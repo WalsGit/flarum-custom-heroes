@@ -1,0 +1,24 @@
+// The hero is the container of its own queries, so that heights follow the
+// width of the hero rather than the window (this also makes the admin
+// preview behave like the forum). Breakpoints are Flarum's.
+.wch-Hero {
+  container-type: inline-size;
+
+  // On the inner container rather than on the header, so that the core
+  // slide-up animation of the dismiss button can still collapse the header.
+  > .container {
+    min-height: var(--wch-height-mobile, auto);
+  }
+}
+
+@container (min-width: @screen-tablet) {
+  .wch-Hero > .container {
+    min-height: var(--wch-height-tablet, auto);
+  }
+}
+
+@container (min-width: @screen-desktop) {
+  .wch-Hero > .container {
+    min-height: var(--wch-height-desktop, auto);
+  }
+}

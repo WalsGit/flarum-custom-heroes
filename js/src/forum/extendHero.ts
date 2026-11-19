@@ -3,6 +3,7 @@ import { extend } from 'flarum/common/extend';
 import Hero from 'flarum/forum/components/Hero';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
+import { heroStyle } from '../common/heroStyle';
 import { configChain, normalizeConfigs, resolveConfig } from '../common/resolveConfig';
 import type { ForumPayload, HeroConfig } from '../common/types';
 import { heroTarget, type HeroTarget } from './heroTarget';
@@ -25,11 +26,14 @@ export function targetConfig(target: HeroTarget): HeroConfig | null {
 export default function extendHero() {
   extend(Hero.prototype, 'view', function (this: Hero, vdom) {
     const target = vdom ? heroTarget(this) : null;
+    const config = target ? targetConfig(target) : null;
 
-    if (!vdom || !target || !targetConfig(target)) return;
+    if (!vdom || !target || !config) return;
 
     // The header rendered by `Hero.view()`.
-    const attrs = (vdom as Mithril.Vnode<{ className?: string }>).attrs;
+    const attrs = (vdom as Mithril.Vnode<{ className?: string; style?: Record<string, string> }>).attrs;
     attrs.className = classList(attrs.className, 'wch-Hero', `wch-Hero--${target.scope}`);
+    // Added to the hero's own style (for example the color of a tag), not replacing it.
+    attrs.style = { ...attrs.style, ...heroStyle(config) };
   });
 }

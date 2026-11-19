@@ -1,4 +1,17 @@
 walsgit-custom-heroes:
   admin:
 
+  api:
+    validation:
+      image_not_found: "{path} : image introuvable, veuillez la téléverser à nouveau."
+      invalid_value: "{path} : valeur invalide."
+      missing_key: "{path} : cette valeur est obligatoire."
+      not_enough_items: "{path} : au moins {min} éléments sont requis."
+      placement_conflict: "{path} : les boutons et les icônes de réseaux sociaux ne peuvent pas partager le même coin."
+      section_not_allowed: "{path} : cette section n'est pas autorisée ici."
+      stops_order: "{path} : les points de couleur doivent être dans l'ordre croissant."
+      too_long: "{path} : {max} caractères maximum."
+      too_many_items: "{path} : {max} éléments maximum."
+      unknown_key: "{path} : clé inconnue."
+
   forum:

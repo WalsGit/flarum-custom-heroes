@@ -3,4 +3,17 @@ walsgit-custom-heroes:
   # Checkout https://docs.flarum.org/2.x/extend/i18n/#appendix-a-standard-key-format
   admin:
 
+  api:
+    validation:
+      image_not_found: "{path}: the image was not found, upload it again."
+      invalid_value: "{path}: invalid value."
+      missing_key: "{path}: this value is required."
+      not_enough_items: "{path}: at least {min} items are required."
+      placement_conflict: "{path}: buttons and social icons cannot share the same corner."
+      section_not_allowed: "{path}: this section is not allowed here."
+      stops_order: "{path}: color stops must be in ascending order."
+      too_long: "{path}: must be at most {max} characters."
+      too_many_items: "{path}: at most {max} items are allowed."
+      unknown_key: "{path}: unknown key."
+
   forum:

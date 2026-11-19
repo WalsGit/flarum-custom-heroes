@@ -3,15 +3,16 @@
     "private": true,
     "version": "0.0.0",
     "devDependencies": {
-        "flarum-webpack-config": "^3.1.0",
-        "webpack": "^5.112.2",
-        "webpack-cli": "^4.9.1",
-        "prettier": "^2.5.1",
+        "@babel/core": "^7.29.13",
+        "@flarum/jest-config": "^2.1.1",
         "@flarum/prettier-config": "^1.0.0",
         "flarum-tsconfig": "^2.0.0",
+        "flarum-webpack-config": "^3.1.0",
+        "prettier": "^2.5.1",
         "typescript": "^5.0.0",
         "typescript-coverage-report": "^2.1.2",
-        "@flarum/jest-config": "^2.1.1"
+        "webpack": "^5.112.2",
+        "webpack-cli": "^4.9.1"
     },
     "scripts": {
         "dev": "webpack --mode development --watch",

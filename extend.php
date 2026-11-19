@@ -14,8 +14,10 @@ namespace Walsgit\CustomHeroes;
 use Flarum\Api\Resource\ForumResource;
 use Flarum\Api\Schema;
 use Flarum\Extend;
+use Flarum\Tags\Event\Deleting;
 use Walsgit\CustomHeroes\Api\Controller\SaveConfigController;
 use Walsgit\CustomHeroes\Api\ForumPayload;
+use Walsgit\CustomHeroes\Listener\DeleteTagHeroConfig;
 use Walsgit\CustomHeroes\Providers\CustomHeroesServiceProvider;
 
 return [
@@ -37,5 +39,12 @@ return [
         ->fields(fn () => [
             Schema\Arr::make('walsgitCustomHeroes')
                 ->get(fn () => resolve(ForumPayload::class)()),
+        ]),
+
+    // flarum/tags is optional: tag related extenders only apply when enabled.
+    (new Extend\Conditional())
+        ->whenExtensionEnabled('flarum-tags', fn () => [
+            (new Extend\Event())
+                ->listen(Deleting::class, DeleteTagHeroConfig::class),
         ]),
 ];

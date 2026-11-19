@@ -12,6 +12,7 @@
 namespace Walsgit\CustomHeroes\Config;
 
 use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Database\Eloquent\Builder;
 use Walsgit\CustomHeroes\HeroConfig;
 
 /**
@@ -55,19 +56,34 @@ final class ConfigRepository
      */
     public function save(Scope $scope, string $scopeId, array $config): void
     {
-        $query = HeroConfig::query()->where('scope', $scope->value)->where('scope_id', $scopeId);
-
         if ($config === []) {
-            $query->delete();
-        } else {
-            $row = $query->first() ?? new HeroConfig();
-            $row->scope = $scope->value;
-            $row->scope_id = $scopeId;
-            $row->config = $config;
-            $row->save();
+            $this->delete($scope, $scopeId);
+
+            return;
         }
 
+        $row = $this->query($scope, $scopeId)->first() ?? new HeroConfig();
+        $row->scope = $scope->value;
+        $row->scope_id = $scopeId;
+        $row->config = $config;
+        $row->save();
+
         $this->cache->forget(self::CACHE_KEY);
+    }
+
+    public function delete(Scope $scope, string $scopeId): void
+    {
+        $this->query($scope, $scopeId)->delete();
+
+        $this->cache->forget(self::CACHE_KEY);
+    }
+
+    /**
+     * @return Builder<HeroConfig>
+     */
+    private function query(Scope $scope, string $scopeId): Builder
+    {
+        return HeroConfig::query()->where('scope', $scope->value)->where('scope_id', $scopeId);
     }
 
     public static function key(string $scope, string $scopeId): string

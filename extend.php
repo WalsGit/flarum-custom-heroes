@@ -11,7 +11,12 @@
 
 namespace Walsgit\CustomHeroes;
 
+use Flarum\Api\Resource\ForumResource;
+use Flarum\Api\Schema;
 use Flarum\Extend;
+use Walsgit\CustomHeroes\Api\Controller\SaveConfigController;
+use Walsgit\CustomHeroes\Api\ForumPayload;
+use Walsgit\CustomHeroes\Providers\CustomHeroesServiceProvider;
 
 return [
     (new Extend\Frontend('forum'))
@@ -21,4 +26,16 @@ return [
         ->js(__DIR__.'/js/dist/admin.js')
         ->css(__DIR__.'/less/admin.less'),
     new Extend\Locales(__DIR__.'/locale'),
+
+    (new Extend\ServiceProvider())
+        ->register(CustomHeroesServiceProvider::class),
+
+    (new Extend\Routes('api'))
+        ->post('/walsgit-custom-heroes/configs', 'walsgit-custom-heroes.configs.save', SaveConfigController::class),
+
+    (new Extend\ApiResource(ForumResource::class))
+        ->fields(fn () => [
+            Schema\Arr::make('walsgitCustomHeroes')
+                ->get(fn () => resolve(ForumPayload::class)()),
+        ]),
 ];

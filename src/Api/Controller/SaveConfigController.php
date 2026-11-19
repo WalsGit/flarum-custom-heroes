@@ -1,0 +1,68 @@
+<?php
+
+/*
+ * This file is part of walsgit/flarum-custom-heroes.
+ *
+ * Copyright (c) 2026 Wa!id.
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
+
+namespace Walsgit\CustomHeroes\Api\Controller;
+
+use Flarum\Foundation\ValidationException;
+use Flarum\Http\RequestUtil;
+use Laminas\Diactoros\Response\JsonResponse;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Walsgit\CustomHeroes\Config\ConfigRepository;
+use Walsgit\CustomHeroes\Config\ConfigValidator;
+use Walsgit\CustomHeroes\Config\Scope;
+
+/**
+ * `POST /api/walsgit-custom-heroes/configs`
+ *
+ * Body: `{ "scope": "welcome", "scopeId": "", "config": { … } | null }`.
+ * A null or empty config deletes the stored one (inherit everything).
+ */
+final class SaveConfigController implements RequestHandlerInterface
+{
+    public function __construct(
+        private readonly ConfigValidator $validator,
+        private readonly ConfigRepository $configs,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        RequestUtil::getActor($request)->assertAdmin();
+
+        $body = (array) $request->getParsedBody();
+        $scope = is_string($body['scope'] ?? null) ? Scope::tryFrom($body['scope']) : null;
+        $scopeId = $body['scopeId'] ?? '';
+
+        // Checked here too, so that deleting (null config) needs a valid target.
+        if ($scope === null || ! is_string($scopeId) || ! $scope->acceptsScopeId($scopeId)) {
+            $path = $scope === null ? 'scope' : 'scopeId';
+
+            throw new ValidationException([
+                $path => $this->translator->trans('walsgit-custom-heroes.api.validation.invalid_value', ['path' => $path]),
+            ]);
+        }
+
+        $config = $body['config'] ?? null;
+        $config = $config === null ? [] : $this->validator->validate($scope, $scopeId, $config);
+
+        $this->configs->save($scope, $scopeId, $config);
+
+        return new JsonResponse([
+            'scope' => $scope->value,
+            'scopeId' => $scopeId,
+            'config' => (object) $config,
+        ]);
+    }
+}

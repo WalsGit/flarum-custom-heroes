@@ -6,7 +6,7 @@ jobs:
   run:
     uses: flarum/framework/.github/workflows/REUSABLE_frontend.yml@2.x
     with:
-      enable_bundlewatch: true
+      enable_bundlewatch: false
       enable_prettier: true
       enable_typescript: true
       enable_tests: true
@@ -15,5 +15,7 @@ jobs:
       backend_directory: .
       js_package_manager: yarn
       main_git_branch: main
+      node_version: 24
     secrets:
       bundlewatch_github_token: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
+      git_actor_token: ${{ secrets.GIT_ACTOR_TOKEN }}

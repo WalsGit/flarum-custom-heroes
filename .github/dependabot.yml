@@ -1,0 +1,42 @@
+version: 2
+updates:
+  # Backend: PHP / Composer
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    target-branch: "main"
+    open-pull-requests-limit: 2
+    labels:
+      - "dependencies"
+      - "chore"
+    groups:
+      php-dependencies:
+        patterns:
+          - "*"
+
+  # Frontend: JavaScript / Yarn (package.json lives in js/)
+  - package-ecosystem: "npm"
+    directory: "/js"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    target-branch: "main"
+    open-pull-requests-limit: 2
+    labels:
+      - "dependencies"
+      - "chore"
+    # Build tooling is aligned with Flarum core (prettier 2, webpack-cli 4,
+    # flarum-tsconfig for TypeScript 5): skip major bumps that break the build.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "prettier"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "webpack-cli"
+        update-types: ["version-update:semver-major"]
+    groups:
+      js-dependencies:
+        patterns:
+          - "*"

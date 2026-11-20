@@ -59,4 +59,32 @@ describe('heroStyle', () => {
   it('sets no overlay for the none type', () => {
     expect(heroStyle({ overlay: { type: 'none' } })).toEqual({});
   });
+
+  it('builds a linear gradient from a corner to the opposite one', () => {
+    const stops = [
+      { color: '#000000', at: 0 },
+      { color: '#ffffff', at: 100 },
+    ];
+
+    expect(heroStyle({ overlay: { type: 'gradient', corner: 'top-left', stops } })['--wch-overlay']).toBe(
+      'linear-gradient(to bottom right, #000000 0%, #ffffff 100%)'
+    );
+    expect(heroStyle({ overlay: { type: 'gradient', corner: 'bottom-right', stops } })['--wch-overlay']).toBe(
+      'linear-gradient(to top left, #000000 0%, #ffffff 100%)'
+    );
+  });
+
+  it('builds a radial gradient from its shape and position', () => {
+    const stops = [
+      { color: '#00000000', at: 0 },
+      { color: '#000000b3', at: 100 },
+    ];
+
+    expect(heroStyle({ overlay: { type: 'radial', shape: 'ellipse', position: 'center', stops } })['--wch-overlay']).toBe(
+      'radial-gradient(ellipse at center, #00000000 0%, #000000b3 100%)'
+    );
+    expect(heroStyle({ overlay: { type: 'radial', shape: 'circle', position: 'top-right', stops } })['--wch-overlay']).toBe(
+      'radial-gradient(circle at top right, #00000000 0%, #000000b3 100%)'
+    );
+  });
 });

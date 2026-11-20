@@ -33,7 +33,17 @@ export interface GradientStop {
   at: number;
 }
 
-export type OverlaySection = { type: 'none' } | { type: 'solid'; color: Color } | { type: 'gradient'; angle: number; stops: GradientStop[] };
+/** Linear: along an angle, or from a corner to the opposite one. */
+export type LinearGradient = { type: 'gradient'; stops: GradientStop[] } & ({ angle: number } | { corner: Corner });
+
+export interface RadialGradient {
+  type: 'radial';
+  shape: 'circle' | 'ellipse';
+  position: 'center' | Corner;
+  stops: GradientStop[];
+}
+
+export type OverlaySection = { type: 'none' } | { type: 'solid'; color: Color } | LinearGradient | RadialGradient;
 
 export type HeightSection = { preset: 'auto' | Size } | { preset: 'custom'; desktop: number; tablet: number; mobile: number };
 

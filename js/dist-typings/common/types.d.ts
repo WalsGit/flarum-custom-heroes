@@ -39,12 +39,20 @@ export interface RadialGradient {
     position: 'center' | Corner;
     stops: GradientStop[];
 }
+/** One color per corner, blending in the middle. */
+export interface CornersGradient {
+    type: 'corners';
+    topLeft: Color;
+    topRight: Color;
+    bottomLeft: Color;
+    bottomRight: Color;
+}
 export type OverlaySection = {
     type: 'none';
 } | {
     type: 'solid';
     color: Color;
-} | LinearGradient | RadialGradient;
+} | LinearGradient | RadialGradient | CornersGradient;
 export type HeightSection = {
     preset: 'auto' | Size;
 } | {

@@ -15,3 +15,9 @@ export declare function configChain(scope: Exclude<HeroScope, 'global'>, scopeId
  * merged key by key.
  */
 export declare function resolveConfig(configs: HeroConfigs, chain: string[]): HeroConfig;
+/**
+ * The key of the config that defines a section for a hero (the most specific
+ * one of the chain), or null when no config defines it. Images belong to that
+ * config: an inherited background uses the file of the level above.
+ */
+export declare function sectionOwner(configs: HeroConfigs, chain: string[], section: keyof HeroConfig): string | null;

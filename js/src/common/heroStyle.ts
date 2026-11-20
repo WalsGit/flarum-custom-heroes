@@ -1,4 +1,4 @@
-import type { BackgroundSection, HeightSection, HeroConfig, OverlaySection } from './types';
+import type { BackgroundSection, Corner, GradientStop, HeightSection, HeroConfig, OverlaySection } from './types';
 
 /** Heights of the presets in pixels, per breakpoint. */
 export const HEIGHT_PRESETS = {
@@ -27,13 +27,28 @@ const BACKGROUND_POSITIONS: Record<BackgroundSection['position'], string> = {
   bottom: 'center bottom',
 };
 
+/** A linear gradient from a corner goes to the opposite one. */
+const OPPOSITE_CORNERS: Record<Corner, string> = {
+  'top-left': 'bottom right',
+  'top-right': 'bottom left',
+  'bottom-left': 'top right',
+  'bottom-right': 'top left',
+};
+
+const stopList = (stops: GradientStop[]) => stops.map((stop) => `${stop.color} ${stop.at}%`).join(', ');
+
 /** The CSS background of the overlay, or null when there is none. */
 function overlayBackground(overlay: OverlaySection): string | null {
   switch (overlay.type) {
     case 'solid':
       return overlay.color;
-    case 'gradient':
-      return `linear-gradient(${overlay.angle}deg, ${overlay.stops.map((stop) => `${stop.color} ${stop.at}%`).join(', ')})`;
+    case 'gradient': {
+      const direction = 'corner' in overlay ? `to ${OPPOSITE_CORNERS[overlay.corner]}` : `${overlay.angle}deg`;
+
+      return `linear-gradient(${direction}, ${stopList(overlay.stops)})`;
+    }
+    case 'radial':
+      return `radial-gradient(${overlay.shape} at ${overlay.position.replace('-', ' ')}, ${stopList(overlay.stops)})`;
     default:
       return null;
   }

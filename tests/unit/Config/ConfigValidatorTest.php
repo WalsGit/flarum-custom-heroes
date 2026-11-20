@@ -295,6 +295,37 @@ class ConfigValidatorTest extends TestCase
         );
     }
 
+    public function test_linear_gradient_goes_along_an_angle_or_from_a_corner(): void
+    {
+        $stops = [['color' => '#000000', 'at' => 0], ['color' => '#ffffff', 'at' => 100]];
+
+        $this->assertSame(
+            ['type' => 'gradient', 'corner' => 'top-left', 'stops' => $stops],
+            $this->valid(['overlay' => ['type' => 'gradient', 'corner' => 'top-left', 'stops' => $stops]])['overlay']
+        );
+        $this->assertInvalid(['overlay' => ['type' => 'gradient', 'corner' => 'middle', 'stops' => $stops]], 'config.overlay.corner', 'invalid_value');
+        // Exactly one direction.
+        $this->assertInvalid(['overlay' => ['type' => 'gradient', 'stops' => $stops]], 'config.overlay.angle', 'invalid_value');
+        $this->assertInvalid(['overlay' => ['type' => 'gradient', 'angle' => 90, 'corner' => 'top-left', 'stops' => $stops]], 'config.overlay.angle', 'invalid_value');
+    }
+
+    public function test_radial_gradient(): void
+    {
+        $stops = [['color' => '#00000000', 'at' => 0], ['color' => '#000000b3', 'at' => 100]];
+
+        $this->assertSame(
+            ['type' => 'radial', 'shape' => 'ellipse', 'position' => 'center', 'stops' => $stops],
+            $this->valid(['overlay' => ['type' => 'radial', 'stops' => $stops]])['overlay']
+        );
+        $this->assertSame(
+            ['type' => 'radial', 'shape' => 'circle', 'position' => 'bottom-right', 'stops' => $stops],
+            $this->valid(['overlay' => ['type' => 'radial', 'shape' => 'circle', 'position' => 'bottom-right', 'stops' => $stops]])['overlay']
+        );
+        $this->assertInvalid(['overlay' => ['type' => 'radial', 'shape' => 'square', 'stops' => $stops]], 'config.overlay.shape', 'invalid_value');
+        $this->assertInvalid(['overlay' => ['type' => 'radial', 'position' => '50% 50%', 'stops' => $stops]], 'config.overlay.position', 'invalid_value');
+        $this->assertInvalid(['overlay' => ['type' => 'radial', 'angle' => 90, 'stops' => $stops]], 'config.overlay.angle', 'unknown_key');
+    }
+
     public function test_overlay_rejects_keys_of_other_types(): void
     {
         $this->assertInvalid(['overlay' => ['type' => 'none', 'color' => '#000']], 'config.overlay.color', 'unknown_key');

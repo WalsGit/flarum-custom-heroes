@@ -41,7 +41,24 @@ walsgit-custom-heroes:
       type_label: Type
       type_none: None
       type_solid: Solid color
-      type_gradient: Gradient
+      type_gradient: Linear gradient
+      type_radial: Radial gradient
+      direction_label: Direction
+      direction_angle: Along an angle
+      from_top_left: From the top left corner
+      from_top_right: From the top right corner
+      from_bottom_left: From the bottom left corner
+      from_bottom_right: From the bottom right corner
+      corner_help: The gradient goes diagonally to the opposite corner, whatever the size of the hero.
+      shape_label: Shape
+      shape_ellipse: Ellipse (follows the hero's proportions)
+      shape_circle: Circle
+      center_label: Center
+      center_center: Middle
+      center_top_left: Top left corner
+      center_top_right: Top right corner
+      center_bottom_left: Bottom left corner
+      center_bottom_right: Bottom right corner
       color_label: Color
       opacity_label: "{label}: opacity"
       angle_label: Angle
@@ -49,7 +66,7 @@ walsgit-custom-heroes:
       stops_label: Colors
       stop_label: "Color {number}"
       stop_position_label: "Color {number}: position"
-      stops_help: Each color has a position along the gradient, from 0 to 100%.
+      stops_help: "Each color has a position along the gradient, from 0 to 100% (for a radial gradient: from the center outwards)."
       add_stop_button: Add a color
       remove_stop_button: Remove this color
     height:

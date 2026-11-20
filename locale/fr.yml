@@ -39,7 +39,24 @@ walsgit-custom-heroes:
       type_label: Type
       type_none: Aucun
       type_solid: Couleur unie
-      type_gradient: Dégradé
+      type_gradient: Dégradé linéaire
+      type_radial: Dégradé radial
+      direction_label: Direction
+      direction_angle: Selon un angle
+      from_top_left: Depuis le coin haut gauche
+      from_top_right: Depuis le coin haut droit
+      from_bottom_left: Depuis le coin bas gauche
+      from_bottom_right: Depuis le coin bas droit
+      corner_help: Le dégradé va en diagonale jusqu'au coin opposé, quelle que soit la taille du hero.
+      shape_label: Forme
+      shape_ellipse: Ellipse (suit les proportions du hero)
+      shape_circle: Cercle
+      center_label: Centre
+      center_center: Milieu
+      center_top_left: Coin haut gauche
+      center_top_right: Coin haut droit
+      center_bottom_left: Coin bas gauche
+      center_bottom_right: Coin bas droit
       color_label: Couleur
       opacity_label: "{label} : opacité"
       angle_label: Angle
@@ -47,7 +64,7 @@ walsgit-custom-heroes:
       stops_label: Couleurs
       stop_label: "Couleur {number}"
       stop_position_label: "Couleur {number} : position"
-      stops_help: Chaque couleur a une position dans le dégradé, de 0 à 100 %.
+      stops_help: "Chaque couleur a une position dans le dégradé, de 0 à 100 % (pour un dégradé radial : du centre vers l'extérieur)."
       add_stop_button: Ajouter une couleur
       remove_stop_button: Retirer cette couleur
     height:

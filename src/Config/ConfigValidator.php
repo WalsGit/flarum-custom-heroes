@@ -153,11 +153,32 @@ final class ConfigValidator
                 ];
 
             case 'gradient':
-                $object = $this->object($value, $path, ['type', 'angle', 'stops']);
+                // Linear: along an angle, or from a corner to the opposite one.
+                $object = $this->object($value, $path, ['type', 'stops'], ['angle', 'corner']);
+
+                if ($object === null) {
+                    return null;
+                }
+
+                if (array_key_exists('angle', $object) === array_key_exists('corner', $object)) {
+                    $this->fail("$path.angle", 'invalid_value');
+
+                    return null;
+                }
+
+                $direction = array_key_exists('corner', $object)
+                    ? ['corner' => $this->enum($object['corner'], self::CORNERS, "$path.corner")]
+                    : ['angle' => $this->int($object['angle'], 0, 360, "$path.angle")];
+
+                return ['type' => 'gradient', ...$direction, 'stops' => $this->gradientStops($object['stops'], "$path.stops")];
+
+            case 'radial':
+                $object = $this->object($value, $path, ['type', 'stops'], ['shape', 'position']);
 
                 return $object === null ? null : [
-                    'type' => 'gradient',
-                    'angle' => $this->int($object['angle'], 0, 360, "$path.angle"),
+                    'type' => 'radial',
+                    'shape' => $this->enum($object['shape'] ?? 'ellipse', ['circle', 'ellipse'], "$path.shape"),
+                    'position' => $this->enum($object['position'] ?? 'center', ['center', ...self::CORNERS], "$path.position"),
                     'stops' => $this->gradientStops($object['stops'], "$path.stops"),
                 ];
 

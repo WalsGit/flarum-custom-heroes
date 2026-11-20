@@ -224,7 +224,7 @@ export default class HeroesPage extends ExtensionPage {
     const draft = structuredClone(config);
 
     // The server wants ascending color stops.
-    if (draft.overlay?.type === 'gradient') {
+    if (draft.overlay && 'stops' in draft.overlay) {
       draft.overlay.stops.sort((a, b) => a.at - b.at);
     }
 

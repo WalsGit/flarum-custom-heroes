@@ -23,9 +23,10 @@
   }
 }
 
-// Background image: covers the hero, under its content. The hero color stays
-// visible while the image loads.
-.wch-Hero--image {
+// Background image and overlay, under the content. From bottom to top: hero
+// color (visible while the image loads), image, overlay, content.
+.wch-Hero--image,
+.wch-Hero--overlay {
   position: relative;
   overflow: hidden;
 
@@ -42,4 +43,12 @@
   height: 100%;
   object-fit: cover;
   object-position: var(--wch-bg-position, center center);
+}
+
+.wch-Hero--overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--wch-overlay);
+  pointer-events: none;
 }

@@ -1,4 +1,4 @@
-import type { BackgroundSection, HeightSection, HeroConfig } from './types';
+import type { BackgroundSection, HeightSection, HeroConfig, OverlaySection } from './types';
 
 /** Heights of the presets in pixels, per breakpoint. */
 export const HEIGHT_PRESETS = {
@@ -27,13 +27,28 @@ const BACKGROUND_POSITIONS: Record<BackgroundSection['position'], string> = {
   bottom: 'center bottom',
 };
 
+/** The CSS background of the overlay, or null when there is none. */
+function overlayBackground(overlay: OverlaySection): string | null {
+  switch (overlay.type) {
+    case 'solid':
+      return overlay.color;
+    case 'gradient':
+      return `linear-gradient(${overlay.angle}deg, ${overlay.stops.map((stop) => `${stop.color} ${stop.at}%`).join(', ')})`;
+    default:
+      return null;
+  }
+}
+
 /**
  * The CSS variables of a resolved config, set on the hero element. Values
  * come from a validated config, never from raw CSS.
  */
 export function heroStyle(config: HeroConfig): Record<string, string> {
+  const overlay = config.overlay ? overlayBackground(config.overlay) : null;
+
   return {
     ...(config.height ? heightVariables(config.height) : {}),
     ...(config.background?.image ? { '--wch-bg-position': BACKGROUND_POSITIONS[config.background.position] } : {}),
+    ...(overlay ? { '--wch-overlay': overlay } : {}),
   };
 }

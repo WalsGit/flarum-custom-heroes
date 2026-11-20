@@ -35,4 +35,28 @@ describe('heroStyle', () => {
     expect(heroStyle({ background: { image, position: 'top' } })).toEqual({ '--wch-bg-position': 'center top' });
     expect(heroStyle({ background: { image: null, position: 'top' } })).toEqual({});
   });
+
+  it('sets a solid overlay color', () => {
+    expect(heroStyle({ overlay: { type: 'solid', color: '#00000080' } })).toEqual({ '--wch-overlay': '#00000080' });
+  });
+
+  it('builds a linear gradient overlay from its angle and stops', () => {
+    const stops = [
+      { color: '#000000cc', at: 0 },
+      { color: '#ff000080', at: 30 },
+      { color: '#00ff0040', at: 60 },
+      { color: '#00000000', at: 100 },
+    ];
+
+    expect(heroStyle({ overlay: { type: 'gradient', angle: 180, stops: stops.slice(0, 2) } })).toEqual({
+      '--wch-overlay': 'linear-gradient(180deg, #000000cc 0%, #ff000080 30%)',
+    });
+    expect(heroStyle({ overlay: { type: 'gradient', angle: 45, stops } })['--wch-overlay']).toBe(
+      'linear-gradient(45deg, #000000cc 0%, #ff000080 30%, #00ff0040 60%, #00000000 100%)'
+    );
+  });
+
+  it('sets no overlay for the none type', () => {
+    expect(heroStyle({ overlay: { type: 'none' } })).toEqual({});
+  });
 });

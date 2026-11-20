@@ -43,7 +43,16 @@ export interface RadialGradient {
   stops: GradientStop[];
 }
 
-export type OverlaySection = { type: 'none' } | { type: 'solid'; color: Color } | LinearGradient | RadialGradient;
+/** One color per corner, blending in the middle. */
+export interface CornersGradient {
+  type: 'corners';
+  topLeft: Color;
+  topRight: Color;
+  bottomLeft: Color;
+  bottomRight: Color;
+}
+
+export type OverlaySection = { type: 'none' } | { type: 'solid'; color: Color } | LinearGradient | RadialGradient | CornersGradient;
 
 export type HeightSection = { preset: 'auto' | Size } | { preset: 'custom'; desktop: number; tablet: number; mobile: number };
 

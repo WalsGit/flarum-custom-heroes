@@ -87,4 +87,13 @@ describe('heroStyle', () => {
       'radial-gradient(circle at top right, #00000000 0%, #000000b3 100%)'
     );
   });
+
+  it('blends one color from each corner', () => {
+    const overlay = { type: 'corners', topLeft: '#ff0000', topRight: '#00ff00', bottomLeft: '#0000ff', bottomRight: '#ffffff80' } as const;
+
+    expect(heroStyle({ overlay })['--wch-overlay']).toBe(
+      'radial-gradient(at top left, #ff0000, transparent 70%), radial-gradient(at top right, #00ff00, transparent 70%), ' +
+        'radial-gradient(at bottom left, #0000ff, transparent 70%), radial-gradient(at bottom right, #ffffff80, transparent 70%)'
+    );
+  });
 });

@@ -41,6 +41,12 @@ walsgit-custom-heroes:
       type_solid: Couleur unie
       type_gradient: Dégradé linéaire
       type_radial: Dégradé radial
+      type_corners: Dégradé 4 coins
+      corner_topLeft: Haut gauche
+      corner_topRight: Haut droit
+      corner_bottomLeft: Bas gauche
+      corner_bottomRight: Bas droit
+      corners_help: Chaque couleur part de son coin et se fond avec les autres au centre. Baissez l'opacité pour laisser voir l'image.
       direction_label: Direction
       direction_angle: Selon un angle
       from_top_left: Depuis le coin haut gauche

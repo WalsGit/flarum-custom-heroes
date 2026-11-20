@@ -326,6 +326,19 @@ class ConfigValidatorTest extends TestCase
         $this->assertInvalid(['overlay' => ['type' => 'radial', 'angle' => 90, 'stops' => $stops]], 'config.overlay.angle', 'unknown_key');
     }
 
+    public function test_corners_gradient_has_one_color_per_corner(): void
+    {
+        $corners = ['type' => 'corners', 'topLeft' => '#FF0000B3', 'topRight' => '#00f', 'bottomLeft' => '#00ff00', 'bottomRight' => '#00000000'];
+
+        $this->assertSame(
+            ['type' => 'corners', 'topLeft' => '#ff0000b3', 'topRight' => '#00f', 'bottomLeft' => '#00ff00', 'bottomRight' => '#00000000'],
+            $this->valid(['overlay' => $corners])['overlay']
+        );
+        $this->assertInvalid(['overlay' => ['bottomRight' => 'red'] + $corners], 'config.overlay.bottomRight', 'invalid_value');
+        $this->assertInvalid(['overlay' => array_diff_key($corners, ['topLeft' => 0])], 'config.overlay.topLeft', 'missing_key');
+        $this->assertInvalid(['overlay' => $corners + ['stops' => []]], 'config.overlay.stops', 'unknown_key');
+    }
+
     public function test_overlay_rejects_keys_of_other_types(): void
     {
         $this->assertInvalid(['overlay' => ['type' => 'none', 'color' => '#000']], 'config.overlay.color', 'unknown_key');

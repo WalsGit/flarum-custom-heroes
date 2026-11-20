@@ -142,3 +142,42 @@
     gap: 5px;
   }
 }
+
+// The four colors sit in the corners they start from.
+.wch-OverlayForm-corners {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  justify-content: space-between;
+  gap: 15px 30px;
+  max-width: 560px;
+  padding: 12px;
+  border: 1px dashed var(--control-bg);
+  border-radius: var(--border-radius);
+}
+
+.wch-OverlayForm-corner {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  &--topRight,
+  &--bottomRight {
+    align-items: flex-end;
+  }
+}
+
+.wch-OverlayForm-cornerLabel {
+  color: var(--muted-color);
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .wch-OverlayForm-corners {
+    grid-template-columns: 1fr;
+  }
+
+  .wch-OverlayForm-corner--topRight,
+  .wch-OverlayForm-corner--bottomRight {
+    align-items: flex-start;
+  }
+}

@@ -172,6 +172,18 @@ final class ConfigValidator
 
                 return ['type' => 'gradient', ...$direction, 'stops' => $this->gradientStops($object['stops'], "$path.stops")];
 
+            case 'corners':
+                // One color per corner, blending in the middle.
+                $object = $this->object($value, $path, ['type', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight']);
+
+                return $object === null ? null : [
+                    'type' => 'corners',
+                    'topLeft' => $this->color($object['topLeft'], "$path.topLeft"),
+                    'topRight' => $this->color($object['topRight'], "$path.topRight"),
+                    'bottomLeft' => $this->color($object['bottomLeft'], "$path.bottomLeft"),
+                    'bottomRight' => $this->color($object['bottomRight'], "$path.bottomRight"),
+                ];
+
             case 'radial':
                 $object = $this->object($value, $path, ['type', 'stops'], ['shape', 'position']);
 

@@ -24,6 +24,11 @@ class UploadImageTest extends TestCase
 {
     use RetrievesAuthorizedUsers;
 
+    /**
+     * @var list<string> temporary files created by the test
+     */
+    private array $tempFiles = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,6 +42,18 @@ class UploadImageTest extends TestCase
         ]);
 
         $this->assets()->deleteDirectory(ImagePaths::DIRECTORY);
+    }
+
+    protected function tearDown(): void
+    {
+        array_map('unlink', $this->tempFiles);
+
+        parent::tearDown();
+    }
+
+    private function tempFile(): string
+    {
+        return $this->tempFiles[] = (string) tempnam(sys_get_temp_dir(), 'wch');
     }
 
     private function assets(): Filesystem
@@ -59,7 +76,7 @@ class UploadImageTest extends TestCase
     {
         $image = imagecreatetruecolor($width, $height);
         imagefill($image, 0, 0, (int) imagecolorallocate($image, $red, 100, 150));
-        $path = (string) tempnam(sys_get_temp_dir(), 'wch');
+        $path = $this->tempFile();
         imagepng($image, $path);
 
         return $path;
@@ -134,10 +151,10 @@ class UploadImageTest extends TestCase
     #[Test]
     public function invalid_uploads_are_rejected(): void
     {
-        $text = (string) tempnam(sys_get_temp_dir(), 'wch');
+        $text = $this->tempFile();
         file_put_contents($text, '<?php echo "hi";');
 
-        $gif = (string) tempnam(sys_get_temp_dir(), 'wch');
+        $gif = $this->tempFile();
         imagegif(imagecreatetruecolor(800, 300), $gif);
 
         $this->assertSame(422, $this->upload($text)->getStatusCode());
@@ -147,6 +164,47 @@ class UploadImageTest extends TestCase
         $this->assertSame(422, $this->upload($this->png(800, 300), ['kind' => 'logo'])->getStatusCode());
         $this->assertSame(422, $this->upload($this->png(800, 300), ['scope' => 'welcome', 'scopeId' => '3'])->getStatusCode());
         $this->assertSame([], $this->storedFiles());
+    }
+
+    /**
+     * @param array<string, mixed> $json
+     */
+    private function import(array $json): ResponseInterface
+    {
+        return $this->send($this->request('POST', '/api/walsgit-custom-heroes/images', [
+            'authenticatedAs' => 1,
+            'json' => $json + ['kind' => 'background', 'scope' => 'welcome', 'scopeId' => ''],
+        ]));
+    }
+
+    #[Test]
+    public function import_from_a_non_public_or_invalid_url_is_rejected(): void
+    {
+        foreach (['http://127.0.0.1/x.png', 'http://localhost/x.png', 'javascript:alert(1)', 'https://example.com/'.str_repeat('a', 250)] as $url) {
+            $response = $this->import(['url' => $url]);
+
+            $this->assertSame(422, $response->getStatusCode(), $url);
+            $this->assertArrayHasKey('url', $this->errors($response), $url);
+        }
+
+        $this->assertSame(422, $this->import(['url' => ['https://example.com/x.png']])->getStatusCode());
+        // Neither a file nor a URL.
+        $this->assertArrayHasKey('image', $this->errors($this->import([])));
+        $this->assertSame([], $this->storedFiles());
+    }
+
+    /**
+     * @return array<string, string> the validation errors keyed by path
+     */
+    private function errors(ResponseInterface $response): array
+    {
+        $errors = [];
+
+        foreach ($this->body($response)['errors'] ?? [] as $error) {
+            $errors[basename($error['source']['pointer'] ?? '')] = $error['detail'];
+        }
+
+        return $errors;
     }
 
     #[Test]

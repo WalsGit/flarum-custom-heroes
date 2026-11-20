@@ -1,4 +1,4 @@
-import type { HeightSection, HeroConfig } from './types';
+import type { BackgroundSection, HeightSection, HeroConfig } from './types';
 
 /** Heights of the presets in pixels, per breakpoint. */
 export const HEIGHT_PRESETS = {
@@ -21,6 +21,12 @@ function heightVariables(height: HeightSection): Record<string, string> {
   };
 }
 
+const BACKGROUND_POSITIONS: Record<BackgroundSection['position'], string> = {
+  center: 'center center',
+  top: 'center top',
+  bottom: 'center bottom',
+};
+
 /**
  * The CSS variables of a resolved config, set on the hero element. Values
  * come from a validated config, never from raw CSS.
@@ -28,5 +34,6 @@ function heightVariables(height: HeightSection): Record<string, string> {
 export function heroStyle(config: HeroConfig): Record<string, string> {
   return {
     ...(config.height ? heightVariables(config.height) : {}),
+    ...(config.background?.image ? { '--wch-bg-position': BACKGROUND_POSITIONS[config.background.position] } : {}),
   };
 }

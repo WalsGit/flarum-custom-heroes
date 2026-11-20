@@ -28,4 +28,11 @@ describe('heroStyle', () => {
   it('ignores the sections that have no variable yet', () => {
     expect(heroStyle({ dismissible: false, overlay: { type: 'none' } })).toEqual({});
   });
+
+  it('sets the background position only when there is an image', () => {
+    const image = { id: '3f2a9c1d7b4e6a05', width: 1920, height: 640, widths: [640, 1024, 1440, 1920] };
+
+    expect(heroStyle({ background: { image, position: 'top' } })).toEqual({ '--wch-bg-position': 'center top' });
+    expect(heroStyle({ background: { image: null, position: 'top' } })).toEqual({});
+  });
 });

@@ -2,7 +2,7 @@ import app from 'flarum/admin/app';
 import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import Select from 'flarum/common/components/Select';
-import type { Corner, GradientStop, LinearGradient, OverlaySection, RadialGradient } from '../../common/types';
+import type { Corner, CornersGradient, GradientStop, LinearGradient, OverlaySection, RadialGradient } from '../../common/types';
 import AlphaColorInput from './AlphaColorInput';
 
 export interface OverlayFormAttrs extends ComponentAttrs {
@@ -24,6 +24,7 @@ const DEFAULTS: Record<OverlaySection['type'], OverlaySection> = {
       { color: '#00000033', at: 100 },
     ],
   },
+  corners: { type: 'corners', topLeft: '#e64980b3', topRight: '#4c6ef5b3', bottomLeft: '#fab005b3', bottomRight: '#12b886b3' },
   // A vignette: clear in the middle, darker on the edges.
   radial: {
     type: 'radial',
@@ -58,7 +59,13 @@ export default class OverlayForm extends Component<OverlayFormAttrs> {
           <label>{t('type_label')}</label>
           <Select
             value={value.type}
-            options={{ none: t('type_none'), solid: t('type_solid'), gradient: t('type_gradient'), radial: t('type_radial') }}
+            options={{
+              none: t('type_none'),
+              solid: t('type_solid'),
+              gradient: t('type_gradient'),
+              radial: t('type_radial'),
+              corners: t('type_corners'),
+            }}
             onchange={(type: OverlaySection['type']) => onchange(DEFAULTS[type])}
           />
         </div>
@@ -72,6 +79,7 @@ export default class OverlayForm extends Component<OverlayFormAttrs> {
 
         {value.type === 'gradient' && [this.linearDirection(value), this.stops(value)]}
         {value.type === 'radial' && [this.radialShape(value), this.stops(value)]}
+        {value.type === 'corners' && this.corners(value)}
       </div>
     );
   }
@@ -132,6 +140,27 @@ export default class OverlayForm extends Component<OverlayFormAttrs> {
             onchange={(position: RadialGradient['position']) => onchange({ ...value, position })}
           />
         </label>
+      </div>
+    );
+  }
+
+  /** The four colors, laid out like the corners they start from. */
+  corners(value: CornersGradient) {
+    const { onchange } = this.attrs;
+    const keys = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'] as const;
+
+    return (
+      <div className="Form-group">
+        <label>{t('stops_label')}</label>
+        <div className="wch-OverlayForm-corners">
+          {keys.map((key) => (
+            <div className={`wch-OverlayForm-corner wch-OverlayForm-corner--${key}`}>
+              <span className="wch-OverlayForm-cornerLabel">{t(`corner_${key}`)}</span>
+              <AlphaColorInput value={value[key]} label={t(`corner_${key}`)} onchange={(color: string) => onchange({ ...value, [key]: color })} />
+            </div>
+          ))}
+        </div>
+        <p className="helpText">{t('corners_help')}</p>
       </div>
     );
   }

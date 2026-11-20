@@ -43,6 +43,12 @@ walsgit-custom-heroes:
       type_solid: Solid color
       type_gradient: Linear gradient
       type_radial: Radial gradient
+      type_corners: 4 corners gradient
+      corner_topLeft: Top left
+      corner_topRight: Top right
+      corner_bottomLeft: Bottom left
+      corner_bottomRight: Bottom right
+      corners_help: Each color starts from its corner and blends with the others in the middle. Lower the opacity to see the image through.
       direction_label: Direction
       direction_angle: Along an angle
       from_top_left: From the top left corner

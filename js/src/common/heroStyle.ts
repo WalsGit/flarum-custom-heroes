@@ -49,6 +49,18 @@ function overlayBackground(overlay: OverlaySection): string | null {
     }
     case 'radial':
       return `radial-gradient(${overlay.shape} at ${overlay.position.replace('-', ' ')}, ${stopList(overlay.stops)})`;
+    case 'corners':
+      // Each color fades out from its corner: the four meet and blend in the middle.
+      return (
+        [
+          ['top left', overlay.topLeft],
+          ['top right', overlay.topRight],
+          ['bottom left', overlay.bottomLeft],
+          ['bottom right', overlay.bottomRight],
+        ] as const
+      )
+        .map(([corner, color]) => `radial-gradient(at ${corner}, ${color}, transparent 70%)`)
+        .join(', ');
     default:
       return null;
   }

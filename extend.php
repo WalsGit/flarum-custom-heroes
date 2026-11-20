@@ -11,6 +11,7 @@
 
 namespace Walsgit\CustomHeroes;
 
+use Flarum\Api\Context;
 use Flarum\Api\Resource\ForumResource;
 use Flarum\Api\Schema;
 use Flarum\Extend;
@@ -18,6 +19,7 @@ use Flarum\Tags\Event\Deleting;
 use Walsgit\CustomHeroes\Api\Controller\SaveConfigController;
 use Walsgit\CustomHeroes\Api\Controller\UploadImageController;
 use Walsgit\CustomHeroes\Api\ForumPayload;
+use Walsgit\CustomHeroes\Image\UploadLimits;
 use Walsgit\CustomHeroes\Listener\DeleteTagHeroConfig;
 use Walsgit\CustomHeroes\Providers\CustomHeroesServiceProvider;
 
@@ -41,6 +43,10 @@ return [
         ->fields(fn () => [
             Schema\Arr::make('walsgitCustomHeroes')
                 ->get(fn () => resolve(ForumPayload::class)()),
+            // For the admin page only.
+            Schema\Arr::make('walsgitCustomHeroesUpload')
+                ->visible(fn ($model, Context $context) => $context->getActor()->isAdmin())
+                ->get(fn () => resolve(UploadLimits::class)()),
         ]),
 
     // flarum/tags is optional: tag related extenders only apply when enabled.

@@ -1,0 +1,132 @@
+.wch-HeroesPage-body {
+  max-width: 760px;
+}
+
+.wch-HeroesPage-scope {
+  margin-bottom: 25px;
+
+  .Select {
+    max-width: 420px;
+  }
+}
+
+// One card per section.
+.wch-Section {
+  margin: 0 0 20px;
+  padding: 15px 20px 5px;
+  border: 1px solid var(--control-bg);
+  border-radius: var(--border-radius);
+
+  > legend {
+    padding: 0 6px;
+    margin-left: -6px;
+    font-weight: bold;
+    font-size: 15px;
+  }
+
+  > .Checkbox,
+  .Form-group {
+    margin-bottom: 15px;
+  }
+}
+
+
+.wch-BackgroundForm-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 320px;
+  aspect-ratio: 16 / 6;
+  margin-bottom: 15px;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  background: var(--control-bg);
+  color: var(--control-color);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.wch-BackgroundForm-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wch-BackgroundForm-url,
+.wch-OverlayForm-angle,
+.wch-OverlayForm-stop,
+.wch-HeightForm-input,
+.wch-AlphaColor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wch-BackgroundForm-url .FormControl {
+  flex: 1;
+  min-width: 0;
+}
+
+.wch-OverlayForm-angle .FormControl,
+.wch-OverlayForm-at {
+  width: 80px;
+}
+
+.wch-OverlayForm-stop {
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.wch-AlphaColor-color {
+  width: 44px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid var(--control-bg);
+  border-radius: var(--border-radius);
+  background: none;
+  cursor: pointer;
+}
+
+.wch-AlphaColor-opacity {
+  width: 140px;
+}
+
+.wch-AlphaColor-value {
+  min-width: 3em;
+  color: var(--muted-color);
+}
+
+.wch-HeightForm-custom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .FormControl {
+    width: 100px;
+  }
+}
+
+.wch-HeroesPage-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wch-BackgroundForm-warning {
+  margin-top: -5px;
+  color: var(--alert-color, var(--muted-color));
+
+  &::before {
+    content: '⚠ ';
+  }
+}

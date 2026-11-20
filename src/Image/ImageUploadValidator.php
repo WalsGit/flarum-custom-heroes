@@ -21,6 +21,8 @@ use Psr\Http\Message\UploadedFileInterface;
  */
 final class ImageUploadValidator extends AbstractImageValidator
 {
+    public const MAX_SIZE_KB = 5 * 1024;
+
     private const MAX_SIDE = 4000;
 
     protected function assertFileMimes(UploadedFileInterface $file): void
@@ -39,7 +41,7 @@ final class ImageUploadValidator extends AbstractImageValidator
 
     public function getMaxSize(): int
     {
-        return 5 * 1024; // KB
+        return self::MAX_SIZE_KB;
     }
 
     public function getMaxResolution(): int

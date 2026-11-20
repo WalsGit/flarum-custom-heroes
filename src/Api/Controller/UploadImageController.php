@@ -15,6 +15,7 @@ use Flarum\Foundation\ValidationException;
 use Flarum\Http\RequestUtil;
 use Intervention\Image\Exceptions\RuntimeException as ImageException;
 use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -24,11 +25,16 @@ use Walsgit\CustomHeroes\Config\ConfigRepository;
 use Walsgit\CustomHeroes\Config\Scope;
 use Walsgit\CustomHeroes\Image\HeroImages;
 use Walsgit\CustomHeroes\Image\ImageUploadValidator;
+use Walsgit\CustomHeroes\Image\RemoteImageFetcher;
 
 /**
- * `POST /api/walsgit-custom-heroes/images` (multipart)
+ * `POST /api/walsgit-custom-heroes/images`
  *
- * Fields: `image` (file), `kind` (`background`), `scope`, `scopeId`.
+ * Multipart: `image` (file), `kind` (`background`), `scope`, `scopeId`.
+ * Or JSON: `{ "url": "https://…", "kind", "scope", "scopeId" }`: the image is
+ * downloaded once, through the SSRF-hardened fetcher, then handled like an
+ * upload.
+ *
  * Returns the `ImageRef` to put in the config. The image is not used until
  * the config is saved; a previous upload that was never saved is removed.
  */
@@ -36,11 +42,13 @@ final class UploadImageController implements RequestHandlerInterface
 {
     // shortcut: background only, `logo` comes with the logo section (phase 7).
     private const KINDS = ['background'];
+    private const URL_MAX_LENGTH = 255;
 
     public function __construct(
         private readonly ImageUploadValidator $validator,
         private readonly HeroImages $images,
         private readonly ConfigRepository $configs,
+        private readonly RemoteImageFetcher $fetcher,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -57,23 +65,56 @@ final class UploadImageController implements RequestHandlerInterface
         }
 
         $file = $request->getUploadedFiles()['image'] ?? null;
-
-        if (! $file instanceof UploadedFileInterface) {
-            $this->fail('image', 'missing_key');
-        }
-
-        $this->validator->assertImageValid('image', $file);
-
-        // Keeps at most two versions per hero: the saved one and this upload.
-        $this->images->cleanup($scope, $scopeId, $this->configs->all()[ConfigRepository::key($scope->value, $scopeId)] ?? []);
+        $download = null;
 
         try {
-            $ref = $this->images->storeBackground($scope, $scopeId, (string) $file->getStream());
-        } catch (ImageException) {
-            $this->fail('image', 'image_processing_failed');
+            if (! $file instanceof UploadedFileInterface) {
+                $download = (string) tempnam(sys_get_temp_dir(), 'wch');
+                $file = $this->download($body['url'] ?? null, $download);
+            }
+
+            $this->validator->assertImageValid('image', $file);
+
+            // Keeps at most two versions per hero: the saved one and this upload.
+            $this->images->cleanup($scope, $scopeId, $this->configs->all()[ConfigRepository::key($scope->value, $scopeId)] ?? []);
+
+            try {
+                $ref = $this->images->storeBackground($scope, $scopeId, (string) $file->getStream());
+            } catch (ImageException) {
+                $this->fail('image', 'image_processing_failed');
+            }
+        } finally {
+            // Our own temporary file, created above.
+            if ($download !== null && $download !== '') {
+                @unlink($download);
+            }
         }
 
         return new JsonResponse($ref);
+    }
+
+    /**
+     * Downloads the image at $url into $path, wrapped as an uploaded file so
+     * that it goes through the same validation as an upload.
+     */
+    private function download(mixed $url, string $path): UploadedFileInterface
+    {
+        if ($url === null) {
+            $this->fail('image', 'missing_key');
+        }
+
+        if (! is_string($url) || $url === '' || strlen($url) > self::URL_MAX_LENGTH) {
+            $this->fail('url', 'invalid_value');
+        }
+
+        if ($path === '' || ! $this->fetcher->download($url, $path)) {
+            $this->fail('url', 'image_download_failed');
+        }
+
+        // The real type is checked again by the validator, this only feeds the core checks.
+        $mime = (@getimagesize($path) ?: [])['mime'] ?? 'application/octet-stream';
+
+        return new UploadedFile($path, (int) filesize($path), UPLOAD_ERR_OK, 'remote-image', $mime);
     }
 
     private function fail(string $path, string $error): never

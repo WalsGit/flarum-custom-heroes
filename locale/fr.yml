@@ -4,6 +4,7 @@ walsgit-custom-heroes:
   api:
     validation:
       image_processing_failed: "{path} : l'image n'a pas pu être traitée. Le serveur ne prend peut-être pas en charge le WebP."
+      image_download_failed: "{path} : l'image n'a pas pu être téléchargée (adresse injoignable ou non publique, ou fichier de plus de 5 Mo)."
       image_not_found: "{path} : image introuvable, veuillez la téléverser à nouveau."
       invalid_value: "{path} : valeur invalide."
       missing_key: "{path} : cette valeur est obligatoire."

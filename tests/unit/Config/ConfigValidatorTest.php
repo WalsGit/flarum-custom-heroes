@@ -25,6 +25,7 @@ class ConfigValidatorTest extends TestCase
 {
     private const BG_ID = 'aaaaaaaaaaaaaaaa';
     private const LOGO_ID = 'bbbbbbbbbbbbbbbb';
+    private const OTHER_ID = 'dddddddddddddddd';
 
     private ConfigValidator $validator;
 
@@ -33,9 +34,12 @@ class ConfigValidatorTest extends TestCase
         parent::setUp();
 
         $existing = [
-            ImagePaths::background(self::BG_ID, 640),
-            ImagePaths::background(self::BG_ID, 1024),
-            ImagePaths::logo(self::LOGO_ID),
+            ImagePaths::background(Scope::Welcome, '', self::BG_ID, 640),
+            ImagePaths::background(Scope::Welcome, '', self::BG_ID, 1024),
+            ImagePaths::logo(Scope::Welcome, '', self::LOGO_ID),
+            // Uploaded for another hero.
+            ImagePaths::background(Scope::Global, '', self::OTHER_ID, 640),
+            ImagePaths::background(Scope::Tag, '12', self::OTHER_ID, 640),
         ];
 
         $assets = m::mock(Filesystem::class);
@@ -181,6 +185,15 @@ class ConfigValidatorTest extends TestCase
 
         $image = ['widths' => [640, 1024, 1440]] + self::backgroundImage();
         $this->assertInvalid(['background' => ['image' => $image]], 'config.background.image', 'image_not_found');
+    }
+
+    public function test_background_image_must_belong_to_the_target(): void
+    {
+        $image = ['id' => self::OTHER_ID, 'widths' => [640]] + self::backgroundImage();
+
+        $this->assertInvalid(['background' => ['image' => $image]], 'config.background.image', 'image_not_found');
+        $this->assertInvalid(['background' => ['image' => $image]], 'config.background.image', 'image_not_found', Scope::Tag);
+        $this->assertEquals($image, $this->valid(['background' => ['image' => $image]], Scope::Tag, '12')['background']['image']);
     }
 
     #[DataProvider('invalidImageRefs')]

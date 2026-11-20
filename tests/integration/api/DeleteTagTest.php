@@ -12,7 +12,10 @@
 namespace Walsgit\CustomHeroes\Tests\integration\api;
 
 use Flarum\Testing\integration\TestCase;
+use Illuminate\Contracts\Filesystem\Factory;
 use PHPUnit\Framework\Attributes\Test;
+use Walsgit\CustomHeroes\Config\Scope;
+use Walsgit\CustomHeroes\Image\ImagePaths;
 
 class DeleteTagTest extends TestCase
 {
@@ -67,5 +70,22 @@ class DeleteTagTest extends TestCase
         $this->assertArrayNotHasKey('tag:12', $configs);
         $this->assertArrayHasKey('tag:13', $configs);
         $this->assertArrayHasKey('tag', $configs);
+    }
+
+    #[Test]
+    public function deleting_a_tag_removes_its_images_only(): void
+    {
+        $assets = $this->app()->getContainer()->make(Factory::class)->disk('flarum-assets');
+        $id = 'aaaaaaaaaaaaaaaa';
+        $tag12 = ImagePaths::background(Scope::Tag, '12', $id, 640);
+        $tag13 = ImagePaths::background(Scope::Tag, '13', $id, 640);
+        $assets->put($tag12, 'x');
+        $assets->put($tag13, 'x');
+
+        $this->send($this->request('DELETE', '/api/tags/12', ['authenticatedAs' => 1]));
+
+        $this->assertFalse($assets->exists($tag12));
+        $this->assertTrue($assets->exists($tag13));
+        $assets->delete($tag13);
     }
 }

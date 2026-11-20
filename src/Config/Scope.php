@@ -11,6 +11,9 @@
 
 namespace Walsgit\CustomHeroes\Config;
 
+use Flarum\Foundation\ValidationException;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 /**
  * The places a hero config can be defined for.
  *
@@ -28,6 +31,30 @@ enum Scope: string
     private const COMMON_SECTIONS = ['background', 'overlay', 'height', 'textStyle', 'logo', 'socials', 'buttons'];
 
     private const INSTANCE_SECTIONS = ['background', 'overlay', 'height'];
+
+    /**
+     * Reads the target (`scope`, `scopeId`) of an admin request body.
+     *
+     * @param array<mixed> $body
+     * @return array{self, string}
+     *
+     * @throws ValidationException
+     */
+    public static function fromBody(array $body, TranslatorInterface $translator): array
+    {
+        $scope = is_string($body['scope'] ?? null) ? self::tryFrom($body['scope']) : null;
+        $scopeId = $body['scopeId'] ?? '';
+
+        if ($scope === null || ! is_string($scopeId) || ! $scope->acceptsScopeId($scopeId)) {
+            $path = $scope === null ? 'scope' : 'scopeId';
+
+            throw new ValidationException([
+                $path => $translator->trans('walsgit-custom-heroes.api.validation.invalid_value', ['path' => $path]),
+            ]);
+        }
+
+        return [$scope, $scopeId];
+    }
 
     public function acceptsScopeId(string $scopeId): bool
     {

@@ -1,3 +1,6 @@
+// The forum's hero rendering, for the live preview.
+@import "common/hero";
+
 .wch-HeroesPage-body {
   max-width: 760px;
 }
@@ -179,5 +182,97 @@
   .wch-OverlayForm-corner--topRight,
   .wch-OverlayForm-corner--bottomRight {
     align-items: flex-start;
+  }
+}
+
+// Live preview: stays in view while the sections below are edited.
+.wch-Preview {
+  position: sticky;
+  top: var(--header-height, 52px);
+  z-index: 2;
+  margin: 0 -10px 20px;
+  padding: 10px;
+  background: var(--body-bg);
+  transition: box-shadow 0.2s;
+
+  &--stuck {
+    box-shadow: 0 2px 6px var(--shadow-color);
+  }
+
+  @media @phone {
+    position: static;
+  }
+}
+
+.wch-Preview-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+
+  .Button.active {
+    background: var(--control-color);
+    color: var(--control-bg);
+  }
+}
+
+.wch-Preview-frame {
+  overflow: hidden;
+  border: 1px solid var(--control-bg);
+  border-radius: var(--border-radius);
+  background: var(--body-bg);
+}
+
+.wch-Preview-viewport {
+  margin: 0 auto;
+}
+
+// The forum's hero styles, which the admin does not load. Sized with
+// container queries on the hero, like the heights, so that each device
+// renders as it would at that width.
+.wch-PreviewHero {
+  background: var(--hero-bg);
+  text-align: center;
+  color: var(--contrast-color, var(--hero-color));
+
+  > .container {
+    width: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 1.5em;
+  }
+
+  .Hero-subtitle {
+    margin: 8px 0 0;
+    line-height: 1.5em;
+  }
+
+  &--colored {
+    --hero-color: var(--body-bg);
+  }
+}
+
+@container (min-width: @screen-tablet) {
+  .wch-PreviewHero {
+    > .container {
+      padding-top: 40px;
+      padding-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 22px;
+    }
+
+    .Hero-subtitle {
+      font-size: 15px;
+    }
   }
 }

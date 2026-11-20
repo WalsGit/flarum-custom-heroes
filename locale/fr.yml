@@ -19,6 +19,15 @@ walsgit-custom-heroes:
     discard_confirm: Abandonner les modifications non enregistrées ?
     saved_message: Les réglages du hero ont été enregistrés.
     webp_unsupported: "Ce serveur ne sait pas encoder les images WebP (GD ou Imagick sans WebP) : l'envoi d'images échouera."
+    preview:
+      title: Aperçu
+      desktop: Ordinateur
+      tablet: Tablette
+      mobile: Mobile
+      welcome_title: Bienvenue sur le forum
+      tag_title: Nom du tag
+      tag_subtitle: La description du tag.
+      discussion_title: Le titre d'une discussion
     background:
       title: Image de fond
       no_image: Aucune image

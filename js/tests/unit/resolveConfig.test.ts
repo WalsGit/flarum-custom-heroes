@@ -1,4 +1,4 @@
-import { configChain, normalizeConfigs, resolveConfig } from '../../src/common/resolveConfig';
+import { configChain, normalizeConfigs, resolveConfig, sectionOwner } from '../../src/common/resolveConfig';
 import type { HeroConfigs } from '../../src/common/types';
 
 const configs: HeroConfigs = {
@@ -88,5 +88,22 @@ describe('resolveConfig', () => {
 
   it('only reads own keys', () => {
     expect(resolveConfig({}, ['toString', '__proto__'])).toEqual({});
+  });
+});
+
+describe('sectionOwner', () => {
+  it('returns the most specific config that defines the section', () => {
+    expect(sectionOwner(configs, ['global', 'tag', 'tag:12'], 'overlay')).toBe('tag:12');
+    expect(sectionOwner(configs, ['global', 'tag', 'tag:12'], 'height')).toBe('tag:12');
+    expect(sectionOwner(configs, ['global', 'tag', 'tag:13'], 'height')).toBe('tag');
+  });
+
+  it('returns the level above for an inherited section', () => {
+    expect(sectionOwner(configs, ['global', 'tag', 'tag:12'], 'background')).toBe('global');
+  });
+
+  it('returns null when no config defines the section', () => {
+    expect(sectionOwner(configs, ['global', 'welcome'], 'logo')).toBeNull();
+    expect(sectionOwner({}, ['global', 'welcome'], 'background')).toBeNull();
   });
 });

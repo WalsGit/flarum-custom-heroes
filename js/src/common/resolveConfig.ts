@@ -42,3 +42,12 @@ export function resolveConfig(configs: HeroConfigs, chain: string[]): HeroConfig
 
   return resolved;
 }
+
+/**
+ * The key of the config that defines a section for a hero (the most specific
+ * one of the chain), or null when no config defines it. Images belong to that
+ * config: an inherited background uses the file of the level above.
+ */
+export function sectionOwner(configs: HeroConfigs, chain: string[], section: keyof HeroConfig): string | null {
+  return [...chain].reverse().find((key) => configs[key]?.[section] !== undefined) ?? null;
+}

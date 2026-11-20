@@ -21,6 +21,15 @@ walsgit-custom-heroes:
     discard_confirm: Discard your unsaved changes?
     saved_message: The hero settings have been saved.
     webp_unsupported: "This server cannot encode WebP images (GD or Imagick without WebP support): image uploads will fail."
+    preview:
+      title: Preview
+      desktop: Desktop
+      tablet: Tablet
+      mobile: Mobile
+      welcome_title: Welcome to the forum
+      tag_title: Tag name
+      tag_subtitle: The description of the tag.
+      discussion_title: The title of a discussion
     background:
       title: Background image
       no_image: No image

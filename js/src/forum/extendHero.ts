@@ -5,29 +5,10 @@ import DiscussionHero from 'flarum/forum/components/DiscussionHero';
 import WelcomeHero from 'flarum/forum/components/WelcomeHero';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
-import { backgroundImageAttrs } from '../common/backgroundImage';
-import { heroStyle } from '../common/heroStyle';
-import { configChain, normalizeConfigs, resolveConfig, sectionOwner } from '../common/resolveConfig';
-import type { ForumPayload, HeroConfig } from '../common/types';
-import { heroTarget, type HeroTarget } from './heroTarget';
-
-/**
- * The config that applies to a hero, or null when nothing is configured for
- * it, with the background image attributes when it has one.
- */
-export function targetConfig(target: HeroTarget): { config: HeroConfig; image: ReturnType<typeof backgroundImageAttrs> | null } | null {
-  const payload = app.forum.attribute<ForumPayload | undefined>('walsgitCustomHeroes');
-  const configs = normalizeConfigs(payload?.configs);
-  const chain = configChain(target.scope, target.scopeId);
-  const config = resolveConfig(configs, chain);
-
-  if (Object.keys(config).length === 0) return null;
-
-  const owner = sectionOwner(configs, chain, 'background');
-  const image = config.background?.image && owner && payload ? backgroundImageAttrs(payload.assetsUrl, owner, config.background.image) : null;
-
-  return { config, image };
-}
+import { heroDecoration } from '../common/heroDecoration';
+import { configChain, normalizeConfigs } from '../common/resolveConfig';
+import type { ForumPayload } from '../common/types';
+import { heroTarget } from './heroTarget';
 
 function customizeHero(this: Hero, vdom: Mithril.Children) {
   // The header rendered by `Hero.view()`.
@@ -37,25 +18,20 @@ function customizeHero(this: Hero, vdom: Mithril.Children) {
   if (!header?.attrs || header.attrs.className?.split(' ').includes('wch-Hero')) return;
 
   const target = heroTarget(this);
-  const resolved = target ? targetConfig(target) : null;
+  const payload = app.forum.attribute<ForumPayload | undefined>('walsgitCustomHeroes');
+  const decoration =
+    target && payload
+      ? heroDecoration(normalizeConfigs(payload.configs), configChain(target.scope, target.scopeId), target.scope, payload.assetsUrl)
+      : null;
 
-  if (!target || !resolved) return;
+  if (!decoration) return;
 
-  const { config, image } = resolved;
-
-  const style = heroStyle(config);
-
-  header.attrs.className = classList(header.attrs.className, 'wch-Hero', `wch-Hero--${target.scope}`, {
-    'wch-Hero--image': !!image,
-    'wch-Hero--overlay': '--wch-overlay' in style,
-  });
+  header.attrs.className = classList(header.attrs.className, decoration.className);
   // Added to the hero's own style (for example the color of a tag), not replacing it.
-  header.attrs.style = { ...header.attrs.style, ...style };
+  header.attrs.style = { ...header.attrs.style, ...decoration.style };
 
-  if (image) {
-    // Decorative, behind the content. An <img> rather than a CSS background, so that the browser picks the size.
-    const background = m('img.wch-Hero-background', { alt: '', fetchpriority: 'high', decoding: 'async', ...image });
-    header.children = [background, ...((header.children as Mithril.ChildArray | undefined) ?? [])];
+  if (decoration.background) {
+    header.children = [decoration.background, ...((header.children as Mithril.ChildArray | undefined) ?? [])];
   }
 }
 

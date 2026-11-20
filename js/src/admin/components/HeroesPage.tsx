@@ -12,6 +12,7 @@ import { parentChain, targetOf } from '../utils/scopes';
 import { uploadLimits } from '../utils/uploadLimits';
 import BackgroundForm from './BackgroundForm';
 import HeightForm from './HeightForm';
+import HeroPreview from './HeroPreview';
 import OverlayForm from './OverlayForm';
 
 /** The sections this page edits. Other sections of a config are kept as they are. */
@@ -75,6 +76,8 @@ export default class HeroesPage extends ExtensionPage {
               <Select value={this.key} options={this.scopeOptions()} onchange={(key: string) => this.select(key)} />
               <p className="helpText">{t('scope_help')}</p>
             </div>
+
+            <HeroPreview configs={{ ...this.configs, [this.key]: this.draft }} target={this.key} />
 
             <div className="wch-HeroesPage-sections">
               {this.section(

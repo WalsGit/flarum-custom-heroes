@@ -76,6 +76,17 @@ class SaveConfigTest extends TestCase
     }
 
     #[Test]
+    public function upload_limits_are_only_sent_to_admins(): void
+    {
+        $guest = json_decode((string) $this->send($this->request('GET', '/api'))->getBody(), true);
+        $admin = json_decode((string) $this->send($this->request('GET', '/api', ['authenticatedAs' => 1]))->getBody(), true);
+
+        $this->assertArrayNotHasKey('walsgitCustomHeroesUpload', $guest['data']['attributes']);
+        $this->assertGreaterThan(0, $admin['data']['attributes']['walsgitCustomHeroesUpload']['maxSize']);
+        $this->assertIsBool($admin['data']['attributes']['walsgitCustomHeroesUpload']['webp']);
+    }
+
+    #[Test]
     public function guest_cannot_save_a_config(): void
     {
         $response = $this->save(['scope' => 'welcome', 'config' => ['dismissible' => false]], null);

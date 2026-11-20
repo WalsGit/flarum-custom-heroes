@@ -1,5 +1,67 @@
 walsgit-custom-heroes:
   admin:
+    scope_label: Hero à personnaliser
+    scope_help: "Chaque hero hérite des réglages du niveau au-dessus : Par défaut, puis son type (Accueil, Tags, Discussions), puis le tag lui-même."
+    scopes:
+      global: Par défaut (tous les heroes)
+      welcome: Accueil (Welcome)
+      tag: Tags (par défaut)
+      tag_instance: "Tag : {name}"
+      discussion: Discussions
+      customized: "{label} — personnalisé"
+    inherit_from_label: "Hériter de « {source} »"
+    inherit_core_label: Utiliser le rendu par défaut de Flarum
+    save_button: Enregistrer
+    cancel_button: Annuler les modifications
+    reset_button: Tout hériter
+    reset_global_button: Revenir au rendu de Flarum
+    reset_confirm: "Supprimer tous les réglages de « {target} » ? Ses images seront supprimées."
+    discard_confirm: Abandonner les modifications non enregistrées ?
+    saved_message: Les réglages du hero ont été enregistrés.
+    webp_unsupported: "Ce serveur ne sait pas encoder les images WebP (GD ou Imagick sans WebP) : l'envoi d'images échouera."
+    background:
+      title: Image de fond
+      no_image: Aucune image
+      small_image_warning: "Cette image ne fait que {width} px de large : elle risque d'être floue sur les grands écrans ({recommended} px ou plus recommandés). Elle est tout de même utilisée."
+      upload_button: Téléverser une image
+      remove_button: Sans image
+      upload_help: "JPEG, PNG ou WebP, jusqu'à {size} Mo et 4000 px de côté. Optimisée en WebP en plusieurs tailles."
+      too_large: "Cette image est trop lourde : {size} Mo maximum."
+      url_label: Ou importer depuis une URL
+      url_help: L'image est téléchargée une seule fois et stockée sur votre forum.
+      import_button: Importer
+      position_label: Position
+      position_center: Centre
+      position_top: Haut
+      position_bottom: Bas
+    overlay:
+      title: Filtre
+      type_label: Type
+      type_none: Aucun
+      type_solid: Couleur unie
+      type_gradient: Dégradé
+      color_label: Couleur
+      opacity_label: "{label} : opacité"
+      angle_label: Angle
+      angle_help: "0° va du bas vers le haut, 90° de gauche à droite, 180° du haut vers le bas."
+      stops_label: Couleurs
+      stop_label: "Couleur {number}"
+      stop_position_label: "Couleur {number} : position"
+      stops_help: Chaque couleur a une position dans le dégradé, de 0 à 100 %.
+      add_stop_button: Ajouter une couleur
+      remove_stop_button: Retirer cette couleur
+    height:
+      title: Hauteur
+      preset_label: Hauteur
+      preset_auto: Hauteur par défaut de Flarum
+      preset_s: "Petite ({desktop} / {tablet} / {mobile} px)"
+      preset_m: "Moyenne ({desktop} / {tablet} / {mobile} px)"
+      preset_l: "Grande ({desktop} / {tablet} / {mobile} px)"
+      preset_custom: Personnalisée
+      preset_help: "Hauteurs minimales sur ordinateur / tablette / mobile : un contenu plus long agrandit le hero."
+      desktop_label: Ordinateur
+      tablet_label: Tablette
+      mobile_label: Mobile
 
   api:
     validation:

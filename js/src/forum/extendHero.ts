@@ -43,9 +43,14 @@ function customizeHero(this: Hero, vdom: Mithril.Children) {
 
   const { config, image } = resolved;
 
-  header.attrs.className = classList(header.attrs.className, 'wch-Hero', `wch-Hero--${target.scope}`, image && 'wch-Hero--image');
+  const style = heroStyle(config);
+
+  header.attrs.className = classList(header.attrs.className, 'wch-Hero', `wch-Hero--${target.scope}`, {
+    'wch-Hero--image': !!image,
+    'wch-Hero--overlay': '--wch-overlay' in style,
+  });
   // Added to the hero's own style (for example the color of a tag), not replacing it.
-  header.attrs.style = { ...header.attrs.style, ...heroStyle(config) };
+  header.attrs.style = { ...header.attrs.style, ...style };
 
   if (image) {
     // Decorative, behind the content. An <img> rather than a CSS background, so that the browser picks the size.

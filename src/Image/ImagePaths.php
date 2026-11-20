@@ -11,9 +11,14 @@
 
 namespace Walsgit\CustomHeroes\Image;
 
+use Walsgit\CustomHeroes\Config\Scope;
+
 /**
  * Single source of truth for the names of the image files stored by the
  * extension, relative to the root of the `flarum-assets` disk.
+ *
+ * Files belong to the hero they were uploaded for (its target: scope and
+ * scope id) and carry a version id: `bg-tag-12-{id}-1024.webp`.
  */
 final class ImagePaths
 {
@@ -26,13 +31,28 @@ final class ImagePaths
 
     public const ID_PATTERN = '/^[a-f0-9]{16}$/';
 
-    public static function background(string $id, int $width): string
+    public static function background(Scope $scope, string $scopeId, string $id, int $width): string
     {
-        return self::DIRECTORY."/bg-$id-$width.webp";
+        return self::DIRECTORY.'/bg-'.self::target($scope, $scopeId)."-$id-$width.webp";
     }
 
-    public static function logo(string $id): string
+    public static function logo(Scope $scope, string $scopeId, string $id): string
     {
-        return self::DIRECTORY."/logo-$id.webp";
+        return self::DIRECTORY.'/logo-'.self::target($scope, $scopeId)."-$id.webp";
+    }
+
+    /**
+     * Matches the file names (without directory) of a target. Captures the
+     * kind (`bg` or `logo`) and the image id. Anchored: `bg-tag-…` (all tag
+     * heroes) never matches `bg-tag-12-…` (the hero of tag 12).
+     */
+    public static function targetPattern(Scope $scope, string $scopeId): string
+    {
+        return '/^(bg|logo)-'.preg_quote(self::target($scope, $scopeId), '/').'-([a-f0-9]{16})(?:-[0-9]+)?\.webp$/';
+    }
+
+    private static function target(Scope $scope, string $scopeId): string
+    {
+        return $scopeId === '' ? $scope->value : "$scope->value-$scopeId";
     }
 }

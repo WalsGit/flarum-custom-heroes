@@ -16,6 +16,7 @@ use Flarum\Api\Schema;
 use Flarum\Extend;
 use Flarum\Tags\Event\Deleting;
 use Walsgit\CustomHeroes\Api\Controller\SaveConfigController;
+use Walsgit\CustomHeroes\Api\Controller\UploadImageController;
 use Walsgit\CustomHeroes\Api\ForumPayload;
 use Walsgit\CustomHeroes\Listener\DeleteTagHeroConfig;
 use Walsgit\CustomHeroes\Providers\CustomHeroesServiceProvider;
@@ -33,7 +34,8 @@ return [
         ->register(CustomHeroesServiceProvider::class),
 
     (new Extend\Routes('api'))
-        ->post('/walsgit-custom-heroes/configs', 'walsgit-custom-heroes.configs.save', SaveConfigController::class),
+        ->post('/walsgit-custom-heroes/configs', 'walsgit-custom-heroes.configs.save', SaveConfigController::class)
+        ->post('/walsgit-custom-heroes/images', 'walsgit-custom-heroes.images.upload', UploadImageController::class),
 
     (new Extend\ApiResource(ForumResource::class))
         ->fields(fn () => [

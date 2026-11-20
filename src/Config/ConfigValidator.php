@@ -50,6 +50,12 @@ final class ConfigValidator
      */
     private array $errors = [];
 
+    /**
+     * The target being validated: images must belong to it.
+     */
+    private Scope $scope;
+    private string $scopeId = '';
+
     public function __construct(
         private readonly Filesystem $assets,
         private readonly TranslatorInterface $translator,
@@ -64,6 +70,8 @@ final class ConfigValidator
     public function validate(Scope $scope, string $scopeId, mixed $config): array
     {
         $this->errors = [];
+        $this->scope = $scope;
+        $this->scopeId = $scopeId;
         $result = [];
 
         if (! $scope->acceptsScopeId($scopeId)) {
@@ -454,10 +462,13 @@ final class ConfigValidator
             }
 
             $ref['widths'] = $expected;
-            $files = array_map(fn (int $width) => ImagePaths::background($id, $width), $expected);
+            $files = array_map(fn (int $width) => ImagePaths::background($this->scope, $this->scopeId, $id, $width), $expected);
         } else {
-            $files = [ImagePaths::logo($id)];
+            $files = [ImagePaths::logo($this->scope, $this->scopeId, $id)];
         }
+
+        // The paths are built from the target, so an image uploaded for another
+        // hero (which may clean it up) is not found.
 
         foreach ($files as $file) {
             if (! $this->assets->exists($file)) {

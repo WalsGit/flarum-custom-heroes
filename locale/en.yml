@@ -5,6 +5,7 @@ walsgit-custom-heroes:
 
   api:
     validation:
+      image_processing_failed: "{path}: the image could not be processed. The server may not support WebP."
       image_not_found: "{path}: the image was not found, upload it again."
       invalid_value: "{path}: invalid value."
       missing_key: "{path}: this value is required."

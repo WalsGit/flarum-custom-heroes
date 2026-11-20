@@ -11,7 +11,6 @@
 
 namespace Walsgit\CustomHeroes\Api\Controller;
 
-use Flarum\Foundation\ValidationException;
 use Flarum\Http\RequestUtil;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -21,6 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Walsgit\CustomHeroes\Config\ConfigRepository;
 use Walsgit\CustomHeroes\Config\ConfigValidator;
 use Walsgit\CustomHeroes\Config\Scope;
+use Walsgit\CustomHeroes\Image\HeroImages;
 
 /**
  * `POST /api/walsgit-custom-heroes/configs`
@@ -33,6 +33,7 @@ final class SaveConfigController implements RequestHandlerInterface
     public function __construct(
         private readonly ConfigValidator $validator,
         private readonly ConfigRepository $configs,
+        private readonly HeroImages $images,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -42,22 +43,14 @@ final class SaveConfigController implements RequestHandlerInterface
         RequestUtil::getActor($request)->assertAdmin();
 
         $body = (array) $request->getParsedBody();
-        $scope = is_string($body['scope'] ?? null) ? Scope::tryFrom($body['scope']) : null;
-        $scopeId = $body['scopeId'] ?? '';
-
-        // Checked here too, so that deleting (null config) needs a valid target.
-        if ($scope === null || ! is_string($scopeId) || ! $scope->acceptsScopeId($scopeId)) {
-            $path = $scope === null ? 'scope' : 'scopeId';
-
-            throw new ValidationException([
-                $path => $this->translator->trans('walsgit-custom-heroes.api.validation.invalid_value', ['path' => $path]),
-            ]);
-        }
+        // Checked before the config, so that deleting (null config) needs a valid target.
+        [$scope, $scopeId] = Scope::fromBody($body, $this->translator);
 
         $config = $body['config'] ?? null;
         $config = $config === null ? [] : $this->validator->validate($scope, $scopeId, $config);
 
         $this->configs->save($scope, $scopeId, $config);
+        $this->images->cleanup($scope, $scopeId, $config);
 
         return new JsonResponse([
             'scope' => $scope->value,

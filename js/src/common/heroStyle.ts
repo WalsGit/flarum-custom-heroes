@@ -43,6 +43,9 @@ function textVariables(text: TextStyleSection): Record<string, string> {
   };
 }
 
+/** Displayed logo heights in pixels (reduced on mobile by the CSS). */
+export const LOGO_HEIGHTS = { s: 64, m: 96, l: 128 } as const;
+
 const BACKGROUND_POSITIONS: Record<BackgroundSection['position'], string> = {
   center: 'center center',
   top: 'center top',
@@ -100,5 +103,6 @@ export function heroStyle(config: HeroConfig): Record<string, string> {
     ...(config.background?.image ? { '--wch-bg-position': BACKGROUND_POSITIONS[config.background.position] } : {}),
     ...(overlay ? { '--wch-overlay': overlay } : {}),
     ...(config.textStyle ? textVariables(config.textStyle) : {}),
+    ...(config.logo?.image ? { '--wch-logo-height': `${LOGO_HEIGHTS[config.logo.size]}px` } : {}),
   };
 }

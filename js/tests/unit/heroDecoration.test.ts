@@ -1,4 +1,4 @@
-import { heroDecoration } from '../../src/common/heroDecoration';
+import { heroDecoration, withLogo } from '../../src/common/heroDecoration';
 import type { HeroConfigs } from '../../src/common/types';
 
 const assets = 'https://example.com/assets/extensions/walsgit-custom-heroes';
@@ -39,5 +39,33 @@ describe('heroDecoration', () => {
   it('marks a fixed height, but not the height of Flarum', () => {
     expect(heroDecoration({ global: { height: { preset: 'm' } } }, ['global'], 'global', assets)!.className).toContain('wch-Hero--fixedHeight');
     expect(heroDecoration({ global: { height: { preset: 'auto' } } }, ['global'], 'global', assets)!.className).not.toContain('wch-Hero--fixedHeight');
+  });
+
+  it('adds the logo of the config that defines it, and its classes', () => {
+    const logo = { image: { id: '1b4f0e9851971998', width: 240, height: 120 }, side: 'right', size: 'l', alt: 'Forum', hideOnMobile: true } as const;
+    const decoration = heroDecoration({ global: { logo } }, ['global', 'tag', 'tag:12'], 'tag', assets)!;
+
+    expect(decoration.className).toBe('wch-Hero wch-Hero--tag wch-Hero--logo wch-Hero--logo-right wch-Hero--logoHideMobile');
+    expect(decoration.style['--wch-logo-height']).toBe('128px');
+    expect((decoration.logo as any).attrs).toMatchObject({ src: `${assets}/logo-global-${logo.image.id}.webp`, alt: 'Forum', width: 240, height: 120 });
+  });
+
+  it('shows no logo when a more specific config removes it', () => {
+    const image = { id: '1b4f0e9851971998', width: 240, height: 120 };
+    const logo = { side: 'left', size: 'm', alt: '', hideOnMobile: false } as const;
+    const decoration = heroDecoration({ global: { logo: { ...logo, image } }, tag: { logo: { ...logo, image: null } } }, ['global', 'tag'], 'tag', assets)!;
+
+    expect(decoration.logo).toBeNull();
+    expect(decoration.className).not.toContain('wch-Hero--logo');
+  });
+
+  it('groups the logo with the content, apart from the close button', () => {
+    const close = m('button', { className: 'Hero-close Button' });
+    const content = m('.containerNarrow');
+    const [first, group] = withLogo([close, content], m('img.wch-Hero-logo')) as any[];
+
+    expect(first).toBe(close);
+    expect(group.attrs.className).toBe('wch-Hero-group');
+    expect(group.children[1].children[0]).toBe(content);
   });
 });

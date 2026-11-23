@@ -79,7 +79,8 @@ export interface TextSection {
 export const DEFAULT_TEXT: TextSection = { afterClose: 'hero', title: '', message: '' };
 
 export interface LogoSection {
-  image: ImageRef;
+  /** null: no logo, instead of the one of the level above. */
+  image: ImageRef | null;
   side: 'left' | 'right';
   size: Size;
   alt: string;

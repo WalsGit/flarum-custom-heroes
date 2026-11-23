@@ -24,6 +24,11 @@ final class HeroImages
 {
     private const BACKGROUND_QUALITY = 80;
 
+    private const LOGO_QUALITY = 90;
+
+    /** Twice the largest displayed height (128 px), for high density screens. */
+    public const LOGO_MAX_HEIGHT = 256;
+
     public function __construct(
         private readonly Filesystem $assets,
         private readonly ImageManager $manager,
@@ -69,12 +74,40 @@ final class HeroImages
     }
 
     /**
+     * Re-encodes an already validated logo to WebP, keeping its transparency,
+     * at most LOGO_MAX_HEIGHT high (never upscaled).
+     *
+     * @return array{id: string, width: int, height: int} the `ImageRef`
+     *
+     * @throws \Intervention\Image\Exceptions\RuntimeException
+     */
+    public function storeLogo(Scope $scope, string $scopeId, string $contents): array
+    {
+        $id = substr(hash('sha256', $contents), 0, 16);
+        $image = $this->manager->read($contents);
+
+        if ($image->isAnimated()) {
+            $image->removeAnimation();
+        }
+
+        $image->scaleDown(height: self::LOGO_MAX_HEIGHT);
+
+        $this->assets->put(
+            ImagePaths::logo($scope, $scopeId, $id),
+            (string) $image->toWebp(quality: self::LOGO_QUALITY, strip: true)
+        );
+
+        return ['id' => $id, 'width' => $image->width(), 'height' => $image->height()];
+    }
+
+    /**
      * Deletes the files of a target that its config does not reference. An
-     * empty config deletes all of them.
+     * empty config deletes all of them. With a kind (`bg` or `logo`), only the
+     * files of that kind are considered.
      *
      * @param array<string, mixed> $config
      */
-    public function cleanup(Scope $scope, string $scopeId, array $config): void
+    public function cleanup(Scope $scope, string $scopeId, array $config, ?string $kind = null): void
     {
         $keep = [
             'bg' => self::imageId($config['background'] ?? null),
@@ -83,7 +116,7 @@ final class HeroImages
         $pattern = ImagePaths::targetPattern($scope, $scopeId);
 
         foreach ($this->assets->files(ImagePaths::DIRECTORY) as $path) {
-            if (preg_match($pattern, basename($path), $match) === 1 && $keep[$match[1]] !== $match[2]) {
+            if (preg_match($pattern, basename($path), $match) === 1 && ($kind === null || $kind === $match[1]) && $keep[$match[1]] !== $match[2]) {
                 $this->assets->delete($path);
             }
         }

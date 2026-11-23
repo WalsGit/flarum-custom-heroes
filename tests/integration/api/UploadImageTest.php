@@ -140,6 +140,38 @@ class UploadImageTest extends TestCase
     }
 
     #[Test]
+    public function logo_is_stored_once_scaled_down_with_its_transparency(): void
+    {
+        $image = imagecreatetruecolor(1200, 600);
+        imagesavealpha($image, true);
+        imagefill($image, 0, 0, (int) imagecolorallocatealpha($image, 0, 0, 0, 127));
+        $path = $this->tempFile();
+        imagepng($image, $path);
+
+        $response = $this->upload($path, ['kind' => 'logo']);
+
+        $this->assertSame(200, $response->getStatusCode(), (string) $response->getBody());
+        $ref = $this->body($response);
+        $this->assertSame(['width' => 512, 'height' => 256], array_diff_key($ref, ['id' => 0]));
+        $this->assertSame(["logo-discussion-{$ref['id']}.webp"], $this->storedFiles());
+
+        $stored = imagecreatefromstring((string) $this->assets()->get(ImagePaths::DIRECTORY."/logo-discussion-{$ref['id']}.webp"));
+        $this->assertSame(127, imagecolorsforindex($stored, imagecolorat($stored, 10, 10))['alpha']);
+
+        $this->assertSame(200, $this->saveConfig('discussion', '', ['logo' => ['image' => $ref]])->getStatusCode());
+    }
+
+    #[Test]
+    public function uploading_a_logo_keeps_an_unsaved_background(): void
+    {
+        $background = $this->body($this->upload($this->png(700, 300)));
+        $logo = $this->body($this->upload($this->png(200, 100), ['kind' => 'logo']));
+
+        $this->assertSame(["bg-discussion-{$background['id']}-640.webp", "logo-discussion-{$logo['id']}.webp"], $this->storedFiles());
+        $this->assertSame(200, $this->saveConfig('discussion', '', ['background' => ['image' => $background], 'logo' => ['image' => $logo]])->getStatusCode());
+    }
+
+    #[Test]
     public function narrow_image_is_kept_at_its_own_size(): void
     {
         $ref = $this->body($this->upload($this->png(300, 100)));
@@ -161,7 +193,7 @@ class UploadImageTest extends TestCase
         // Real type checked, whatever the client announces.
         $this->assertSame(422, $this->upload($gif)->getStatusCode());
         $this->assertSame(422, $this->upload($this->png(4001, 100))->getStatusCode());
-        $this->assertSame(422, $this->upload($this->png(800, 300), ['kind' => 'logo'])->getStatusCode());
+        $this->assertSame(422, $this->upload($this->png(800, 300), ['kind' => 'icon'])->getStatusCode());
         $this->assertSame(422, $this->upload($this->png(800, 300), ['scope' => 'discussion', 'scopeId' => '3'])->getStatusCode());
         $this->assertSame([], $this->storedFiles());
     }

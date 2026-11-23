@@ -3,7 +3,7 @@ import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
-import { heroDecoration } from '../../common/heroDecoration';
+import { heroDecoration, withLogo } from '../../common/heroDecoration';
 import { resolveConfig } from '../../common/resolveConfig';
 import { DEFAULT_TEXT, type ForumPayload, type HeroConfig, type HeroConfigs } from '../../common/types';
 import { parentChain, targetOf } from '../utils/scopes';
@@ -91,22 +91,24 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     const content = this.content(scope, scopeId, config, closed);
     const closable = scope === 'global' && !closed;
 
+    const children = [
+      closable && <i className="Hero-close fas fa-times" aria-hidden="true" />,
+      <div className="containerNarrow">
+        {content.title && <h1 className="Hero-title">{content.title}</h1>}
+        {/* Like the core: kept even when empty (but discussions have none). */}
+        {(content.subtitle || (content.title && scope !== 'discussion')) && (
+          <div className={classList('Hero-subtitle', closed && 'wch-Hero-message')}>{content.subtitle}</div>
+        )}
+      </div>,
+    ];
+
     return (
       <header
         className={classList('Hero wch-PreviewHero', decoration?.className, content.color && 'wch-PreviewHero--colored')}
         style={{ ...(content.color ? { '--hero-bg': content.color } : {}), ...decoration?.style }}
       >
         {decoration?.background}
-        <div className="container">
-          {closable && <i className="Hero-close fas fa-times" aria-hidden="true" />}
-          <div className="containerNarrow">
-            {content.title && <h1 className="Hero-title">{content.title}</h1>}
-            {/* Like the core: kept even when empty (but discussions have none). */}
-            {(content.subtitle || (content.title && scope !== 'discussion')) && (
-              <div className={classList('Hero-subtitle', closed && 'wch-Hero-message')}>{content.subtitle}</div>
-            )}
-          </div>
-        </div>
+        <div className="container">{decoration?.logo ? withLogo(children, decoration.logo) : children}</div>
       </header>
     );
   }

@@ -13,12 +13,13 @@ import { uploadLimits } from '../utils/uploadLimits';
 import BackgroundForm from './BackgroundForm';
 import HeightForm from './HeightForm';
 import HeroPreview from './HeroPreview';
+import LogoForm from './LogoForm';
 import OverlayForm from './OverlayForm';
 import TextForm from './TextForm';
 import TextStyleForm from './TextStyleForm';
 
 /** The sections this page edits. Other sections of a config are kept as they are. */
-type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle';
+type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo';
 
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.${key}`, params, true);
 
@@ -113,6 +114,15 @@ export default class HeroesPage extends ExtensionPage {
                   (parent) => parent ?? { align: 'center', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
                   (value, set) => <TextStyleForm value={value} onchange={set} />
                 )}
+              {/* Not per tag (D4). */}
+              {!targetOf(this.key).scopeId &&
+                this.section(
+                  'logo',
+                  // The logo of the level above belongs to it: never copied.
+                  (parent) => ({ side: 'left', size: 'm', alt: '', hideOnMobile: false, ...parent, image: null }),
+                  (value, set) => <LogoForm value={value} onchange={set} target={this.key} />,
+                  t('logo.add_label')
+                )}
             </div>
 
             <div className="Form-group Form-controls wch-HeroesPage-controls">
@@ -141,11 +151,14 @@ export default class HeroesPage extends ExtensionPage {
 
   /**
    * A section card: inherited (with where it comes from) or defined here.
+   * With `addLabel`, a section that has nothing to inherit is switched on to
+   * be added ("Add a logo") rather than off to stop using Flarum's default.
    */
   section<K extends EditedSection>(
     name: K,
     initial: (parent: HeroConfig[K] | undefined) => NonNullable<HeroConfig[K]>,
-    form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children
+    form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children,
+    addLabel?: string
   ) {
     const value = this.draft[name];
     const chain = parentChain(this.key);
@@ -163,9 +176,15 @@ export default class HeroesPage extends ExtensionPage {
         {/* Locale keys use underscores: `textStyle` → `text_style`. */}
         <legend>{t(`${name.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`)}.title`)}</legend>
 
-        <Switch state={value === undefined} onchange={toggle}>
-          {owner ? t('inherit_from_label', { source: this.scopeLabel(owner) }) : t('inherit_core_label')}
-        </Switch>
+        {!owner && addLabel ? (
+          <Switch state={value !== undefined} onchange={(add: boolean) => toggle(!add)}>
+            {addLabel}
+          </Switch>
+        ) : (
+          <Switch state={value === undefined} onchange={toggle}>
+            {owner ? t('inherit_from_label', { source: this.scopeLabel(owner) }) : t('inherit_core_label')}
+          </Switch>
+        )}
 
         {value !== undefined && form(value as NonNullable<HeroConfig[K]>, set)}
       </fieldset>

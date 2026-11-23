@@ -5,7 +5,7 @@ import DiscussionHero from 'flarum/forum/components/DiscussionHero';
 import WelcomeHero from 'flarum/forum/components/WelcomeHero';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
-import { heroDecoration } from '../common/heroDecoration';
+import { heroDecoration, withLogo } from '../common/heroDecoration';
 import { configChain, normalizeConfigs } from '../common/resolveConfig';
 import type { ForumPayload } from '../common/types';
 import { heroTarget } from './heroTarget';
@@ -29,6 +29,14 @@ function customizeHero(this: Hero, vdom: Mithril.Children) {
   header.attrs.className = classList(header.attrs.className, decoration.className);
   // Added to the hero's own style (for example the color of a tag), not replacing it.
   header.attrs.style = { ...header.attrs.style, ...decoration.style };
+
+  if (decoration.logo) {
+    const container = ((header.children as Mithril.ChildArray | undefined) ?? []).find(
+      (child) => (child as Mithril.Vnode<{ className?: string }>)?.attrs?.className === 'container'
+    ) as Mithril.Vnode | undefined;
+
+    if (container) container.children = withLogo((container.children as Mithril.ChildArray | undefined) ?? [], decoration.logo);
+  }
 
   if (decoration.background) {
     header.children = [decoration.background, ...((header.children as Mithril.ChildArray | undefined) ?? [])];

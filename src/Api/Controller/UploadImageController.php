@@ -30,7 +30,7 @@ use Walsgit\CustomHeroes\Image\RemoteImageFetcher;
 /**
  * `POST /api/walsgit-custom-heroes/images`
  *
- * Multipart: `image` (file), `kind` (`background`), `scope`, `scopeId`.
+ * Multipart: `image` (file), `kind` (`background` | `logo`), `scope`, `scopeId`.
  * Or JSON: `{ "url": "https://…", "kind", "scope", "scopeId" }`: the image is
  * downloaded once, through the SSRF-hardened fetcher, then handled like an
  * upload.
@@ -40,8 +40,8 @@ use Walsgit\CustomHeroes\Image\RemoteImageFetcher;
  */
 final class UploadImageController implements RequestHandlerInterface
 {
-    // shortcut: background only, `logo` comes with the logo section (phase 7).
-    private const KINDS = ['background'];
+    /** Upload kind => file kind (prefix of the file names). */
+    private const KINDS = ['background' => 'bg', 'logo' => 'logo'];
     private const URL_MAX_LENGTH = 255;
 
     public function __construct(
@@ -60,7 +60,9 @@ final class UploadImageController implements RequestHandlerInterface
         $body = (array) $request->getParsedBody();
         [$scope, $scopeId] = Scope::fromBody($body, $this->translator);
 
-        if (! in_array($body['kind'] ?? null, self::KINDS, true)) {
+        $kind = $body['kind'] ?? null;
+
+        if (! is_string($kind) || ! isset(self::KINDS[$kind])) {
             $this->fail('kind', 'invalid_value');
         }
 
@@ -75,11 +77,16 @@ final class UploadImageController implements RequestHandlerInterface
 
             $this->validator->assertImageValid('image', $file);
 
-            // Keeps at most two versions per hero: the saved one and this upload.
-            $this->images->cleanup($scope, $scopeId, $this->configs->all()[ConfigRepository::key($scope->value, $scopeId)] ?? []);
+            // Keeps at most two versions per hero and kind: the saved one and this upload
+            // (an unsaved upload of the other kind is kept).
+            $saved = $this->configs->all()[ConfigRepository::key($scope->value, $scopeId)] ?? [];
+            $this->images->cleanup($scope, $scopeId, $saved, self::KINDS[$kind]);
 
             try {
-                $ref = $this->images->storeBackground($scope, $scopeId, (string) $file->getStream());
+                $contents = (string) $file->getStream();
+                $ref = $kind === 'logo'
+                    ? $this->images->storeLogo($scope, $scopeId, $contents)
+                    : $this->images->storeBackground($scope, $scopeId, $contents);
             } catch (ImageException) {
                 $this->fail('image', 'image_processing_failed');
             }

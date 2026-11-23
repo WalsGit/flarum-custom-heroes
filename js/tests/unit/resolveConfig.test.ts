@@ -9,13 +9,11 @@ const configs: HeroConfigs = {
   },
   tag: {
     height: { preset: 'm' },
+    textStyle: { align: 'left', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
   },
   'tag:12': {
     height: { preset: 'custom', desktop: 400, tablet: 300, mobile: 200 },
     overlay: { type: 'none' },
-  },
-  welcome: {
-    text: { afterClose: 'none', title: '', message: '' },
   },
 };
 
@@ -37,7 +35,8 @@ describe('normalizeConfigs', () => {
 
 describe('configChain', () => {
   it('goes from the most general to the most specific config', () => {
-    expect(configChain('welcome')).toEqual(['global', 'welcome']);
+    expect(configChain('global')).toEqual(['global']);
+    expect(configChain('discussion')).toEqual(['global', 'discussion']);
     expect(configChain('tag', '12')).toEqual(['global', 'tag', 'tag:12']);
   });
 
@@ -73,11 +72,11 @@ describe('resolveConfig', () => {
     const resolved = resolveConfig(configs, configChain('discussion'));
 
     expect(resolved.height).toEqual({ preset: 's' });
-    expect(resolved).not.toHaveProperty('text');
+    expect(resolved).not.toHaveProperty('textStyle');
   });
 
   it('returns an empty config when nothing applies', () => {
-    expect(resolveConfig({}, configChain('welcome'))).toEqual({});
+    expect(resolveConfig({}, configChain('global'))).toEqual({});
   });
 
   it('does not mutate the stored configs', () => {
@@ -103,7 +102,7 @@ describe('sectionOwner', () => {
   });
 
   it('returns null when no config defines the section', () => {
-    expect(sectionOwner(configs, ['global', 'welcome'], 'logo')).toBeNull();
-    expect(sectionOwner({}, ['global', 'welcome'], 'background')).toBeNull();
+    expect(sectionOwner(configs, ['global', 'discussion'], 'logo')).toBeNull();
+    expect(sectionOwner({}, ['global', 'discussion'], 'background')).toBeNull();
   });
 });

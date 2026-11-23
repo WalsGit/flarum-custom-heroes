@@ -12,7 +12,7 @@ const DISMISSED_KEY = 'welcomeHidden';
 /** The resolved Welcome config, or null when the Welcome hero is not customized. */
 function welcomeConfig(): HeroConfig | null {
   const payload = app.forum.attribute<ForumPayload | undefined>('walsgitCustomHeroes');
-  const config = payload ? resolveConfig(normalizeConfigs(payload.configs), configChain('welcome')) : {};
+  const config = payload ? resolveConfig(normalizeConfigs(payload.configs), configChain('global')) : {};
 
   return Object.keys(config).length > 0 ? config : null;
 }

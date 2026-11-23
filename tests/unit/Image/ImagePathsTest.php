@@ -21,7 +21,7 @@ class ImagePathsTest extends TestCase
 
     public function test_file_names_include_the_target(): void
     {
-        $this->assertSame(ImagePaths::DIRECTORY.'/bg-welcome-'.self::ID.'-1024.webp', ImagePaths::background(Scope::Welcome, '', self::ID, 1024));
+        $this->assertSame(ImagePaths::DIRECTORY.'/bg-global-'.self::ID.'-1024.webp', ImagePaths::background(Scope::Global, '', self::ID, 1024));
         $this->assertSame(ImagePaths::DIRECTORY.'/bg-tag-12-'.self::ID.'-640.webp', ImagePaths::background(Scope::Tag, '12', self::ID, 640));
         $this->assertSame(ImagePaths::DIRECTORY.'/logo-global-'.self::ID.'.webp', ImagePaths::logo(Scope::Global, '', self::ID));
     }

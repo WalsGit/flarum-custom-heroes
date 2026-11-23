@@ -30,7 +30,6 @@ describe('targetOf / parentChain', () => {
 
   it('lists the configs a target inherits from', () => {
     expect(parentChain('global')).toEqual([]);
-    expect(parentChain('welcome')).toEqual(['global']);
     expect(parentChain('tag')).toEqual(['global']);
     expect(parentChain('tag:12')).toEqual(['global', 'tag']);
   });

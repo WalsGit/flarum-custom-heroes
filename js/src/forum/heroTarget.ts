@@ -4,7 +4,7 @@ import WelcomeHero from 'flarum/forum/components/WelcomeHero';
 import type { HeroScope } from '../common/types';
 
 export interface HeroTarget {
-  scope: Exclude<HeroScope, 'global'>;
+  scope: HeroScope;
   scopeId: string | null;
 }
 
@@ -14,7 +14,8 @@ export interface HeroTarget {
  */
 export function heroTarget(hero: Hero): HeroTarget | null {
   if (hero instanceof WelcomeHero) {
-    return { scope: 'welcome', scopeId: null };
+    // The default config is the home hero's.
+    return { scope: 'global', scopeId: null };
   }
 
   if (hero instanceof DiscussionHero) {

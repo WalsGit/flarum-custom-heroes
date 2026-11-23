@@ -25,7 +25,7 @@ use Walsgit\CustomHeroes\Image\HeroImages;
 /**
  * `POST /api/walsgit-custom-heroes/configs`
  *
- * Body: `{ "scope": "welcome", "scopeId": "", "config": { … } | null }`.
+ * Body: `{ "scope": "tag", "scopeId": "12", "config": { … } | null }`.
  * A null or empty config deletes the stored one (inherit everything).
  */
 final class SaveConfigController implements RequestHandlerInterface

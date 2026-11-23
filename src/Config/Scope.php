@@ -24,7 +24,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 enum Scope: string
 {
     case Global = 'global';
-    case Welcome = 'welcome';
     case Tag = 'tag';
     case Discussion = 'discussion';
 
@@ -75,7 +74,8 @@ enum Scope: string
             return self::INSTANCE_SECTIONS;
         }
 
-        if ($this === self::Welcome) {
+        // The default level is also the home (Welcome) hero: its text is set there.
+        if ($this === self::Global) {
             return [...self::COMMON_SECTIONS, 'text'];
         }
 

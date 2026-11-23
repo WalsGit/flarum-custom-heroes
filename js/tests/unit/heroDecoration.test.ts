@@ -11,13 +11,13 @@ const configs: HeroConfigs = {
 
 describe('heroDecoration', () => {
   it('returns null when nothing applies', () => {
-    expect(heroDecoration({}, ['global', 'welcome'], 'welcome', assets)).toBeNull();
+    expect(heroDecoration({}, ['global'], 'global', assets)).toBeNull();
   });
 
   it('adds the classes, variables and image of the resolved config', () => {
-    const decoration = heroDecoration(configs, ['global', 'welcome'], 'welcome', assets)!;
+    const decoration = heroDecoration(configs, ['global'], 'global', assets)!;
 
-    expect(decoration.className).toBe('wch-Hero wch-Hero--welcome wch-Hero--image wch-Hero--overlay');
+    expect(decoration.className).toBe('wch-Hero wch-Hero--global wch-Hero--image wch-Hero--overlay');
     expect(decoration.style['--wch-overlay']).toBe('#00000080');
     expect((decoration.background as any).attrs.src).toBe(`${assets}/bg-global-${image.id}-1440.webp`);
   });

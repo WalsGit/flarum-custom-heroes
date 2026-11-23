@@ -6,7 +6,7 @@ export interface Target {
   scopeId: string;
 }
 
-/** `global`, `welcome`, `tag:12`… to `{ scope, scopeId }`. */
+/** `global`, `discussion`, `tag:12`… to `{ scope, scopeId }`. */
 export function targetOf(key: string): Target {
   const [scope, scopeId = ''] = key.split(':');
 

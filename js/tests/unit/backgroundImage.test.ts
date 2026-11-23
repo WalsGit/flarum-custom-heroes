@@ -5,9 +5,9 @@ const id = '3f2a9c1d7b4e6a05';
 
 describe('backgroundImageAttrs', () => {
   it('lists every generated width, the largest as fallback', () => {
-    expect(backgroundImageAttrs(assets, 'welcome', { id, width: 1440, height: 540, widths: [640, 1024, 1440] })).toEqual({
-      src: `${assets}/bg-welcome-${id}-1440.webp`,
-      srcset: `${assets}/bg-welcome-${id}-640.webp 640w, ${assets}/bg-welcome-${id}-1024.webp 1024w, ${assets}/bg-welcome-${id}-1440.webp 1440w`,
+    expect(backgroundImageAttrs(assets, 'global', { id, width: 1440, height: 540, widths: [640, 1024, 1440] })).toEqual({
+      src: `${assets}/bg-global-${id}-1440.webp`,
+      srcset: `${assets}/bg-global-${id}-640.webp 640w, ${assets}/bg-global-${id}-1024.webp 1024w, ${assets}/bg-global-${id}-1440.webp 1440w`,
       sizes: '100vw',
     });
   });

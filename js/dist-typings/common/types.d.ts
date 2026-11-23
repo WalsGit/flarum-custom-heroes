@@ -3,7 +3,8 @@
  * (`src/Config/ConfigValidator.php`). Configs reach the frontend already
  * validated and normalized: optional keys are always filled.
  */
-export type HeroScope = 'global' | 'welcome' | 'tag' | 'discussion';
+/** `global` is also the config of the home (Welcome) hero. */
+export type HeroScope = 'global' | 'tag' | 'discussion';
 /** `#rgb`, `#rrggbb` or `#rrggbbaa`, lowercase. */
 export type Color = string;
 export type Size = 's' | 'm' | 'l';
@@ -69,7 +70,7 @@ export interface TextStyleSection {
     color: Color | null;
 }
 /**
- * Welcome only. Flarum's welcome text can always be closed; then the hero
+ * Default level only (home hero). Flarum's welcome text can always be closed; then the hero
  * stays with this text (empty: no text) or disappears like in Flarum.
  */
 export interface TextSection {

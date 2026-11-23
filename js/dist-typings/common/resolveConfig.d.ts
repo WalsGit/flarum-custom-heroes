@@ -8,7 +8,7 @@ export declare function normalizeConfigs(configs: unknown): HeroConfigs;
  * The keys of the configs that apply to a hero, from the most general to the
  * most specific. For example `['global', 'tag', 'tag:12']`.
  */
-export declare function configChain(scope: Exclude<HeroScope, 'global'>, scopeId?: string | null): string[];
+export declare function configChain(scope: HeroScope, scopeId?: string | null): string[];
 /**
  * Applies the inheritance: each section comes from the most specific config
  * of the chain that defines it. Sections are replaced as a whole, never

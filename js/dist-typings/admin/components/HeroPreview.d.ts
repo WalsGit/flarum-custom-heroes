@@ -4,7 +4,7 @@ import { type HeroConfig, type HeroConfigs } from '../../common/types';
 export interface HeroPreviewAttrs extends ComponentAttrs {
     /** The stored configs, with the draft of the edited target in place. */
     configs: HeroConfigs;
-    /** The edited target: `global`, `welcome`, `tag:12`… */
+    /** The edited target: `global`, `discussion`, `tag:12`… */
     target: string;
 }
 type Device = 'desktop' | 'tablet' | 'mobile';
@@ -14,13 +14,13 @@ type Device = 'desktop' | 'tablet' | 'mobile';
  */
 export default class HeroPreview extends Component<HeroPreviewAttrs> {
     device: Device;
-    /** Welcome: preview the hero once Flarum's welcome text is closed. */
+    /** Home (default level): preview the hero once Flarum's welcome text is closed. */
     closed: boolean;
     observer: ResizeObserver | null;
     onscroll: () => void;
     view(): JSX.Element;
     hero(): JSX.Element;
-    /** What the hero shows: the Welcome texts, a tag, or a sample discussion. */
+    /** What the hero shows: the Welcome texts (default level), a tag, or a sample discussion. */
     content(scope: string, scopeId: string, config: HeroConfig, closed: boolean): {
         title: string;
         subtitle?: string;

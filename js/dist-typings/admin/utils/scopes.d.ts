@@ -4,7 +4,7 @@ export interface Target {
     scope: HeroScope;
     scopeId: string;
 }
-/** `global`, `welcome`, `tag:12`… to `{ scope, scopeId }`. */
+/** `global`, `discussion`, `tag:12`… to `{ scope, scopeId }`. */
 export declare function targetOf(key: string): Target;
 /**
  * The keys of the configs a target inherits from, from the most general to

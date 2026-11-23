@@ -9,7 +9,7 @@ type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle';
  * here.
  */
 export default class HeroesPage extends ExtensionPage {
-    /** The config being edited: `global`, `welcome`, `tag:12`… */
+    /** The config being edited: `global`, `discussion`, `tag:12`… */
     key: string;
     /** The stored configs, kept in sync with the server after each save. */
     configs: HeroConfigs;
@@ -23,7 +23,7 @@ export default class HeroesPage extends ExtensionPage {
      * A section card: inherited (with where it comes from) or defined here.
      */
     section<K extends EditedSection>(name: K, initial: (parent: HeroConfig[K] | undefined) => NonNullable<HeroConfig[K]>, form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children): JSX.Element;
-    /** Welcome only, with no level to inherit from: the default is stored as a missing section. */
+    /** Default level only (home hero), with no level to inherit from: the default is stored as a missing section. */
     textSection(): JSX.Element;
     tagsEnabled(): boolean;
     scopeLabel(key: string): string;

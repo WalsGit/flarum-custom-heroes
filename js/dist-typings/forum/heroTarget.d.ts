@@ -1,7 +1,7 @@
 import type Hero from 'flarum/forum/components/Hero';
 import type { HeroScope } from '../common/types';
 export interface HeroTarget {
-    scope: Exclude<HeroScope, 'global'>;
+    scope: HeroScope;
     scopeId: string | null;
 }
 /**

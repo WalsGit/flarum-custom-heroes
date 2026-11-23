@@ -23,6 +23,8 @@ export default class HeroesPage extends ExtensionPage {
      * A section card: inherited (with where it comes from) or defined here.
      */
     section<K extends EditedSection>(name: K, initial: (parent: HeroConfig[K] | undefined) => NonNullable<HeroConfig[K]>, form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children): JSX.Element;
+    /** Welcome only, with no level to inherit from: a missing value is the core's behavior (a close button). */
+    dismissibleSection(): JSX.Element;
     tagsEnabled(): boolean;
     scopeLabel(key: string): string;
     scopeOptions(): Record<string, string>;

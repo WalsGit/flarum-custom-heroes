@@ -1,6 +1,6 @@
 import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import type Mithril from 'mithril';
-import type { HeroConfigs } from '../../common/types';
+import { type HeroConfig, type HeroConfigs } from '../../common/types';
 export interface HeroPreviewAttrs extends ComponentAttrs {
     /** The stored configs, with the draft of the edited target in place. */
     configs: HeroConfigs;
@@ -14,12 +14,14 @@ type Device = 'desktop' | 'tablet' | 'mobile';
  */
 export default class HeroPreview extends Component<HeroPreviewAttrs> {
     device: Device;
+    /** Welcome: preview the hero once Flarum's welcome text is closed. */
+    closed: boolean;
     observer: ResizeObserver | null;
     onscroll: () => void;
     view(): JSX.Element;
     hero(): JSX.Element;
     /** What the hero shows: the Welcome texts, a tag, or a sample discussion. */
-    content(scope: string, scopeId: string): {
+    content(scope: string, scopeId: string, config: HeroConfig, closed: boolean): {
         title: string;
         subtitle?: string;
         color?: string;

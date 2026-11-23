@@ -68,13 +68,17 @@ export interface TextStyleSection {
     subtitleSize: Size;
     color: Color | null;
 }
-export type TextSection = {
-    source: 'core';
-} | {
-    source: 'custom';
+/**
+ * Welcome only. Flarum's welcome text can always be closed; then the hero
+ * stays with this text (empty: no text) or disappears like in Flarum.
+ */
+export interface TextSection {
+    afterClose: 'hero' | 'none';
     title: string;
     message: string;
-};
+}
+/** What a Welcome hero without `text` section does: it stays, without text. */
+export declare const DEFAULT_TEXT: TextSection;
 export interface LogoSection {
     image: ImageRef;
     side: 'left' | 'right';
@@ -125,7 +129,6 @@ export interface HeroConfig {
     logo?: LogoSection;
     socials?: SocialsSection;
     buttons?: ButtonsSection;
-    dismissible?: boolean;
 }
 /** Configs keyed by `scope` or `scope:scopeId`. */
 export type HeroConfigs = Record<string, HeroConfig>;

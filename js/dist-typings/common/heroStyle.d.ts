@@ -18,6 +18,23 @@ export declare const HEIGHT_PRESETS: {
     };
 };
 /**
+ * Text sizes in rem, on mobile then on tablet and desktop. `m` is the size
+ * of the core.
+ */
+export declare const TEXT_SIZES: {
+    readonly title: {
+        readonly s: readonly [0.875, 1.125];
+        readonly m: readonly [1, 1.375];
+        readonly l: readonly [1.25, 1.75];
+        readonly xl: readonly [1.5, 2.25];
+    };
+    readonly subtitle: {
+        readonly s: readonly [0.75, 0.8125];
+        readonly m: readonly [0.8125, 0.9375];
+        readonly l: readonly [0.9375, 1.125];
+    };
+};
+/**
  * The CSS variables of a resolved config, set on the hero element. Values
  * come from a validated config, never from raw CSS.
  */

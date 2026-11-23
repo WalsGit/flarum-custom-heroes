@@ -27,14 +27,21 @@ function wasDismissed(): boolean {
 }
 
 /**
- * A customized Welcome hero is always shown: its close button only hides the
- * text (title and message), and `dismissible: false` removes the button.
+ * A customized Welcome hero is always shown, even without a core title: its
+ * close button only hides the text (title and message), and
+ * `dismissible: false` removes the button.
  */
 export default function extendWelcomeHero() {
+  // Even with an empty core title: the hero shows its own settings.
   override(WelcomeHero.prototype, 'isHidden', function (this: WelcomeHero, original: () => boolean) {
-    if (!welcomeConfig()) return original();
+    return welcomeConfig() ? false : original();
+  });
 
-    return !app.forum.attribute<string>('welcomeTitle')?.trim();
+  extend(WelcomeHero.prototype, 'contentItems', function (this: WelcomeHero, items: ItemList<Mithril.Children>) {
+    if (!welcomeConfig()) return;
+
+    if (!app.forum.attribute<string>('welcomeTitle')?.trim()) items.remove('title');
+    if (!app.forum.attribute<string>('welcomeMessage')?.trim()) items.remove('subtitle');
   });
 
   extend(WelcomeHero.prototype, 'bodyItems', function (this: WelcomeHero, items: ItemList<Mithril.Children>) {
@@ -42,7 +49,11 @@ export default function extendWelcomeHero() {
 
     if (!config || !items.has('dismiss-button')) return;
 
-    if (config.dismissible === false) {
+    if (this.contentItems().isEmpty()) {
+      // No text: nothing to close.
+      items.remove('dismiss-button');
+      items.remove('content');
+    } else if (config.dismissible === false) {
       items.remove('dismiss-button');
     } else if (wasDismissed()) {
       items.remove('dismiss-button');

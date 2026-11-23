@@ -26,7 +26,6 @@ walsgit-custom-heroes:
       desktop: Desktop
       tablet: Tablet
       mobile: Mobile
-      welcome_title: Welcome to the forum
       tag_title: Tag name
       tag_subtitle: The description of the tag.
       discussion_title: The title of a discussion

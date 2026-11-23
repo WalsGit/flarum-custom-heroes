@@ -4,6 +4,7 @@ import Button from 'flarum/common/components/Button';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { heroDecoration } from '../../common/heroDecoration';
+import { resolveConfig } from '../../common/resolveConfig';
 import type { ForumPayload, HeroConfigs } from '../../common/types';
 import { parentChain, targetOf } from '../utils/scopes';
 
@@ -65,6 +66,7 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     const payload = app.forum.attribute<ForumPayload>('walsgitCustomHeroes');
     const decoration = heroDecoration(configs, chain, scope, payload.assetsUrl);
     const content = this.content(scope, scopeId);
+    const dismissible = scope === 'welcome' && resolveConfig(configs, chain).dismissible !== false;
 
     return (
       <header
@@ -73,6 +75,7 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
       >
         {decoration?.background}
         <div className="container">
+          {dismissible && <i className="Hero-close fas fa-times" aria-hidden="true" />}
           <div className="containerNarrow">
             <h1 className="Hero-title">{content.title}</h1>
             {content.subtitle && <div className="Hero-subtitle">{content.subtitle}</div>}

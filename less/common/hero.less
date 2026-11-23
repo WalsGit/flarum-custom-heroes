@@ -52,3 +52,88 @@
   background: var(--wch-overlay);
   pointer-events: none;
 }
+
+// Text style. Doubled class to win over the core `.Hero` rules wherever
+// this file is loaded. Sizes are set for mobile, then for wider heroes.
+.wch-Hero.wch-Hero--text {
+  h1 {
+    font-size: var(--wch-title-size-mobile);
+  }
+
+  .Hero-subtitle {
+    font-size: var(--wch-subtitle-size-mobile);
+  }
+
+  // The text block takes the free height (min-height) to place itself;
+  // the close button leaves the flow, where the core puts it, so that it
+  // does not push the text down.
+  > .container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    // Keeps the width of the core (auto margins would shrink it).
+    > :not(.Hero-close) {
+      width: 100%;
+    }
+  }
+
+  .Hero-close {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    margin: 0;
+  }
+}
+
+@container (min-width: @screen-tablet) {
+  .wch-Hero.wch-Hero--text {
+    h1 {
+      font-size: var(--wch-title-size);
+    }
+
+    .Hero-subtitle {
+      font-size: var(--wch-subtitle-size);
+    }
+
+    .Hero-close {
+      top: 30px;
+      right: 15px;
+    }
+  }
+}
+
+.wch-Hero--textColor.wch-Hero {
+  color: var(--wch-text-color);
+}
+
+.wch-Hero--vAlign-middle > .container > :not(.Hero-close) {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.wch-Hero--vAlign-bottom > .container > :not(.Hero-close) {
+  margin-top: auto;
+}
+
+// The narrow text block moves to the side of the hero, not only its lines.
+.wch-Hero.wch-Hero--align-left {
+  text-align: left;
+
+  .containerNarrow {
+    margin-left: 0;
+  }
+}
+
+.wch-Hero.wch-Hero--align-right {
+  text-align: right;
+
+  .containerNarrow {
+    margin-right: 0;
+  }
+}
+
+// Plain text, with its line breaks.
+.wch-Hero-message {
+  white-space: pre-line;
+}

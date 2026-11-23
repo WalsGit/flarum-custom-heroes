@@ -1,4 +1,4 @@
-import type { BackgroundSection, Corner, GradientStop, HeightSection, HeroConfig, OverlaySection } from './types';
+import type { BackgroundSection, Corner, GradientStop, HeightSection, HeroConfig, OverlaySection, TextStyleSection } from './types';
 
 /** Heights of the presets in pixels, per breakpoint. */
 export const HEIGHT_PRESETS = {
@@ -18,6 +18,28 @@ function heightVariables(height: HeightSection): Record<string, string> {
     '--wch-height-desktop': `${values.desktop}px`,
     '--wch-height-tablet': `${values.tablet}px`,
     '--wch-height-mobile': `${values.mobile}px`,
+  };
+}
+
+/**
+ * Text sizes in rem, on mobile then on tablet and desktop. `m` is the size
+ * of the core.
+ */
+export const TEXT_SIZES = {
+  title: { s: [0.875, 1.125], m: [1, 1.375], l: [1.25, 1.75], xl: [1.5, 2.25] },
+  subtitle: { s: [0.75, 0.8125], m: [0.8125, 0.9375], l: [0.9375, 1.125] },
+} as const;
+
+function textVariables(text: TextStyleSection): Record<string, string> {
+  const [titleMobile, title] = TEXT_SIZES.title[text.titleSize];
+  const [subtitleMobile, subtitle] = TEXT_SIZES.subtitle[text.subtitleSize];
+
+  return {
+    '--wch-title-size': `${title}rem`,
+    '--wch-title-size-mobile': `${titleMobile}rem`,
+    '--wch-subtitle-size': `${subtitle}rem`,
+    '--wch-subtitle-size-mobile': `${subtitleMobile}rem`,
+    ...(text.color ? { '--wch-text-color': text.color } : {}),
   };
 }
 
@@ -77,5 +99,6 @@ export function heroStyle(config: HeroConfig): Record<string, string> {
     ...(config.height ? heightVariables(config.height) : {}),
     ...(config.background?.image ? { '--wch-bg-position': BACKGROUND_POSITIONS[config.background.position] } : {}),
     ...(overlay ? { '--wch-overlay': overlay } : {}),
+    ...(config.textStyle ? textVariables(config.textStyle) : {}),
   };
 }

@@ -14,9 +14,11 @@ import BackgroundForm from './BackgroundForm';
 import HeightForm from './HeightForm';
 import HeroPreview from './HeroPreview';
 import OverlayForm from './OverlayForm';
+import TextForm from './TextForm';
+import TextStyleForm from './TextStyleForm';
 
 /** The sections this page edits. Other sections of a config are kept as they are. */
-type EditedSection = 'background' | 'overlay' | 'height';
+type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'text';
 
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.${key}`, params, true);
 
@@ -102,6 +104,20 @@ export default class HeroesPage extends ExtensionPage {
                   <HeightForm value={value} onchange={set} />
                 )
               )}
+              {this.key === 'welcome' &&
+                this.section(
+                  'text',
+                  (parent) => parent ?? { source: 'core' },
+                  (value, set) => <TextForm value={value} onchange={set} />
+                )}
+              {/* Not per tag (D4). */}
+              {!targetOf(this.key).scopeId &&
+                this.section(
+                  'textStyle',
+                  // Top, like the core, so that unticking changes nothing at first.
+                  (parent) => parent ?? { align: 'center', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
+                  (value, set) => <TextStyleForm value={value} onchange={set} />
+                )}
               {this.key === 'welcome' && this.dismissibleSection()}
             </div>
 
@@ -150,7 +166,8 @@ export default class HeroesPage extends ExtensionPage {
 
     return (
       <fieldset className={`wch-Section wch-Section--${name}`}>
-        <legend>{t(`${name}.title`)}</legend>
+        {/* Locale keys use underscores: `textStyle` → `text_style`. */}
+        <legend>{t(`${name.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`)}.title`)}</legend>
 
         <Switch state={value === undefined} onchange={toggle}>
           {owner ? t('inherit_from_label', { source: this.scopeLabel(owner) }) : t('inherit_core_label')}

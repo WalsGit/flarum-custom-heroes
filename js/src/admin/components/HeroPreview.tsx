@@ -5,7 +5,7 @@ import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { heroDecoration } from '../../common/heroDecoration';
 import { resolveConfig } from '../../common/resolveConfig';
-import type { ForumPayload, HeroConfigs } from '../../common/types';
+import type { ForumPayload, HeroConfig, HeroConfigs } from '../../common/types';
 import { parentChain, targetOf } from '../utils/scopes';
 
 export interface HeroPreviewAttrs extends ComponentAttrs {
@@ -65,9 +65,10 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     const chain = [...parentChain(target), target];
     const payload = app.forum.attribute<ForumPayload>('walsgitCustomHeroes');
     const decoration = heroDecoration(configs, chain, scope, payload.assetsUrl);
-    const content = this.content(scope, scopeId);
+    const config = resolveConfig(configs, chain);
+    const content = this.content(scope, scopeId, config);
     // Like on the forum: no close button without a text to hide.
-    const dismissible = scope === 'welcome' && !!(content.title || content.subtitle) && resolveConfig(configs, chain).dismissible !== false;
+    const dismissible = scope === 'welcome' && !!(content.title || content.subtitle) && config.dismissible !== false;
 
     return (
       <header
@@ -79,7 +80,9 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
           {dismissible && <i className="Hero-close fas fa-times" aria-hidden="true" />}
           <div className="containerNarrow">
             {content.title && <h1 className="Hero-title">{content.title}</h1>}
-            {content.subtitle && <div className="Hero-subtitle">{content.subtitle}</div>}
+            {content.subtitle && (
+              <div className={classList('Hero-subtitle', config.text?.source === 'custom' && 'wch-Hero-message')}>{content.subtitle}</div>
+            )}
           </div>
         </div>
       </header>
@@ -87,7 +90,7 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
   }
 
   /** What the hero shows: the Welcome texts, a tag, or a sample discussion. */
-  content(scope: string, scopeId: string): { title: string; subtitle?: string; color?: string } {
+  content(scope: string, scopeId: string, config: HeroConfig): { title: string; subtitle?: string; color?: string } {
     if (scope === 'tag') {
       const tag = scopeId ? app.store.getById('tags', scopeId) : null;
 
@@ -102,6 +105,10 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
 
     if (scope === 'discussion') {
       return { title: t('discussion_title') };
+    }
+
+    if (config.text?.source === 'custom') {
+      return { title: config.text.title.trim(), subtitle: config.text.message.trim() ? config.text.message : undefined };
     }
 
     // The Welcome message is HTML: the preview only needs its text.

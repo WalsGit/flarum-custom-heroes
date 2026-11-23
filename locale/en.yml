@@ -95,6 +95,35 @@ walsgit-custom-heroes:
       desktop_label: Desktop
       tablet_label: Tablet
       mobile_label: Mobile
+    text:
+      title: Text
+      source_label: Text
+      source_core: "Flarum's welcome text (Appearance)"
+      source_custom: Custom text
+      source_help: "The custom text replaces Flarum's welcome text in this hero only. A visitor who closed Flarum's text still sees the custom one."
+      title_label: Title
+      message_label: Message
+      message_help: Plain text, line breaks are kept. Leave the title and the message empty for a hero without text.
+    text_style:
+      title: Text style
+      align_label: Horizontal alignment
+      align_left: Left
+      align_center: Center
+      align_right: Right
+      v_align_label: Vertical position
+      v_align_top: Top
+      v_align_middle: Middle
+      v_align_bottom: Bottom
+      v_align_help: Only visible when the hero is taller than its text (see Height).
+      title_size_label: Title size
+      subtitle_size_label: Message size
+      size_s: Small
+      size_m: "Medium (Flarum's size)"
+      size_l: Large
+      size_xl: Extra large
+      auto_color_label: "Automatic color (Flarum's)"
+      color_label: Text color
+      color_help: A light color on a dark image or overlay keeps the text readable.
     dismissible:
       title: Close button
       label: Show the close button (✕)

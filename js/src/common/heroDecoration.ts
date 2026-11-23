@@ -32,10 +32,16 @@ export function heroDecoration(configs: HeroConfigs, chain: string[], scope: Her
   const style = heroStyle(config);
 
   return {
-    className: classList('wch-Hero', `wch-Hero--${scope}`, {
-      'wch-Hero--image': !!image,
-      'wch-Hero--overlay': '--wch-overlay' in style,
-    }),
+    className: classList(
+      'wch-Hero',
+      `wch-Hero--${scope}`,
+      {
+        'wch-Hero--image': !!image,
+        'wch-Hero--overlay': '--wch-overlay' in style,
+        'wch-Hero--textColor': '--wch-text-color' in style,
+      },
+      config.textStyle && ['wch-Hero--text', `wch-Hero--align-${config.textStyle.align}`, `wch-Hero--vAlign-${config.textStyle.vAlign}`]
+    ),
     style,
     // Decorative, behind the content. An <img> rather than a CSS background, so that the browser picks the size.
     background: image ? m('img.wch-Hero-background', { alt: '', fetchpriority: 'high', decoding: 'async', ...image }) : null,

@@ -28,4 +28,11 @@ describe('heroDecoration', () => {
     expect(decoration.className).toBe('wch-Hero wch-Hero--tag wch-Hero--image');
     expect((decoration.background as any).attrs.src).toContain('bg-global-');
   });
+
+  it('adds the text style classes', () => {
+    const textStyle = { align: 'right', vAlign: 'bottom', titleSize: 'm', subtitleSize: 'm', color: '#fff' } as const;
+    const decoration = heroDecoration({ discussion: { textStyle } }, ['global', 'discussion'], 'discussion', assets)!;
+
+    expect(decoration.className).toBe('wch-Hero wch-Hero--discussion wch-Hero--textColor wch-Hero--text wch-Hero--align-right wch-Hero--vAlign-bottom');
+  });
 });

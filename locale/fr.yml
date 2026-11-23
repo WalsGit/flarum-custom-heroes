@@ -93,6 +93,35 @@ walsgit-custom-heroes:
       desktop_label: Ordinateur
       tablet_label: Tablette
       mobile_label: Mobile
+    text:
+      title: Texte
+      source_label: Texte
+      source_core: Texte d'accueil de Flarum (Apparence)
+      source_custom: Texte personnalisé
+      source_help: "Le texte personnalisé remplace le texte d'accueil de Flarum dans ce hero uniquement. Un visiteur qui avait fermé le texte de Flarum voit quand même le texte personnalisé."
+      title_label: Titre
+      message_label: Message
+      message_help: Texte brut, les retours à la ligne sont conservés. Laisser le titre et le message vides pour un hero sans texte.
+    text_style:
+      title: Style du texte
+      align_label: Alignement horizontal
+      align_left: Gauche
+      align_center: Centre
+      align_right: Droite
+      v_align_label: Position verticale
+      v_align_top: Haut
+      v_align_middle: Milieu
+      v_align_bottom: Bas
+      v_align_help: Visible seulement si le hero est plus haut que son texte (voir Hauteur).
+      title_size_label: Taille du titre
+      subtitle_size_label: Taille du message
+      size_s: Petite
+      size_m: Moyenne (taille de Flarum)
+      size_l: Grande
+      size_xl: Très grande
+      auto_color_label: Couleur automatique (celle de Flarum)
+      color_label: Couleur du texte
+      color_help: Une couleur claire sur une image ou un filtre sombre garde le texte lisible.
     dismissible:
       title: Bouton fermer
       label: Afficher le bouton fermer (✕)

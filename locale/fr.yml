@@ -154,23 +154,60 @@ walsgit-custom-heroes:
       move_up_button: Monter
       move_down_button: Descendre
       remove_button: Supprimer cette icône
-      placement_label: Emplacement
-      placement_below_text: Sous le texte
-      placement_top_left: Coin haut gauche
-      placement_top_right: Coin haut droit
-      placement_bottom_left: Coin bas gauche
-      placement_bottom_right: Coin bas droit
-      placement_help: "Dans un coin, les icônes sont posées sur le hero sans prendre de place : choisissez un coin libre de texte et de logo."
       size_label: Taille
       size_xs: "Très petite ({size} px)"
       size_s: "Petite ({size} px)"
       size_m: "Moyenne ({size} px)"
+      custom_color_label: Changer la couleur des icônes
+      color_label: Couleur des icônes
+    placement:
+      label: Emplacement
+      below_text: Sous le texte
+      top_left: Coin haut gauche
+      top_right: Coin haut droit
+      bottom_left: Coin bas gauche
+      bottom_right: Coin bas droit
+      help: "Dans un coin, ils sont posés sur le hero sans prendre de place : choisissez un coin libre de texte et de logo. Boutons et icônes de réseaux sociaux ne peuvent pas partager un coin (sous le texte, les boutons passent en premier)."
       mobile_label: Sur mobile
       mobile_same: Comme sur les grands écrans
       mobile_below_text: Sous le texte
-      mobile_hide: Masquées
-      custom_color_label: Changer la couleur des icônes
-      color_label: Couleur des icônes
+      mobile_hide: Masqués
+    buttons:
+      title: Boutons
+      add_label: Ajouter des boutons au hero
+      opt_in_help: "Les boutons par défaut ne s'affichent que sur le hero d'accueil : activez cette option pour afficher des boutons sur ces heroes aussi."
+      items_label: Boutons
+      items_help: "Connexion et Inscription ouvrent les fenêtres de Flarum et ne s'affichent qu'aux visiteurs non connectés (Inscription est masqué si les inscriptions sont fermées). L'aperçu montre tous les boutons."
+      item_title: "Bouton {number}"
+      add_button: Ajouter un bouton
+      move_up_button: Monter
+      move_down_button: Descendre
+      remove_button: Supprimer ce bouton
+      label_label: Libellé
+      action_label: Action
+      action_link: Lien
+      action_login: Connexion
+      action_signup: Inscription
+      url_label: Lien
+      visibility_label: Visible par
+      visibility_all: Tout le monde
+      visibility_guest: Visiteurs non connectés
+      visibility_user: Membres connectés
+      icon_label: Icône (facultative)
+      icon_placeholder: "fas fa-rocket"
+      style_label: Style
+      style_primary: "Principal (couleur du forum)"
+      style_default: Standard
+      style_outline: Contour (couleur du texte)
+      size_label: Taille
+      size_s: Petit
+      size_m: Moyen
+      size_l: Grand
+      new_tab_label: Ouvrir dans un nouvel onglet
+      custom_bg_label: Changer la couleur de fond
+      bg_label: "Bouton {number} : couleur de fond"
+      custom_color_label: Changer la couleur du texte
+      color_label: "Bouton {number} : couleur du texte"
 
   api:
     validation:

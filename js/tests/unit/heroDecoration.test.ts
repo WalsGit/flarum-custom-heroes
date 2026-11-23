@@ -62,80 +62,156 @@ describe('heroDecoration', () => {
   it('groups the logo with the content, apart from the close button', () => {
     const close = m('button', { className: 'Hero-close Button' });
     const content = m('.containerNarrow');
-    const decoration = { logo: m('img.wch-Hero-logo'), belowText: null, corners: [] } as any;
-    const [first, group] = decorateContent([close, content], decoration) as any[];
+    const decoration = { logo: m('img.wch-Hero-logo'), belowText: null, corners: {} } as any;
+    const [first, group] = decorateContent([close, content], decoration).content as any[];
 
     expect(first).toBe(close);
     expect(group.attrs.className).toBe('wch-Hero-group');
     expect(group.children[1].children[0]).toBe(content);
   });
 
-  const socials = (placement: string) =>
+  const socials = (placement: string, mobile = 'same') =>
     ({
       size: 'm',
       placement,
       color: null,
-      mobile: 'same',
+      mobile,
       items: [
         { icon: 'fab fa-github', url: 'https://github.com/example', label: 'GitHub' },
         { icon: 'fas fa-envelope', url: 'mailto:team@example.com', label: 'Email' },
       ],
     }) as any;
 
+  const button = (changes = {}) =>
+    ({ label: 'Docs', icon: null, action: 'link', url: 'https://example.com', newTab: false, visibility: 'all', style: 'primary', size: 'm', bg: null, color: null, ...changes }) as any;
+
+  const buttons = (items: any[], placement = 'below-text', mobile = 'same') => ({ placement, mobile, items }) as any;
+
   it('renders the social links, web links in a new tab', () => {
     const decoration = heroDecoration({ global: { socials: socials('below-text') } }, ['global'], 'global', assets)!;
     const [web, mail] = (decoration.belowText as any).children[0].children.map((item: any) => item.children[0].attrs);
 
-    expect(decoration.className).toContain('wch-Hero--socials');
     expect(decoration.style['--wch-socials-size']).toBe('24px');
-    expect(decoration.corners).toEqual([]);
+    expect(decoration.corners).toEqual({});
     expect(web).toMatchObject({ href: 'https://github.com/example', 'aria-label': 'GitHub', target: '_blank', rel: 'noopener noreferrer' });
     expect(mail).toMatchObject({ href: 'mailto:team@example.com', 'aria-label': 'Email' });
     expect(mail.target).toBeUndefined();
   });
 
-  it('puts corner icons over the content and icons below the text with it', () => {
-    const corner = heroDecoration({ global: { socials: socials('top-right') } }, ['global'], 'global', assets)!;
-
-    expect(corner.belowText).toBeNull();
-    expect((corner.corners[0] as any).attrs.className).toBe('wch-Hero-slot wch-Hero-slot--top-right');
-
+  it('puts corners in the header and what is below the text with the text', () => {
     const close = m('button', { className: 'Hero-close Button' });
     const content = m('.containerNarrow');
     const below = heroDecoration({ global: { socials: socials('below-text') } }, ['global'], 'global', assets)!;
-    const [first, body] = decorateContent([close, content], below) as any[];
+    const [first, body] = decorateContent([close, content], below).content as any[];
 
     expect(first).toBe(close);
     expect(body.attrs.className).toBe('wch-Hero-body');
     expect(body.children.map((child: any) => child.attrs.className)).toEqual(['containerNarrow', 'wch-Hero-slot wch-Hero-slot--below-text']);
-    // Corners go in the header, not in the content.
-    expect(decorateContent([content], corner)).toEqual([content]);
+
+    const corner = heroDecoration({ global: { socials: socials('bottom-left') } }, ['global'], 'global', assets)!;
+    const decorated = decorateContent([close, content], corner);
+
+    expect(corner.className).toContain('wch-Hero--corners');
+    expect(decorated.content).toEqual([close, content]);
+    expect(decorated.corners.map((slot: any) => slot.attrs.className)).toEqual(['wch-Hero-slot wch-Hero-slot--bottom-left']);
   });
 
-  it('hides the icons on mobile or moves them below the text', () => {
-    const classes = (placement: string, mobile: string) => {
-      const decoration = heroDecoration({ global: { socials: { ...socials(placement), mobile } } }, ['global'], 'global', assets)!;
+  it('moves the close button below what is in the top right corner', () => {
+    const close = m('button', { className: 'Hero-close Button' });
+    const content = m('.containerNarrow');
+    const decoration = heroDecoration({ global: { socials: socials('top-right') } }, ['global'], 'global', assets)!;
+    const { content: children, corners } = decorateContent([close, content], decoration);
 
-      return [(decoration.belowText as any)?.attrs.className ?? null, ...decoration.corners.map((corner: any) => corner.attrs.className)];
+    expect(children).toEqual([content]);
+    expect((corners[0] as any).children[1]).toBe(close);
+  });
+
+  it('hides a part on mobile or moves it below the text', () => {
+    const classes = (placement: string, mobile: string) => {
+      const decoration = heroDecoration({ global: { socials: socials(placement, mobile) } }, ['global'], 'global', assets)!;
+      const part = (slot: any) => slot?.children[0].attrs.className ?? null;
+
+      return [part(decoration.belowText), ...Object.values(decoration.corners).map((parts: any) => parts[0].attrs.className)];
     };
 
-    expect(classes('top-left', 'hide')).toEqual([null, 'wch-Hero-slot wch-Hero-slot--top-left wch-Hero-slot--hideMobile']);
-    expect(classes('top-left', 'below-text')).toEqual([
-      'wch-Hero-slot wch-Hero-slot--below-text wch-Hero-slot--mobileOnly',
-      'wch-Hero-slot wch-Hero-slot--top-left wch-Hero-slot--hideMobile',
-    ]);
-    // Mithril cannot render one vnode in two places.
-    const both = heroDecoration({ global: { socials: { ...socials('top-left'), mobile: 'below-text' } } }, ['global'], 'global', assets)!;
-    expect((both.belowText as any).children[0]).not.toBe((both.corners[0] as any).children[0]);
+    expect(classes('top-left', 'hide')).toEqual([null, 'wch-Socials wch-Hero-hideMobile']);
+    expect(classes('top-left', 'below-text')).toEqual(['wch-Socials wch-Hero-mobileOnly', 'wch-Socials wch-Hero-hideMobile']);
+    expect(classes('below-text', 'hide')).toEqual(['wch-Socials wch-Hero-hideMobile']);
+    expect(classes('below-text', 'below-text')).toEqual(['wch-Socials']);
+    // The slot itself is hidden where all its parts are, so that its margin does not move the text.
+    const slotClass = (placement: string, mobile: string) =>
+      (heroDecoration({ global: { socials: socials(placement, mobile) } }, ['global'], 'global', assets)!.belowText as any).attrs.className;
+    expect(slotClass('top-left', 'below-text')).toBe('wch-Hero-slot wch-Hero-slot--below-text wch-Hero-mobileOnly');
+    expect(slotClass('below-text', 'hide')).toBe('wch-Hero-slot wch-Hero-slot--below-text wch-Hero-hideMobile');
+    expect(slotClass('below-text', 'same')).toBe('wch-Hero-slot wch-Hero-slot--below-text');
 
-    expect(classes('below-text', 'hide')).toEqual(['wch-Hero-slot wch-Hero-slot--below-text wch-Hero-slot--hideMobile']);
-    expect(classes('below-text', 'below-text')).toEqual(['wch-Hero-slot wch-Hero-slot--below-text']);
+    // A config saved before `mobile` existed.
+    expect(classes('top-left', undefined as any)).toEqual([null, 'wch-Socials']);
+
+    // Mithril cannot render one vnode in two places.
+    const both = heroDecoration({ global: { socials: socials('top-left', 'below-text') } }, ['global'], 'global', assets)!;
+    expect((both.belowText as any).children[0]).not.toBe((both.corners['top-left'] as any)[0]);
   });
 
   it('adds nothing without social links', () => {
-    const decoration = heroDecoration({ global: { socials: { ...socials('top-left'), items: [] } } }, ['global'], 'global', assets);
+    const decoration = heroDecoration({ global: { socials: { ...socials('top-left'), items: [] } } }, ['global'], 'global', assets)!;
 
-    expect(decoration?.corners ?? []).toEqual([]);
-    expect(decoration?.className ?? '').not.toContain('wch-Hero--socials');
+    expect(decoration.corners).toEqual({});
+    expect(decoration.className).not.toContain('wch-Hero--corners');
+  });
+
+  it('renders link and dialog buttons with their style and colors', () => {
+    const calls: string[] = [];
+    const onAction = (action: string) => calls.push(action);
+    const viewer = { guest: true, allowSignUp: true, onAction };
+    const items = [
+      button({ newTab: true, style: 'outline', size: 'l', bg: '#ff000080', icon: 'fas fa-book' }),
+      button({ action: 'login', label: 'Log in', url: undefined, newTab: undefined, visibility: undefined, style: 'default' }),
+    ];
+    const decoration = heroDecoration({ global: { buttons: buttons(items) } }, ['global'], 'global', assets, viewer)!;
+    const [link, login] = (decoration.belowText as any).children[0].children;
+
+    expect(link.tag).toBe('a');
+    expect(link.attrs).toMatchObject({ href: 'https://example.com', target: '_blank', rel: 'noopener noreferrer' });
+    expect(link.attrs.className).toBe('Button wch-HeroButton wch-HeroButton--l wch-HeroButton--outline wch-HeroButton--bg');
+    expect(link.attrs.style).toEqual({ '--wch-button-bg': '#ff000080' });
+    expect(login.tag).toBe('button');
+    expect(login.attrs.className).toBe('Button wch-HeroButton wch-HeroButton--m');
+
+    login.attrs.onclick();
+    expect(calls).toEqual(['login']);
+  });
+
+  it('shows each button to the right visitors', () => {
+    const items = [
+      button({ label: 'All' }),
+      button({ label: 'Guests', visibility: 'guest' }),
+      button({ label: 'Users', visibility: 'user' }),
+      button({ label: 'Log in', action: 'login' }),
+      button({ label: 'Sign up', action: 'signup' }),
+    ];
+    const labels = (viewer: any) => {
+      const decoration = heroDecoration({ global: { buttons: buttons(items) } }, ['global'], 'global', assets, viewer)!;
+
+      return ((decoration.belowText as any)?.children[0].children ?? []).map((b: any) => b.children[1].children[0].children);
+    };
+    const onAction = () => {};
+
+    expect(labels({ guest: true, allowSignUp: true, onAction })).toEqual(['All', 'Guests', 'Log in', 'Sign up']);
+    expect(labels({ guest: true, allowSignUp: false, onAction })).toEqual(['All', 'Guests', 'Log in']);
+    expect(labels({ guest: false, allowSignUp: true, onAction })).toEqual(['All', 'Users']);
+    // The admin preview shows them all.
+    expect(labels(null)).toEqual(['All', 'Guests', 'Users', 'Log in', 'Sign up']);
+  });
+
+  it('stacks buttons above icons in a shared slot', () => {
+    const decoration = heroDecoration(
+      { global: { socials: socials('top-left') }, tag: { buttons: buttons([button()], 'top-left') } },
+      ['global', 'tag'],
+      'tag',
+      assets
+    )!;
+
+    expect(decoration.corners['top-left']!.map((part: any) => part.attrs.className)).toEqual(['wch-HeroButtons', 'wch-Socials']);
   });
 });

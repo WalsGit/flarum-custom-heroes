@@ -249,24 +249,30 @@
   }
 }
 
-// Social icons, in one slot per placement: a corner of the hero, over
-// everything (no space taken), or below the text.
-.wch-Hero--socials {
+// Buttons and social icons, in one slot per placement: a corner of the
+// hero, over everything (no space taken), or below the text. In a slot,
+// buttons come first, then icons.
+.wch-Hero--corners {
   position: relative;
 }
 
 .wch-Hero-slot {
   position: absolute;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 
   &--top-left,
   &--bottom-left {
     left: 5px;
+    align-items: flex-start;
   }
 
   &--top-right,
   &--bottom-right {
     right: 5px;
+    align-items: flex-end;
   }
 
   &--top-left,
@@ -281,52 +287,100 @@
 
   &--below-text {
     position: static;
-    margin-top: 6px;
+    align-items: center;
+    margin-top: 10px;
+  }
+}
+
+.wch-Hero--align-left .wch-Hero-slot--below-text {
+  align-items: flex-start;
+}
+
+.wch-Hero--align-right .wch-Hero-slot--below-text {
+  align-items: flex-end;
+}
+
+// The close button of the welcome banner, moved below the top right corner
+// content. Doubled class to win over the other close button rules.
+.wch-Hero.wch-Hero .wch-Hero-slot > .Hero-close {
+  position: static;
+  float: none;
+  margin: 0;
+}
+
+// On mobile, a part can be hidden, or shown below the text instead of its corner.
+@wch-mobile-max: (@screen-tablet - 1px);
+
+@container (max-width: @wch-mobile-max) {
+  .wch-Hero-hideMobile {
+    display: none !important;
   }
 
-  &--hideMobile {
-    display: none;
+  // Slightly smaller buttons on mobile (desktop and tablet share their sizes).
+  .wch-HeroButton {
+    &.wch-HeroButton--s {
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+
+    &.wch-HeroButton--m {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    &.wch-HeroButton--l {
+      padding: 9px 18px;
+      font-size: 14px;
+    }
   }
 }
 
 @container (min-width: @screen-tablet) {
-  .wch-Hero-slot--hideMobile {
-    display: block;
-  }
-
-  .wch-Hero-slot--mobileOnly {
-    display: none;
+  .wch-Hero-mobileOnly {
+    display: none !important;
   }
 }
 
-// Icons in the top right corner sit where the close button of the welcome
-// banner is: it moves below them (only where they are shown).
-.wch-Hero:has(> .wch-Hero-slot--top-right:not(.wch-Hero-slot--hideMobile)) {
-  > .container {
-    position: relative;
-  }
-
-  .Hero-close {
-    position: absolute;
-    top: ~"max(10px, var(--wch-socials-size) + 15px)";
-    right: 5px;
-    margin: 0;
-  }
+.wch-HeroButtons {
+  display: flex;
+  flex-wrap: wrap;
+  // Each size keeps its own height.
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-@container (min-width: @screen-tablet) {
-  // Doubled class: as specific as the mobile rule (its :not), to win over it.
-  .wch-Hero.wch-Hero:has(> .wch-Hero-slot--top-right) {
-    > .container {
-      position: relative;
-    }
+// Flarum buttons, with their own sizes and optional colors (through the
+// variables of Flarum's button styles, so that hover still works).
+.wch-HeroButton {
+  &--s {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
 
-    .Hero-close {
-      position: absolute;
-      top: ~"max(30px, var(--wch-socials-size) + 15px)";
-      right: 15px;
-      margin: 0;
-    }
+  &--l {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+
+  &--outline {
+    --button-color: currentColor;
+    --button-bg: transparent;
+    --button-bg-hover: ~"color-mix(in srgb, currentColor 15%, transparent)";
+    --button-bg-active: ~"color-mix(in srgb, currentColor 25%, transparent)";
+    color: inherit;
+    border: 2px solid;
+  }
+
+  &--bg {
+    --button-bg: var(--wch-button-bg);
+    --button-bg-hover: ~"color-mix(in srgb, var(--wch-button-bg), #000 10%)";
+    --button-bg-active: ~"color-mix(in srgb, var(--wch-button-bg), #000 20%)";
+  }
+
+  &--color {
+    --button-color: var(--wch-button-color);
+    color: var(--wch-button-color);
   }
 }
 

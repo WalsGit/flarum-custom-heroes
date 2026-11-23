@@ -483,10 +483,11 @@ class ConfigValidatorTest extends TestCase
 
         $this->assertSame([
             'placement' => 'below-text',
+            'mobile' => 'same',
             'items' => [[
                 'label' => 'Docs', 'icon' => null, 'action' => 'link',
                 'url' => 'https://example.com', 'newTab' => false, 'visibility' => 'all',
-                'size' => 'm', 'bg' => null, 'color' => null,
+                'style' => 'primary', 'size' => 'm', 'bg' => null, 'color' => null,
             ]],
         ], $buttons);
     }
@@ -523,6 +524,16 @@ class ConfigValidatorTest extends TestCase
         $this->assertInvalid(['buttons' => ['items' => [['action' => 'delete'] + $link]]], 'config.buttons.items.0.action', 'invalid_value');
         $this->assertInvalid(['buttons' => ['items' => array_fill(0, 5, $link)]], 'config.buttons.items', 'too_many_items');
         $this->assertInvalid(['buttons' => ['items' => [['label' => str_repeat('a', 41)] + $link]]], 'config.buttons.items.0.label', 'too_long');
+        $this->assertInvalid(['buttons' => ['items' => [['style' => 'danger'] + $link]]], 'config.buttons.items.0.style', 'invalid_value');
+        $this->assertInvalid(['buttons' => ['mobile' => 'top-left', 'items' => []]], 'config.buttons.mobile', 'invalid_value');
+        $this->assertSame('outline', $this->valid(['buttons' => ['items' => [['style' => 'outline'] + $link]]])['buttons']['items'][0]['style']);
+    }
+
+    public function test_tags_and_discussions_can_show_the_default_buttons(): void
+    {
+        $this->assertSame('inherit', $this->valid(['buttons' => 'inherit'], Scope::Tag)['buttons']);
+        $this->assertSame('inherit', $this->valid(['buttons' => 'inherit'], Scope::Discussion)['buttons']);
+        $this->assertInvalid(['buttons' => 'inherit'], 'config.buttons', 'invalid_value');
     }
 
     // Placements ---------------------------------------------------------------

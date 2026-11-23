@@ -5,10 +5,18 @@ import DiscussionHero from 'flarum/forum/components/DiscussionHero';
 import WelcomeHero from 'flarum/forum/components/WelcomeHero';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
-import { decorateContent, heroDecoration } from '../common/heroDecoration';
+import { decorateContent, heroDecoration, type HeroViewer } from '../common/heroDecoration';
 import { configChain, normalizeConfigs } from '../common/resolveConfig';
 import type { ForumPayload } from '../common/types';
 import { heroTarget } from './heroTarget';
+
+/** The current visitor, for the hero buttons. */
+const viewer = (): HeroViewer => ({
+  guest: !app.session.user,
+  allowSignUp: !!app.forum.attribute('allowSignUp'),
+  onAction: (action) =>
+    app.modal.show(() => (action === 'login' ? import('flarum/forum/components/LogInModal') : import('flarum/forum/components/SignUpModal'))),
+});
 
 function customizeHero(this: Hero, vdom: Mithril.Children) {
   // The header rendered by `Hero.view()`.
@@ -21,7 +29,7 @@ function customizeHero(this: Hero, vdom: Mithril.Children) {
   const payload = app.forum.attribute<ForumPayload | undefined>('walsgitCustomHeroes');
   const decoration =
     target && payload
-      ? heroDecoration(normalizeConfigs(payload.configs), configChain(target.scope, target.scopeId), target.scope, payload.assetsUrl)
+      ? heroDecoration(normalizeConfigs(payload.configs), configChain(target.scope, target.scopeId), target.scope, payload.assetsUrl, viewer())
       : null;
 
   if (!decoration) return;
@@ -30,21 +38,20 @@ function customizeHero(this: Hero, vdom: Mithril.Children) {
   // Added to the hero's own style (for example the color of a tag), not replacing it.
   header.attrs.style = { ...header.attrs.style, ...decoration.style };
 
-  if (decoration.logo || decoration.belowText) {
-    const container = ((header.children as Mithril.ChildArray | undefined) ?? []).find(
-      (child) => (child as Mithril.Vnode<{ className?: string }>)?.attrs?.className === 'container'
-    ) as Mithril.Vnode | undefined;
+  const children = () => (header.children as Mithril.ChildArray | undefined) ?? [];
+  const container = children().find((child) => (child as Mithril.Vnode<{ className?: string }>)?.attrs?.className === 'container') as
+    | Mithril.Vnode
+    | undefined;
 
-    if (container) container.children = decorateContent((container.children as Mithril.ChildArray | undefined) ?? [], decoration);
+  if (container) {
+    const { content, corners } = decorateContent((container.children as Mithril.ChildArray | undefined) ?? [], decoration);
+    container.children = content;
+    // In the corners of the hero itself, not of its content.
+    header.children = [...children(), ...corners];
   }
 
   if (decoration.background) {
-    header.children = [decoration.background, ...((header.children as Mithril.ChildArray | undefined) ?? [])];
-  }
-
-  // In the corners of the hero itself, not of its content.
-  if (decoration.corners.length) {
-    header.children = [...((header.children as Mithril.ChildArray | undefined) ?? []), ...decoration.corners];
+    header.children = [decoration.background, ...children()];
   }
 }
 

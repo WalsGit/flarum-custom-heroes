@@ -351,7 +351,45 @@
   }
 }
 
-// The preview's links must not leave the admin.
-.wch-PreviewHero .wch-Socials-link {
+// The preview's links and buttons must not leave the admin.
+.wch-PreviewHero .wch-Socials-link,
+.wch-PreviewHero .wch-HeroButton {
   pointer-events: none;
+}
+
+.wch-ButtonsForm-item {
+  // The Form-group is a flex column: take its whole width.
+  align-self: stretch;
+  margin: 0 0 12px;
+  padding: 12px;
+  border: 1px solid var(--control-bg);
+  border-radius: var(--border-radius);
+
+  .Checkbox,
+  .wch-AlphaColor {
+    margin-bottom: 8px;
+  }
+}
+
+.wch-ButtonsForm-itemHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+
+  strong {
+    margin-right: auto;
+  }
+}
+
+.wch-ButtonsForm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0 12px;
+}
+
+.wch-ButtonsForm-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

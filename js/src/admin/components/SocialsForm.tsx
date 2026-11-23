@@ -5,12 +5,15 @@ import Icon from 'flarum/common/components/Icon';
 import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
 import { SOCIAL_SIZES } from '../../common/heroStyle';
-import type { SocialItem, SocialsSection } from '../../common/types';
+import type { Placement, SocialItem, SocialsSection } from '../../common/types';
 import AlphaColorInput from './AlphaColorInput';
+import PlacementFields, { type PlacementChanges } from './PlacementFields';
 
 export interface SocialsFormAttrs extends ComponentAttrs {
   value: SocialsSection;
   onchange: (value: SocialsSection) => void;
+  /** A corner used by the buttons. */
+  taken: Placement | null;
 }
 
 /** Limits validated by the server. */
@@ -72,20 +75,12 @@ export default class SocialsForm extends Component<SocialsFormAttrs> {
           </p>
         </div>
 
-        <div className="Form-group">
-          <label>{t('placement_label')}</label>
-          <Select
-            value={value.placement}
-            options={Object.fromEntries(
-              (['below-text', 'top-left', 'top-right', 'bottom-left', 'bottom-right'] as const).map((placement) => [
-                placement,
-                t(`placement_${placement.replace('-', '_')}`),
-              ])
-            )}
-            onchange={(placement: SocialsSection['placement']) => this.update({ placement })}
-          />
-          <p className="helpText">{t('placement_help')}</p>
-        </div>
+        <PlacementFields
+          placement={value.placement}
+          mobile={value.mobile}
+          taken={this.attrs.taken}
+          onchange={(changes: PlacementChanges) => this.update(changes)}
+        />
 
         <div className="Form-group">
           <label>{t('size_label')}</label>
@@ -93,20 +88,6 @@ export default class SocialsForm extends Component<SocialsFormAttrs> {
             value={value.size}
             options={Object.fromEntries((['xs', 's', 'm'] as const).map((size) => [size, t(`size_${size}`, { size: SOCIAL_SIZES[size] })]))}
             onchange={(size: SocialsSection['size']) => this.update({ size })}
-          />
-        </div>
-
-        <div className="Form-group">
-          <label>{t('mobile_label')}</label>
-          <Select
-            value={value.placement === 'below-text' && value.mobile === 'below-text' ? 'same' : value.mobile}
-            options={{
-              same: t('mobile_same'),
-              // Already below the text.
-              ...(value.placement === 'below-text' ? {} : { 'below-text': t('mobile_below_text') }),
-              hide: t('mobile_hide'),
-            }}
-            onchange={(mobile: SocialsSection['mobile']) => this.update({ mobile })}
           />
         </div>
 
@@ -143,10 +124,12 @@ export default class SocialsForm extends Component<SocialsFormAttrs> {
           aria-label={t('icon_label', { number })}
           value={item.icon}
           oninput={(e: InputEvent) => {
-            const icon = (e.target as HTMLInputElement).value.trim();
+            // Trimmed once done (onchange), so that spaces can be typed.
+            const icon = (e.target as HTMLInputElement).value;
             // A suggested icon names its network, unless a label is already set.
             set({ icon, ...(!item.label && SUGGESTIONS[icon] ? { label: SUGGESTIONS[icon] } : {}) });
           }}
+          onchange={(e: Event) => set({ icon: (e.target as HTMLInputElement).value.trim() })}
         />
         <input
           className="FormControl wch-SocialsForm-label"

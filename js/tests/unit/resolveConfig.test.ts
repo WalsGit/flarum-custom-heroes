@@ -106,3 +106,27 @@ describe('sectionOwner', () => {
     expect(sectionOwner({}, ['global', 'discussion'], 'background')).toBeNull();
   });
 });
+
+describe('home-only sections', () => {
+  const buttons = { placement: 'below-text', mobile: 'same', items: [] } as any;
+  const configs: HeroConfigs = { global: { buttons, height: { preset: 's' } }, tag: {} };
+
+  it('gives the default buttons to the home hero only', () => {
+    expect(resolveConfig(configs, ['global']).buttons).toBe(buttons);
+    expect(resolveConfig(configs, ['global', 'tag', 'tag:12'])).toEqual({ height: { preset: 's' } });
+    expect(sectionOwner(configs, ['global', 'discussion'], 'buttons')).toBeNull();
+  });
+
+  it('lets tags and discussions opt in at their own level', () => {
+    const tagButtons = { ...buttons, placement: 'top-left' };
+    const withTag = { ...configs, tag: { buttons: tagButtons } };
+
+    expect(resolveConfig(withTag, ['global', 'tag', 'tag:12']).buttons).toBe(tagButtons);
+    expect(sectionOwner(withTag, ['global', 'tag', 'tag:12'], 'buttons')).toBe('tag');
+  });
+
+  it('shows the default buttons where a level asks for them', () => {
+    expect(resolveConfig({ ...configs, tag: { buttons: 'inherit' } }, ['global', 'tag', 'tag:12']).buttons).toBe(buttons);
+    expect(resolveConfig({ discussion: { buttons: 'inherit' } }, ['global', 'discussion']).buttons).toBeUndefined();
+  });
+});

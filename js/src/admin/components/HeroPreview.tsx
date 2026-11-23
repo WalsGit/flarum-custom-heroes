@@ -102,14 +102,16 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
       </div>,
     ];
 
+    const decorated = decoration ? decorateContent(children, decoration) : { content: children, corners: [] };
+
     return (
       <header
         className={classList('Hero wch-PreviewHero', decoration?.className, content.color && 'wch-PreviewHero--colored')}
         style={{ ...(content.color ? { '--hero-bg': content.color } : {}), ...decoration?.style }}
       >
         {decoration?.background}
-        <div className="container">{decoration ? decorateContent(children, decoration) : children}</div>
-        {decoration?.corners}
+        <div className="container">{decorated.content}</div>
+        {decorated.corners}
       </header>
     );
   }

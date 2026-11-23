@@ -27,9 +27,9 @@ walsgit-custom-heroes:
       mobile: Mobile
       tag_title: Tag name
       tag_subtitle: The description of the tag.
-      state_welcome: Welcome text
+      state_welcome: Welcome banner
       state_closed: Once closed
-      hidden: "Once the welcome text is closed, this hero is hidden (Flarum's behavior)."
+      hidden: "Once the welcome banner is closed, this hero is hidden (Flarum's behavior)."
       discussion_title: The title of a discussion
     background:
       title: Background image
@@ -88,19 +88,19 @@ walsgit-custom-heroes:
     height:
       title: Height
       preset_label: Height
-      preset_auto: "Flarum's default"
+      preset_auto: "Flarum's default (follows the text)"
       preset_s: "Small ({desktop} / {tablet} / {mobile} px)"
       preset_m: "Medium ({desktop} / {tablet} / {mobile} px)"
       preset_l: "Large ({desktop} / {tablet} / {mobile} px)"
       preset_custom: Custom
-      preset_help: "Minimum heights on desktop / tablet / mobile: a longer content makes the hero taller."
+      preset_help: "Fixed heights on desktop / tablet / mobile: the hero keeps its height whatever the text (title cut after 2 lines, message after 3)."
       desktop_label: Desktop
       tablet_label: Tablet
       mobile_label: Mobile
     text:
       title: Text
-      intro: "Flarum's welcome text (Appearance) is shown first and can be closed with ✕, like in Flarum. This sets what the hero does once it is closed, or when Flarum's welcome title is empty."
-      after_close_label: Once the welcome text is closed
+      intro: "Flarum's welcome banner (Basics) is shown first and can be closed with ✕, like in Flarum. This sets what the hero does once it is closed, or when the welcome banner has no title."
+      after_close_label: Once the welcome banner is closed
       after_close_hero: Keep the hero, with the text below
       after_close_none: "Hide the hero (Flarum's behavior)"
       title_label: Title

@@ -4,22 +4,23 @@
 .wch-Hero {
   container-type: inline-size;
 
-  // On the inner container rather than on the header, so that the core
-  // slide-up animation of the dismiss button can still collapse the header.
+  // A fixed height (unless Flarum's default), so that the hero does not
+  // change with its text. On the inner container rather than on the header,
+  // so that the core slide-up animation can still collapse the header.
   > .container {
-    min-height: var(--wch-height-mobile, auto);
+    height: var(--wch-height-mobile, auto);
   }
 }
 
 @container (min-width: @screen-tablet) {
   .wch-Hero > .container {
-    min-height: var(--wch-height-tablet, auto);
+    height: var(--wch-height-tablet, auto);
   }
 }
 
 @container (min-width: @screen-desktop) {
   .wch-Hero > .container {
-    min-height: var(--wch-height-desktop, auto);
+    height: var(--wch-height-desktop, auto);
   }
 }
 
@@ -136,4 +137,28 @@
 // Plain text, with its line breaks.
 .wch-Hero-message {
   white-space: pre-line;
+}
+
+// Fixed height: long texts are cut rather than making the hero taller.
+.wch-Hero--fixedHeight {
+  > .container {
+    overflow: hidden;
+  }
+
+  .Hero-title,
+  .Hero-subtitle {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .Hero-title {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .Hero-subtitle {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
 }

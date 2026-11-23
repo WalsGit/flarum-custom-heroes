@@ -38,6 +38,7 @@ export function heroDecoration(configs: HeroConfigs, chain: string[], scope: Her
       {
         'wch-Hero--image': !!image,
         'wch-Hero--overlay': '--wch-overlay' in style,
+        'wch-Hero--fixedHeight': '--wch-height-desktop' in style,
         'wch-Hero--textColor': '--wch-text-color' in style,
       },
       config.textStyle && ['wch-Hero--text', `wch-Hero--align-${config.textStyle.align}`, `wch-Hero--vAlign-${config.textStyle.vAlign}`]

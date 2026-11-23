@@ -35,4 +35,9 @@ describe('heroDecoration', () => {
 
     expect(decoration.className).toBe('wch-Hero wch-Hero--discussion wch-Hero--textColor wch-Hero--text wch-Hero--align-right wch-Hero--vAlign-bottom');
   });
+
+  it('marks a fixed height, but not the height of Flarum', () => {
+    expect(heroDecoration({ global: { height: { preset: 'm' } } }, ['global'], 'global', assets)!.className).toContain('wch-Hero--fixedHeight');
+    expect(heroDecoration({ global: { height: { preset: 'auto' } } }, ['global'], 'global', assets)!.className).not.toContain('wch-Hero--fixedHeight');
+  });
 });

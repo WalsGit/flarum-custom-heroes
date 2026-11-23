@@ -96,6 +96,10 @@ walsgit-custom-heroes:
       desktop_label: Desktop
       tablet_label: Tablet
       mobile_label: Mobile
+    dismissible:
+      title: Close button
+      label: Show the close button (✕)
+      help: "Once this hero is customized, it is always shown: the close button only hides its text, for the visitor who clicks it. Without the button, the text is always shown."
 
   api:
     validation:

@@ -94,6 +94,10 @@ walsgit-custom-heroes:
       desktop_label: Ordinateur
       tablet_label: Tablette
       mobile_label: Mobile
+    dismissible:
+      title: Bouton fermer
+      label: Afficher le bouton fermer (✕)
+      help: "Une fois ce hero personnalisé, il est toujours affiché : le bouton fermer ne masque que son texte, pour le visiteur qui clique dessus. Sans le bouton, le texte est toujours affiché."
 
   api:
     validation:

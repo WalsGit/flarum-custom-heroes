@@ -102,6 +102,7 @@ export default class HeroesPage extends ExtensionPage {
                   <HeightForm value={value} onchange={set} />
                 )
               )}
+              {this.key === 'welcome' && this.dismissibleSection()}
             </div>
 
             <div className="Form-group Form-controls wch-HeroesPage-controls">
@@ -156,6 +157,24 @@ export default class HeroesPage extends ExtensionPage {
         </Switch>
 
         {value !== undefined && form(value as NonNullable<HeroConfig[K]>, set)}
+      </fieldset>
+    );
+  }
+
+  /** Welcome only, with no level to inherit from: a missing value is the core's behavior (a close button). */
+  dismissibleSection() {
+    const toggle = (dismissible: boolean) => {
+      const { dismissible: _, ...rest } = this.draft;
+      this.draft = dismissible ? rest : { ...rest, dismissible: false };
+    };
+
+    return (
+      <fieldset className="wch-Section wch-Section--dismissible">
+        <legend>{t('dismissible.title')}</legend>
+        <Switch state={this.draft.dismissible !== false} onchange={toggle}>
+          {t('dismissible.label')}
+        </Switch>
+        <p className="helpText">{t('dismissible.help')}</p>
       </fieldset>
     );
   }

@@ -89,7 +89,7 @@ class SaveConfigTest extends TestCase
     #[Test]
     public function guest_cannot_save_a_config(): void
     {
-        $response = $this->save(['scope' => 'welcome', 'config' => ['text' => ['afterClose' => 'none']]], null);
+        $response = $this->save(['scope' => 'global', 'config' => ['text' => ['afterClose' => 'none']]], null);
 
         $this->assertGreaterThanOrEqual(400, $response->getStatusCode());
         $this->assertSame([], $this->forumPayload()['configs']);
@@ -98,7 +98,7 @@ class SaveConfigTest extends TestCase
     #[Test]
     public function non_admin_cannot_save_a_config(): void
     {
-        $response = $this->save(['scope' => 'welcome', 'config' => ['text' => ['afterClose' => 'none']]], 2);
+        $response = $this->save(['scope' => 'global', 'config' => ['text' => ['afterClose' => 'none']]], 2);
 
         $this->assertSame(403, $response->getStatusCode());
         $this->assertSame([], $this->forumPayload()['configs']);
@@ -107,14 +107,14 @@ class SaveConfigTest extends TestCase
     #[Test]
     public function admin_can_save_a_config_and_the_forum_receives_it(): void
     {
-        $response = $this->save(['scope' => 'welcome', 'config' => ['textStyle' => ['align' => 'left']]]);
+        $response = $this->save(['scope' => 'global', 'config' => ['textStyle' => ['align' => 'left']]]);
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('left', $this->body($response)['config']['textStyle']['align']);
 
         // Normalized with the defaults, and visible to guests too.
         $configs = $this->forumPayload()['configs'];
-        $this->assertSame('middle', $configs['welcome']['textStyle']['vAlign']);
+        $this->assertSame('middle', $configs['global']['textStyle']['vAlign']);
     }
 
     #[Test]
@@ -139,10 +139,10 @@ class SaveConfigTest extends TestCase
     public function null_or_empty_config_deletes_the_stored_one(): void
     {
         $this->save(['scope' => 'global', 'config' => ['height' => ['preset' => 's']]]);
-        $this->save(['scope' => 'welcome', 'config' => ['text' => ['afterClose' => 'none']]]);
+        $this->save(['scope' => 'global', 'config' => ['text' => ['afterClose' => 'none']]]);
 
         $this->assertSame(200, $this->save(['scope' => 'global', 'config' => null])->getStatusCode());
-        $this->assertSame(200, $this->save(['scope' => 'welcome', 'config' => []])->getStatusCode());
+        $this->assertSame(200, $this->save(['scope' => 'global', 'config' => []])->getStatusCode());
 
         $this->assertSame([], $this->forumPayload()['configs']);
     }
@@ -150,7 +150,7 @@ class SaveConfigTest extends TestCase
     #[Test]
     public function invalid_config_is_rejected_with_the_path_of_the_error(): void
     {
-        $response = $this->save(['scope' => 'welcome', 'config' => ['overlay' => ['type' => 'solid', 'color' => 'red;x']]]);
+        $response = $this->save(['scope' => 'global', 'config' => ['overlay' => ['type' => 'solid', 'color' => 'red;x']]]);
 
         $this->assertSame(422, $response->getStatusCode());
         $this->assertStringContainsString('config.overlay.color', (string) $response->getBody());
@@ -162,7 +162,7 @@ class SaveConfigTest extends TestCase
     {
         $this->assertSame(422, $this->save(['scope' => 'user', 'config' => []])->getStatusCode());
         $this->assertSame(422, $this->save(['config' => []])->getStatusCode());
-        $this->assertSame(422, $this->save(['scope' => 'welcome', 'scopeId' => '3', 'config' => []])->getStatusCode());
+        $this->assertSame(422, $this->save(['scope' => 'global', 'scopeId' => '3', 'config' => []])->getStatusCode());
         $this->assertSame(422, $this->save(['scope' => 'tag', 'scopeId' => 12, 'config' => []])->getStatusCode());
         $this->assertSame(422, $this->save(['scope' => 'tag', 'scopeId' => '../1', 'config' => null])->getStatusCode());
     }

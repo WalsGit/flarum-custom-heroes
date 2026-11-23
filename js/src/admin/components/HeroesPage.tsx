@@ -28,7 +28,7 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
  * here.
  */
 export default class HeroesPage extends ExtensionPage {
-  /** The config being edited: `global`, `welcome`, `tag:12`… */
+  /** The config being edited: `global`, `discussion`, `tag:12`… */
   key = 'global';
   /** The stored configs, kept in sync with the server after each save. */
   configs: HeroConfigs = {};
@@ -104,7 +104,7 @@ export default class HeroesPage extends ExtensionPage {
                   <HeightForm value={value} onchange={set} />
                 )
               )}
-              {this.key === 'welcome' && this.textSection()}
+              {this.key === 'global' && this.textSection()}
               {/* Not per tag (D4). */}
               {!targetOf(this.key).scopeId &&
                 this.section(
@@ -172,7 +172,7 @@ export default class HeroesPage extends ExtensionPage {
     );
   }
 
-  /** Welcome only, with no level to inherit from: the default is stored as a missing section. */
+  /** Default level only (home hero), with no level to inherit from: the default is stored as a missing section. */
   textSection() {
     const set = (text: TextSection) => {
       const { text: _, ...rest } = this.draft;
@@ -205,7 +205,7 @@ export default class HeroesPage extends ExtensionPage {
   }
 
   scopeOptions(): Record<string, string> {
-    const keys = ['global', 'welcome', 'discussion'];
+    const keys = ['global', 'discussion'];
 
     if (this.tagsEnabled()) {
       const tags = app.store.all('tags').sort((a, b) => (a.attribute('name') as string).localeCompare(b.attribute('name') as string));

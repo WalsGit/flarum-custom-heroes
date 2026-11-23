@@ -11,7 +11,7 @@ import { parentChain, targetOf } from '../utils/scopes';
 export interface HeroPreviewAttrs extends ComponentAttrs {
   /** The stored configs, with the draft of the edited target in place. */
   configs: HeroConfigs;
-  /** The edited target: `global`, `welcome`, `tag:12`… */
+  /** The edited target: `global`, `discussion`, `tag:12`… */
   target: string;
 }
 
@@ -28,7 +28,7 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
  */
 export default class HeroPreview extends Component<HeroPreviewAttrs> {
   device: Device = 'desktop';
-  /** Welcome: preview the hero once Flarum's welcome text is closed. */
+  /** Home (default level): preview the hero once Flarum's welcome text is closed. */
   closed = false;
   observer: ResizeObserver | null = null;
   onscroll = () => this.markStuck();
@@ -50,7 +50,7 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
               </Button>
             ))}
           </div>
-          {targetOf(this.attrs.target).scope === 'welcome' && (
+          {targetOf(this.attrs.target).scope === 'global' && (
             <div className="ButtonGroup">
               {[false, true].map((closed) => (
                 <Button
@@ -76,20 +76,20 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
   hero() {
     const { configs, target } = this.attrs;
     const { scope, scopeId } = targetOf(target);
-    // The global config is previewed on its own, the others with what they inherit.
+    // The default config is previewed as the home hero, the others with what they inherit.
     const chain = [...parentChain(target), target];
     const payload = app.forum.attribute<ForumPayload>('walsgitCustomHeroes');
     const decoration = heroDecoration(configs, chain, scope, payload.assetsUrl);
     const config = resolveConfig(configs, chain);
     // Like on the forum: without Flarum's welcome title, the hero is in its closed state.
-    const closed = scope === 'welcome' && (this.closed || !app.forum.attribute<string>('welcomeTitle')?.trim());
+    const closed = scope === 'global' && (this.closed || !app.forum.attribute<string>('welcomeTitle')?.trim());
 
     if (closed && (config.text ?? DEFAULT_TEXT).afterClose === 'none') {
       return <p className="wch-Preview-hidden">{t('hidden')}</p>;
     }
 
     const content = this.content(scope, scopeId, config, closed);
-    const closable = scope === 'welcome' && !closed;
+    const closable = scope === 'global' && !closed;
 
     return (
       <header
@@ -101,14 +101,17 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
           {closable && <i className="Hero-close fas fa-times" aria-hidden="true" />}
           <div className="containerNarrow">
             {content.title && <h1 className="Hero-title">{content.title}</h1>}
-            {content.subtitle && <div className={classList('Hero-subtitle', closed && 'wch-Hero-message')}>{content.subtitle}</div>}
+            {/* Like the core: kept even when empty (but discussions have none). */}
+            {(content.subtitle || (content.title && scope !== 'discussion')) && (
+              <div className={classList('Hero-subtitle', closed && 'wch-Hero-message')}>{content.subtitle}</div>
+            )}
           </div>
         </div>
       </header>
     );
   }
 
-  /** What the hero shows: the Welcome texts, a tag, or a sample discussion. */
+  /** What the hero shows: the Welcome texts (default level), a tag, or a sample discussion. */
   content(scope: string, scopeId: string, config: HeroConfig, closed: boolean): { title: string; subtitle?: string; color?: string } {
     if (scope === 'tag') {
       const tag = scopeId ? app.store.getById('tags', scopeId) : null;

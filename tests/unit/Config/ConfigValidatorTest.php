@@ -34,11 +34,11 @@ class ConfigValidatorTest extends TestCase
         parent::setUp();
 
         $existing = [
-            ImagePaths::background(Scope::Welcome, '', self::BG_ID, 640),
-            ImagePaths::background(Scope::Welcome, '', self::BG_ID, 1024),
-            ImagePaths::logo(Scope::Welcome, '', self::LOGO_ID),
+            ImagePaths::background(Scope::Global, '', self::BG_ID, 640),
+            ImagePaths::background(Scope::Global, '', self::BG_ID, 1024),
+            ImagePaths::logo(Scope::Global, '', self::LOGO_ID),
             // Uploaded for another hero.
-            ImagePaths::background(Scope::Global, '', self::OTHER_ID, 640),
+            ImagePaths::background(Scope::Discussion, '', self::OTHER_ID, 640),
             ImagePaths::background(Scope::Tag, '12', self::OTHER_ID, 640),
         ];
 
@@ -58,12 +58,12 @@ class ConfigValidatorTest extends TestCase
      * @param array<mixed> $config
      * @return array<string, mixed>
      */
-    private function valid(array $config, Scope $scope = Scope::Welcome, string $scopeId = ''): array
+    private function valid(array $config, Scope $scope = Scope::Global, string $scopeId = ''): array
     {
         return $this->validator->validate($scope, $scopeId, $config);
     }
 
-    private function assertInvalid(mixed $config, string $path, string $error, Scope $scope = Scope::Welcome, string $scopeId = ''): void
+    private function assertInvalid(mixed $config, string $path, string $error, Scope $scope = Scope::Global, string $scopeId = ''): void
     {
         try {
             $this->validator->validate($scope, $scopeId, $config);
@@ -124,7 +124,6 @@ class ConfigValidatorTest extends TestCase
     {
         return [
             'global with id' => [Scope::Global, '1'],
-            'welcome with id' => [Scope::Welcome, '1'],
             'discussion with id' => [Scope::Discussion, '1'],
             'tag with text id' => [Scope::Tag, 'abc'],
             'tag with zero id' => [Scope::Tag, '0'],
@@ -145,10 +144,10 @@ class ConfigValidatorTest extends TestCase
     public static function forbiddenSections(): array
     {
         return [
-            'unknown section' => [Scope::Welcome, '', 'script'],
-            'text on global' => [Scope::Global, '', 'text'],
+            'unknown section' => [Scope::Global, '', 'script'],
+            'text on discussion' => [Scope::Discussion, '', 'text'],
             'text on tag' => [Scope::Tag, '', 'text'],
-            'dismissible (removed)' => [Scope::Welcome, '', 'dismissible'],
+            'dismissible (removed)' => [Scope::Global, '', 'dismissible'],
             'logo on tag instance' => [Scope::Tag, '12', 'logo'],
             'text style on tag instance' => [Scope::Tag, '12', 'textStyle'],
         ];

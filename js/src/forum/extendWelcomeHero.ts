@@ -12,7 +12,7 @@ const DISMISSED_KEY = 'welcomeHidden';
 /** The resolved Welcome config, or null when the Welcome hero is not customized. */
 function welcomeConfig(): HeroConfig | null {
   const payload = app.forum.attribute<ForumPayload | undefined>('walsgitCustomHeroes');
-  const config = payload ? resolveConfig(normalizeConfigs(payload.configs), configChain('welcome')) : {};
+  const config = payload ? resolveConfig(normalizeConfigs(payload.configs), configChain('global')) : {};
 
   return Object.keys(config).length > 0 ? config : null;
 }
@@ -48,20 +48,25 @@ export default function extendWelcomeHero() {
 
     if (!config) return;
 
-    if (!isClosed()) {
-      if (!app.forum.attribute<string>('welcomeMessage')?.trim()) items.remove('subtitle');
-
-      return;
-    }
+    // The welcome banner stays as in the core.
+    if (!isClosed()) return;
 
     // The permanent text: plain text, never trusted HTML.
     const { title, message } = config.text ?? DEFAULT_TEXT;
 
+    // No text at all: no content (the hero keeps its height).
+    if (!title.trim() && !message.trim()) {
+      items.remove('title');
+      items.remove('subtitle');
+
+      return;
+    }
+
     if (title.trim()) items.setContent('title', m('h1.Hero-title', title));
     else items.remove('title');
 
-    if (message.trim()) items.setContent('subtitle', m('.Hero-subtitle.wch-Hero-message', message));
-    else items.remove('subtitle');
+    // Kept even when empty, like the core and tag heroes, so that the title sits at the same place.
+    items.setContent('subtitle', m('.Hero-subtitle.wch-Hero-message', message.trim() ? message : ''));
   });
 
   extend(WelcomeHero.prototype, 'bodyItems', function (this: WelcomeHero, items: ItemList<Mithril.Children>) {

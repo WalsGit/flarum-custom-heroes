@@ -88,7 +88,7 @@ class UploadImageTest extends TestCase
     private function upload(string $path, array $fields = [], int $actorId = 1, string $clientType = 'image/png'): ResponseInterface
     {
         $request = $this->request('POST', '/api/walsgit-custom-heroes/images', ['authenticatedAs' => $actorId])
-            ->withParsedBody($fields + ['kind' => 'background', 'scope' => 'welcome', 'scopeId' => ''])
+            ->withParsedBody($fields + ['kind' => 'background', 'scope' => 'discussion', 'scopeId' => ''])
             ->withUploadedFiles(['image' => new UploadedFile($path, (int) filesize($path), UPLOAD_ERR_OK, 'image.png', $clientType)]);
 
         return $this->send($request);
@@ -145,7 +145,7 @@ class UploadImageTest extends TestCase
         $ref = $this->body($this->upload($this->png(300, 100)));
 
         $this->assertSame([300, 100, [640]], [$ref['width'], $ref['height'], $ref['widths']]);
-        $this->assertSame(["bg-welcome-{$ref['id']}-640.webp"], $this->storedFiles());
+        $this->assertSame(["bg-discussion-{$ref['id']}-640.webp"], $this->storedFiles());
     }
 
     #[Test]
@@ -162,7 +162,7 @@ class UploadImageTest extends TestCase
         $this->assertSame(422, $this->upload($gif)->getStatusCode());
         $this->assertSame(422, $this->upload($this->png(4001, 100))->getStatusCode());
         $this->assertSame(422, $this->upload($this->png(800, 300), ['kind' => 'logo'])->getStatusCode());
-        $this->assertSame(422, $this->upload($this->png(800, 300), ['scope' => 'welcome', 'scopeId' => '3'])->getStatusCode());
+        $this->assertSame(422, $this->upload($this->png(800, 300), ['scope' => 'discussion', 'scopeId' => '3'])->getStatusCode());
         $this->assertSame([], $this->storedFiles());
     }
 
@@ -173,7 +173,7 @@ class UploadImageTest extends TestCase
     {
         return $this->send($this->request('POST', '/api/walsgit-custom-heroes/images', [
             'authenticatedAs' => 1,
-            'json' => $json + ['kind' => 'background', 'scope' => 'welcome', 'scopeId' => ''],
+            'json' => $json + ['kind' => 'background', 'scope' => 'discussion', 'scopeId' => ''],
         ]));
     }
 
@@ -216,13 +216,13 @@ class UploadImageTest extends TestCase
 
         // The first upload was never saved: replaced by the second one.
         $this->assertNotSame($first['id'], $second['id']);
-        $this->assertSame(["bg-global-{$other['id']}-640.webp", "bg-welcome-{$second['id']}-640.webp"], $this->storedFiles());
+        $this->assertSame(["bg-discussion-{$second['id']}-640.webp", "bg-global-{$other['id']}-640.webp"], $this->storedFiles());
 
         // Saving keeps the referenced image only, and leaves other heroes alone.
-        $this->saveConfig('welcome', '', ['background' => ['image' => $second]]);
+        $this->saveConfig('discussion', '', ['background' => ['image' => $second]]);
         $third = $this->body($this->upload($this->png(700, 300, 4)));
         $this->assertCount(3, $this->storedFiles());
-        $this->assertSame(200, $this->saveConfig('welcome', '', ['height' => ['preset' => 's']])->getStatusCode());
+        $this->assertSame(200, $this->saveConfig('discussion', '', ['height' => ['preset' => 's']])->getStatusCode());
         $this->assertSame(["bg-global-{$other['id']}-640.webp"], $this->storedFiles());
         $this->assertNotSame($second['id'], $third['id']);
 

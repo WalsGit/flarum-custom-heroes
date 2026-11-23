@@ -16,7 +16,10 @@ export function normalizeConfigs(configs: unknown): HeroConfigs {
  * The keys of the configs that apply to a hero, from the most general to the
  * most specific. For example `['global', 'tag', 'tag:12']`.
  */
-export function configChain(scope: Exclude<HeroScope, 'global'>, scopeId?: string | null): string[] {
+export function configChain(scope: HeroScope, scopeId?: string | null): string[] {
+  // The home (Welcome) hero uses the default config itself.
+  if (scope === 'global') return ['global'];
+
   const chain = ['global', scope];
 
   if (scopeId) {

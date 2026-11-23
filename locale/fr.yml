@@ -1,10 +1,9 @@
 walsgit-custom-heroes:
   admin:
     scope_label: Hero à personnaliser
-    scope_help: "Chaque hero hérite des réglages du niveau au-dessus : Par défaut, puis son type (Accueil, Tags, Discussions), puis le tag lui-même."
+    scope_help: "Les réglages Par défaut s'appliquent au hero d'accueil et à tous les heroes. Tags et Discussions en héritent, puis chaque tag hérite de Tags."
     scopes:
-      global: Par défaut (tous les heroes)
-      welcome: Accueil (Welcome)
+      global: Par défaut (accueil et tous les heroes)
       tag: Tags (par défaut)
       tag_instance: "Tag : {name}"
       discussion: Discussions
@@ -26,9 +25,9 @@ walsgit-custom-heroes:
       mobile: Mobile
       tag_title: Nom du tag
       tag_subtitle: La description du tag.
-      state_welcome: Texte d'accueil
+      state_welcome: Bannière de bienvenue
       state_closed: Une fois fermé
-      hidden: Une fois le texte d'accueil fermé, ce hero est masqué (comportement de Flarum).
+      hidden: Une fois la bannière de bienvenue fermée, ce hero est masqué (comportement de Flarum).
       discussion_title: Le titre d'une discussion
     background:
       title: Image de fond
@@ -87,19 +86,19 @@ walsgit-custom-heroes:
     height:
       title: Hauteur
       preset_label: Hauteur
-      preset_auto: Hauteur par défaut de Flarum
+      preset_auto: Hauteur par défaut de Flarum (suit le texte)
       preset_s: "Petite ({desktop} / {tablet} / {mobile} px)"
       preset_m: "Moyenne ({desktop} / {tablet} / {mobile} px)"
       preset_l: "Grande ({desktop} / {tablet} / {mobile} px)"
       preset_custom: Personnalisée
-      preset_help: "Hauteurs minimales sur ordinateur / tablette / mobile : un contenu plus long agrandit le hero."
+      preset_help: "Hauteurs fixes sur ordinateur / tablette / mobile : le hero garde sa hauteur quel que soit le texte (titre coupé après 2 lignes, message après 3)."
       desktop_label: Ordinateur
       tablet_label: Tablette
       mobile_label: Mobile
     text:
       title: Texte
-      intro: "Le texte d'accueil de Flarum (Apparence) s'affiche d'abord et se ferme avec ✕, comme dans Flarum. Ce réglage définit ce que fait le hero une fois ce texte fermé, ou si le titre d'accueil de Flarum est vide."
-      after_close_label: Une fois le texte d'accueil fermé
+      intro: "La bannière de bienvenue de Flarum (Essentiels) s'affiche d'abord et se ferme avec ✕, comme dans Flarum. Ce réglage définit ce que fait le hero une fois la bannière fermée, ou si elle n'a pas de titre."
+      after_close_label: Une fois la bannière de bienvenue fermée
       after_close_hero: Garder le hero, avec le texte ci-dessous
       after_close_none: Masquer le hero (comportement de Flarum)
       title_label: Titre

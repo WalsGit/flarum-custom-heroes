@@ -1,4 +1,4 @@
-import type { BackgroundSection, Corner, GradientStop, HeightSection, HeroConfig, OverlaySection, TextStyleSection } from './types';
+import type { BackgroundSection, Corner, GradientStop, HeightSection, HeroConfig, OverlaySection, SocialsSection, TextStyleSection } from './types';
 
 /** Heights of the presets in pixels, per breakpoint. */
 export const HEIGHT_PRESETS = {
@@ -40,6 +40,16 @@ function textVariables(text: TextStyleSection): Record<string, string> {
     '--wch-subtitle-size': `${subtitle}rem`,
     '--wch-subtitle-size-mobile': `${subtitleMobile}rem`,
     ...(text.color ? { '--wch-text-color': text.color } : {}),
+  };
+}
+
+/** Social icon sizes in pixels. */
+export const SOCIAL_SIZES = { xs: 14, s: 18, m: 24 } as const;
+
+function socialsVariables(socials: SocialsSection): Record<string, string> {
+  return {
+    '--wch-socials-size': `${SOCIAL_SIZES[socials.size]}px`,
+    ...(socials.color ? { '--wch-socials-color': socials.color } : {}),
   };
 }
 
@@ -104,5 +114,6 @@ export function heroStyle(config: HeroConfig): Record<string, string> {
     ...(overlay ? { '--wch-overlay': overlay } : {}),
     ...(config.textStyle ? textVariables(config.textStyle) : {}),
     ...(config.logo?.image ? { '--wch-logo-height': `${LOGO_HEIGHTS[config.logo.size]}px` } : {}),
+    ...(config.socials?.items.length ? socialsVariables(config.socials) : {}),
   };
 }

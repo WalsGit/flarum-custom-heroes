@@ -1,9 +1,10 @@
+import Icon from 'flarum/common/components/Icon';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { backgroundImageAttrs, logoImageUrl } from './backgroundImage';
 import { heroStyle } from './heroStyle';
 import { resolveConfig, sectionOwner } from './resolveConfig';
-import type { HeroConfig, HeroConfigs, HeroScope } from './types';
+import type { HeroConfig, HeroConfigs, HeroScope, Placement, SocialsSection } from './types';
 
 /**
  * Everything the extension adds to a hero header, from a resolved config.
@@ -15,8 +16,12 @@ export interface HeroDecoration {
   style: Record<string, string>;
   /** The background image, to put first in the header. */
   background: Mithril.Vnode | null;
-  /** The logo, to put next to the content with `withLogo()`. */
+  /** The logo, put next to the content by `decorateContent()`. */
   logo: Mithril.Vnode | null;
+  /** Below the text, put by `decorateContent()`. */
+  belowText: Mithril.Vnode | null;
+  /** Corner slots, to put last in the header, over everything. */
+  corners: Mithril.Vnode[];
 }
 
 const isCloseButton = (child: Mithril.Children) =>
@@ -25,20 +30,62 @@ const isCloseButton = (child: Mithril.Children) =>
     .includes('Hero-close');
 
 /**
- * Groups the logo with the content of a hero container, so that both are
- * placed together; the close button stays apart.
+ * Adds the decoration to the children of a hero container: the logo grouped
+ * with the content, then what goes below the text. The close button stays
+ * apart.
  */
-export function withLogo(children: Mithril.ChildArray, logo: Mithril.Vnode): Mithril.Children[] {
-  return [
-    ...children.filter(isCloseButton),
-    m('.wch-Hero-group', [
-      logo,
+export function decorateContent(children: Mithril.ChildArray, decoration: HeroDecoration): Mithril.Children[] {
+  let content: Mithril.Children[] = children.filter((child) => !isCloseButton(child));
+
+  // Wrapped, so that the text and what is below it are placed (and cut by a fixed height) together.
+  if (decoration.belowText) content = [m('.wch-Hero-body', [...content, decoration.belowText])];
+  if (decoration.logo) content = [m('.wch-Hero-group', [decoration.logo, m('.wch-Hero-groupText', content)])];
+
+  return [...children.filter(isCloseButton), ...content];
+}
+
+/** The social icons: links named by their label, web links in a new tab. */
+function socialLinks(socials: SocialsSection): Mithril.Vnode {
+  return m(
+    'ul.wch-Socials',
+    socials.items.map((item) =>
       m(
-        '.wch-Hero-groupText',
-        children.filter((child) => !isCloseButton(child))
-      ),
-    ]),
-  ];
+        'li',
+        m(
+          'a.wch-Socials-link',
+          {
+            href: item.url,
+            'aria-label': item.label,
+            title: item.label,
+            ...(/^https?:/.test(item.url) ? { target: '_blank', rel: 'noopener noreferrer' } : {}),
+          },
+          // Brand icons only exist in their own style: never forced to the forum's icon style.
+          m(Icon, { name: item.icon, noStyleOverride: true })
+        )
+      )
+    )
+  );
+}
+
+const slot = (placement: Placement, content: Mithril.Children, className?: string | false) =>
+  m(`.wch-Hero-slot.wch-Hero-slot--${placement}`, { className: className || undefined }, content);
+
+/** Where the social icons go: below the text and in a corner, each maybe only on some screens. */
+function socialSlots(socials: SocialsSection | null): Pick<HeroDecoration, 'belowText' | 'corners'> {
+  if (!socials) return { belowText: null, corners: [] };
+
+  // A new list per slot: Mithril cannot render the same vnode in two places.
+  const links = () => socialLinks(socials);
+
+  if (socials.placement === 'below-text') {
+    return { belowText: slot('below-text', links(), socials.mobile === 'hide' && 'wch-Hero-slot--hideMobile'), corners: [] };
+  }
+
+  return {
+    belowText: socials.mobile === 'below-text' ? slot('below-text', links(), 'wch-Hero-slot--mobileOnly') : null,
+    // Compared to the moving values: a config saved before `mobile` existed behaves as `same`.
+    corners: [slot(socials.placement, links(), (socials.mobile === 'below-text' || socials.mobile === 'hide') && 'wch-Hero-slot--hideMobile')],
+  };
 }
 
 /**
@@ -56,6 +103,7 @@ export function heroDecoration(configs: HeroConfigs, chain: string[], scope: Her
   const style = heroStyle(config);
   const logo = config.logo?.image ? config.logo : null;
   const logoOwner = sectionOwner(configs, chain, 'logo');
+  const socials = config.socials?.items.length ? config.socials : null;
 
   return {
     className: classList(
@@ -68,7 +116,8 @@ export function heroDecoration(configs: HeroConfigs, chain: string[], scope: Her
         'wch-Hero--textColor': '--wch-text-color' in style,
       },
       config.textStyle && ['wch-Hero--text', `wch-Hero--align-${config.textStyle.align}`, `wch-Hero--vAlign-${config.textStyle.vAlign}`],
-      logo && ['wch-Hero--logo', `wch-Hero--logo-${logo.side}`, logo.hideOnMobile && 'wch-Hero--logoHideMobile']
+      logo && ['wch-Hero--logo', `wch-Hero--logo-${logo.side}`, logo.hideOnMobile && 'wch-Hero--logoHideMobile'],
+      socials && 'wch-Hero--socials'
     ),
     style,
     // Decorative, behind the content. An <img> rather than a CSS background, so that the browser picks the size.
@@ -83,5 +132,6 @@ export function heroDecoration(configs: HeroConfigs, chain: string[], scope: Her
             height: logo.image.height,
           })
         : null,
+    ...socialSlots(socials),
   };
 }

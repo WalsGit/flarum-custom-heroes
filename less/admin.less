@@ -302,3 +302,56 @@
   text-align: center;
   color: var(--muted-color);
 }
+
+.wch-SocialsForm-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.wch-SocialsForm-icon {
+  width: 24px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.wch-SocialsForm-iconInput,
+.wch-SocialsForm-label {
+  width: 150px;
+}
+
+.wch-SocialsForm-url {
+  flex: 1;
+  min-width: 200px;
+}
+
+// On phones: icon, class and label, then the link and the buttons.
+@media @phone {
+  .wch-SocialsForm-item {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) minmax(0, 1fr) repeat(3, 36px);
+  }
+
+  .wch-SocialsForm-iconInput,
+  .wch-SocialsForm-label,
+  .wch-SocialsForm-url {
+    width: auto;
+    min-width: 0;
+  }
+
+  .wch-SocialsForm-iconInput,
+  .wch-SocialsForm-url {
+    grid-column: ~"2 / 4";
+  }
+
+  .wch-SocialsForm-label {
+    grid-column: ~"4 / -1";
+  }
+}
+
+// The preview's links must not leave the admin.
+.wch-PreviewHero .wch-Socials-link {
+  pointer-events: none;
+}

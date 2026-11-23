@@ -97,6 +97,8 @@ export interface SocialsSection {
   size: 'xs' | 's' | 'm';
   placement: Placement;
   color: Color | null;
+  /** On mobile: like on wider screens, below the text instead of a corner, or hidden. */
+  mobile: 'same' | 'below-text' | 'hide';
   items: SocialItem[];
 }
 

@@ -3,7 +3,7 @@ import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
-import { heroDecoration, withLogo } from '../../common/heroDecoration';
+import { decorateContent, heroDecoration } from '../../common/heroDecoration';
 import { resolveConfig } from '../../common/resolveConfig';
 import { DEFAULT_TEXT, type ForumPayload, type HeroConfig, type HeroConfigs } from '../../common/types';
 import { parentChain, targetOf } from '../utils/scopes';
@@ -108,7 +108,8 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
         style={{ ...(content.color ? { '--hero-bg': content.color } : {}), ...decoration?.style }}
       >
         {decoration?.background}
-        <div className="container">{decoration?.logo ? withLogo(children, decoration.logo) : children}</div>
+        <div className="container">{decoration ? decorateContent(children, decoration) : children}</div>
+        {decoration?.corners}
       </header>
     );
   }

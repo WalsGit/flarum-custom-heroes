@@ -10,6 +10,8 @@ export type Color = string;
 export type Size = 's' | 'm' | 'l';
 export type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 export type Placement = Corner | 'below-text';
+/** On mobile: like on wider screens, below the text instead of a corner, or hidden. */
+export type MobileBehavior = 'same' | 'below-text' | 'hide';
 export interface ImageRef {
     id: string;
     width: number;
@@ -97,13 +99,14 @@ export interface SocialsSection {
     size: 'xs' | 's' | 'm';
     placement: Placement;
     color: Color | null;
-    /** On mobile: like on wider screens, below the text instead of a corner, or hidden. */
-    mobile: 'same' | 'below-text' | 'hide';
+    mobile: MobileBehavior;
     items: SocialItem[];
 }
 interface ButtonBase {
     label: string;
     icon: string | null;
+    /** Flarum's primary or standard button, or an outline in the hero's text color. */
+    style: 'primary' | 'default' | 'outline';
     size: Size;
     bg: Color | null;
     color: Color | null;
@@ -118,6 +121,7 @@ export type ButtonItem = (ButtonBase & {
 });
 export interface ButtonsSection {
     placement: Placement;
+    mobile: MobileBehavior;
     items: ButtonItem[];
 }
 /**
@@ -132,8 +136,13 @@ export interface HeroConfig {
     text?: TextSection;
     logo?: LogoSection;
     socials?: SocialsSection;
-    buttons?: ButtonsSection;
+    /** Tags and discussions do not inherit the default buttons: `inherit` shows them there. */
+    buttons?: ButtonsSection | 'inherit';
 }
+/** The config a hero uses, once inherited: `inherit` is replaced by the default buttons. */
+export type ResolvedConfig = Omit<HeroConfig, 'buttons'> & {
+    buttons?: ButtonsSection;
+};
 /** Configs keyed by `scope` or `scope:scopeId`. */
 export type HeroConfigs = Record<string, HeroConfig>;
 /** The `walsgitCustomHeroes` forum attribute. */

@@ -100,6 +100,7 @@ walsgit-custom-heroes:
       mobile_label: Mobile
     logo:
       title: Logo
+      add_label: Add a logo to the hero
       no_logo: No logo
       image_help: "JPEG, PNG or WebP. Transparency is kept. Stored at most 256 px high (twice the largest size, for sharp screens)."
       side_label: Side

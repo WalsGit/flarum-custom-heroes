@@ -26,6 +26,9 @@ walsgit-custom-heroes:
       mobile: Mobile
       tag_title: Nom du tag
       tag_subtitle: La description du tag.
+      state_welcome: Texte d'accueil
+      state_closed: Une fois fermé
+      hidden: Une fois le texte d'accueil fermé, ce hero est masqué (comportement de Flarum).
       discussion_title: Le titre d'une discussion
     background:
       title: Image de fond
@@ -95,13 +98,13 @@ walsgit-custom-heroes:
       mobile_label: Mobile
     text:
       title: Texte
-      source_label: Texte
-      source_core: Texte d'accueil de Flarum (Apparence)
-      source_custom: Texte personnalisé
-      source_help: "Le texte personnalisé remplace le texte d'accueil de Flarum dans ce hero uniquement. Il est permanent : il n'a pas de bouton fermer."
+      intro: "Le texte d'accueil de Flarum (Apparence) s'affiche d'abord et se ferme avec ✕, comme dans Flarum. Ce réglage définit ce que fait le hero une fois ce texte fermé, ou si le titre d'accueil de Flarum est vide."
+      after_close_label: Une fois le texte d'accueil fermé
+      after_close_hero: Garder le hero, avec le texte ci-dessous
+      after_close_none: Masquer le hero (comportement de Flarum)
       title_label: Titre
       message_label: Message
-      message_help: Texte brut, les retours à la ligne sont conservés. Laisser le titre et le message vides pour un hero sans texte.
+      message_help: Texte brut, les retours à la ligne sont conservés. Laisser les deux vides pour un hero sans texte (fond seul).
     text_style:
       title: Style du texte
       align_label: Alignement horizontal
@@ -122,10 +125,6 @@ walsgit-custom-heroes:
       auto_color_label: Couleur automatique (celle de Flarum)
       color_label: Couleur du texte
       color_help: Une couleur claire sur une image ou un filtre sombre garde le texte lisible.
-    dismissible:
-      title: Bouton fermer
-      label: Afficher le bouton fermer (✕)
-      help: "Une fois ce hero personnalisé, il est toujours affiché : le bouton fermer ne masque que le texte d'accueil de Flarum, pour le visiteur qui clique dessus. Sans le bouton, le texte est toujours affiché."
 
   api:
     validation:

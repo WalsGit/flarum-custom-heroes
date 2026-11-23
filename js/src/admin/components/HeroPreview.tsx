@@ -5,7 +5,7 @@ import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { heroDecoration } from '../../common/heroDecoration';
 import { resolveConfig } from '../../common/resolveConfig';
-import type { ForumPayload, HeroConfig, HeroConfigs } from '../../common/types';
+import { DEFAULT_TEXT, type ForumPayload, type HeroConfig, type HeroConfigs } from '../../common/types';
 import { parentChain, targetOf } from '../utils/scopes';
 
 export interface HeroPreviewAttrs extends ComponentAttrs {
@@ -28,6 +28,8 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
  */
 export default class HeroPreview extends Component<HeroPreviewAttrs> {
   device: Device = 'desktop';
+  /** Welcome: preview the hero once Flarum's welcome text is closed. */
+  closed = false;
   observer: ResizeObserver | null = null;
   onscroll = () => this.markStuck();
 
@@ -48,6 +50,19 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
               </Button>
             ))}
           </div>
+          {targetOf(this.attrs.target).scope === 'welcome' && (
+            <div className="ButtonGroup">
+              {[false, true].map((closed) => (
+                <Button
+                  className={classList('Button', this.closed === closed && 'active')}
+                  aria-pressed={this.closed === closed}
+                  onclick={() => (this.closed = closed)}
+                >
+                  {t(closed ? 'state_closed' : 'state_welcome')}
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="wch-Preview-frame">
           <div className="wch-Preview-viewport" style={{ width: `${WIDTHS[this.device]}px` }}>
@@ -66,10 +81,15 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     const payload = app.forum.attribute<ForumPayload>('walsgitCustomHeroes');
     const decoration = heroDecoration(configs, chain, scope, payload.assetsUrl);
     const config = resolveConfig(configs, chain);
-    const content = this.content(scope, scopeId, config);
-    // Like on the forum: only the core text can be closed.
-    const dismissible =
-      scope === 'welcome' && config.text?.source !== 'custom' && !!(content.title || content.subtitle) && config.dismissible !== false;
+    // Like on the forum: without Flarum's welcome title, the hero is in its closed state.
+    const closed = scope === 'welcome' && (this.closed || !app.forum.attribute<string>('welcomeTitle')?.trim());
+
+    if (closed && (config.text ?? DEFAULT_TEXT).afterClose === 'none') {
+      return <p className="wch-Preview-hidden">{t('hidden')}</p>;
+    }
+
+    const content = this.content(scope, scopeId, config, closed);
+    const closable = scope === 'welcome' && !closed;
 
     return (
       <header
@@ -78,12 +98,10 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
       >
         {decoration?.background}
         <div className="container">
-          {dismissible && <i className="Hero-close fas fa-times" aria-hidden="true" />}
+          {closable && <i className="Hero-close fas fa-times" aria-hidden="true" />}
           <div className="containerNarrow">
             {content.title && <h1 className="Hero-title">{content.title}</h1>}
-            {content.subtitle && (
-              <div className={classList('Hero-subtitle', config.text?.source === 'custom' && 'wch-Hero-message')}>{content.subtitle}</div>
-            )}
+            {content.subtitle && <div className={classList('Hero-subtitle', closed && 'wch-Hero-message')}>{content.subtitle}</div>}
           </div>
         </div>
       </header>
@@ -91,7 +109,7 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
   }
 
   /** What the hero shows: the Welcome texts, a tag, or a sample discussion. */
-  content(scope: string, scopeId: string, config: HeroConfig): { title: string; subtitle?: string; color?: string } {
+  content(scope: string, scopeId: string, config: HeroConfig, closed: boolean): { title: string; subtitle?: string; color?: string } {
     if (scope === 'tag') {
       const tag = scopeId ? app.store.getById('tags', scopeId) : null;
 
@@ -108,8 +126,10 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
       return { title: t('discussion_title') };
     }
 
-    if (config.text?.source === 'custom') {
-      return { title: config.text.title.trim(), subtitle: config.text.message.trim() ? config.text.message : undefined };
+    if (closed) {
+      const { title, message } = config.text ?? DEFAULT_TEXT;
+
+      return { title: title.trim(), subtitle: message.trim() ? message : undefined };
     }
 
     // The Welcome message is HTML: the preview only needs its text.

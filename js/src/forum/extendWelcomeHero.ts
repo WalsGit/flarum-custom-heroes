@@ -4,9 +4,9 @@ import WelcomeHero from 'flarum/forum/components/WelcomeHero';
 import type ItemList from 'flarum/common/utils/ItemList';
 import type Mithril from 'mithril';
 import { configChain, normalizeConfigs, resolveConfig } from '../common/resolveConfig';
-import type { ForumPayload, HeroConfig } from '../common/types';
+import { DEFAULT_TEXT, type ForumPayload, type HeroConfig } from '../common/types';
 
-/** The core's key (not exported), set when a visitor dismisses the Welcome hero. */
+/** The core's key (not exported), set when a visitor closes the welcome text. */
 const DISMISSED_KEY = 'welcomeHidden';
 
 /** The resolved Welcome config, or null when the Welcome hero is not customized. */
@@ -17,7 +17,10 @@ function welcomeConfig(): HeroConfig | null {
   return Object.keys(config).length > 0 ? config : null;
 }
 
-function wasDismissed(): boolean {
+/** Flarum's welcome text was closed by the visitor, or there is none. */
+function isClosed(): boolean {
+  if (!app.forum.attribute<string>('welcomeTitle')?.trim()) return true;
+
   try {
     return !!localStorage.getItem(DISMISSED_KEY);
   } catch (e) {
@@ -27,15 +30,17 @@ function wasDismissed(): boolean {
 }
 
 /**
- * A customized Welcome hero is always shown, even without a core title. Only
- * the core text can be closed (the close button hides that text, not the
- * hero); a custom text is permanent, and `dismissible: false` removes the
- * button.
+ * Flarum's welcome text is shown and closed like in Flarum. Once it is closed
+ * (or when there is none), a customized Welcome hero either stays, with its
+ * own permanent text or without text, or disappears like in Flarum.
  */
 export default function extendWelcomeHero() {
-  // Even with an empty core title: the hero shows its own settings.
   override(WelcomeHero.prototype, 'isHidden', function (this: WelcomeHero, original: () => boolean) {
-    return welcomeConfig() ? false : original();
+    const config = welcomeConfig();
+
+    if (!config) return original();
+
+    return isClosed() && (config.text ?? DEFAULT_TEXT).afterClose === 'none';
   });
 
   extend(WelcomeHero.prototype, 'contentItems', function (this: WelcomeHero, items: ItemList<Mithril.Children>) {
@@ -43,16 +48,20 @@ export default function extendWelcomeHero() {
 
     if (!config) return;
 
-    const custom = config.text?.source === 'custom' ? config.text : null;
-    const title = custom ? custom.title : app.forum.attribute<string>('welcomeTitle') ?? '';
-    const message = custom ? custom.message : app.forum.attribute<string>('welcomeMessage') ?? '';
+    if (!isClosed()) {
+      if (!app.forum.attribute<string>('welcomeMessage')?.trim()) items.remove('subtitle');
 
-    // A custom text is plain text, never trusted HTML.
-    if (!title.trim()) items.remove('title');
-    else if (custom) items.setContent('title', m('h1.Hero-title', title));
+      return;
+    }
 
-    if (!message.trim()) items.remove('subtitle');
-    else if (custom) items.setContent('subtitle', m('.Hero-subtitle.wch-Hero-message', message));
+    // The permanent text: plain text, never trusted HTML.
+    const { title, message } = config.text ?? DEFAULT_TEXT;
+
+    if (title.trim()) items.setContent('title', m('h1.Hero-title', title));
+    else items.remove('title');
+
+    if (message.trim()) items.setContent('subtitle', m('.Hero-subtitle.wch-Hero-message', message));
+    else items.remove('subtitle');
   });
 
   extend(WelcomeHero.prototype, 'bodyItems', function (this: WelcomeHero, items: ItemList<Mithril.Children>) {
@@ -60,21 +69,16 @@ export default function extendWelcomeHero() {
 
     if (!config || !items.has('dismiss-button')) return;
 
-    if (this.contentItems().isEmpty()) {
-      // No text: nothing to close.
+    if (isClosed()) {
       items.remove('dismiss-button');
-      items.remove('content');
-    } else if (config.dismissible === false || config.text?.source === 'custom') {
-      items.remove('dismiss-button');
-    } else if (wasDismissed()) {
-      items.remove('dismiss-button');
-      items.remove('content');
-    } else {
-      // Collapses the text instead of the whole hero, then redraws without it.
+      if (this.contentItems().isEmpty()) items.remove('content');
+    } else if ((config.text ?? DEFAULT_TEXT).afterClose === 'hero') {
+      // Swaps the texts instead of collapsing the whole hero (which the core does, as for `none`).
       (items.get('dismiss-button') as Mithril.Vnode<{ onclick: () => void }>).attrs.onclick = () => {
         this.$('.containerNarrow').slideUp(() => {
           this.hide();
-          m.redraw();
+          m.redraw.sync();
+          this.$('.containerNarrow').hide().slideDown();
         });
       };
     }

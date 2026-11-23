@@ -14,34 +14,23 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
 const MAX_TITLE = 100;
 const MAX_MESSAGE = 500;
 
-/** The Welcome texts of the core, as plain text: a starting point for a custom text. */
-function coreText(): TextSection & { source: 'custom' } {
-  const message = new DOMParser().parseFromString(app.forum.attribute<string>('welcomeMessage') ?? '', 'text/html').body.textContent ?? '';
-
-  return {
-    source: 'custom',
-    title: (app.forum.attribute<string>('welcomeTitle') ?? '').trim().slice(0, MAX_TITLE),
-    message: message.trim().slice(0, MAX_MESSAGE),
-  };
-}
-
 export default class TextForm extends Component<TextFormAttrs> {
   view() {
     const { value, onchange } = this.attrs;
 
     return (
       <div className="wch-TextForm">
+        <p className="helpText">{t('intro')}</p>
         <div className="Form-group">
-          <label>{t('source_label')}</label>
+          <label>{t('after_close_label')}</label>
           <Select
-            value={value.source}
-            options={{ core: t('source_core'), custom: t('source_custom') }}
-            onchange={(source: TextSection['source']) => onchange(source === 'custom' ? coreText() : { source: 'core' })}
+            value={value.afterClose}
+            options={{ hero: t('after_close_hero'), none: t('after_close_none') }}
+            onchange={(afterClose: TextSection['afterClose']) => onchange({ ...value, afterClose })}
           />
-          <p className="helpText">{t('source_help')}</p>
         </div>
 
-        {value.source === 'custom' && [
+        {value.afterClose === 'hero' && [
           <div className="Form-group">
             <label>{t('title_label')}</label>
             <input
@@ -55,7 +44,7 @@ export default class TextForm extends Component<TextFormAttrs> {
             <label>{t('message_label')}</label>
             <textarea
               className="FormControl"
-              rows={4}
+              rows={3}
               maxlength={MAX_MESSAGE}
               value={value.message}
               oninput={(e: InputEvent) => onchange({ ...value, message: (e.target as HTMLTextAreaElement).value })}

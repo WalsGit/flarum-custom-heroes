@@ -148,7 +148,7 @@ class ConfigValidatorTest extends TestCase
             'unknown section' => [Scope::Welcome, '', 'script'],
             'text on global' => [Scope::Global, '', 'text'],
             'text on tag' => [Scope::Tag, '', 'text'],
-            'dismissible on discussion' => [Scope::Discussion, '', 'dismissible'],
+            'dismissible (removed)' => [Scope::Welcome, '', 'dismissible'],
             'logo on tag instance' => [Scope::Tag, '12', 'logo'],
             'text style on tag instance' => [Scope::Tag, '12', 'textStyle'],
         ];
@@ -378,18 +378,20 @@ class ConfigValidatorTest extends TestCase
 
     public function test_custom_text_is_plain_and_normalized(): void
     {
-        $text = $this->valid(['text' => ['source' => 'custom', 'title' => '  Hello  ', 'message' => "Line 1\r\nLine 2"]])['text'];
+        $text = $this->valid(['text' => ['title' => '  Hello  ', 'message' => "Line 1\r\nLine 2"]])['text'];
 
-        $this->assertSame(['source' => 'custom', 'title' => 'Hello', 'message' => "Line 1\nLine 2"], $text);
+        $this->assertSame(['afterClose' => 'hero', 'title' => 'Hello', 'message' => "Line 1\nLine 2"], $text);
+        $this->assertSame(['afterClose' => 'none', 'title' => '', 'message' => ''], $this->valid(['text' => ['afterClose' => 'none']])['text']);
     }
 
     public function test_custom_text_is_bounded(): void
     {
-        $this->assertInvalid(['text' => ['source' => 'custom', 'title' => "Two\nlines"]], 'config.text.title', 'invalid_value');
-        $this->assertInvalid(['text' => ['source' => 'custom', 'title' => str_repeat('é', 101)]], 'config.text.title', 'too_long');
-        $this->assertInvalid(['text' => ['source' => 'custom', 'message' => "Bell\x07"]], 'config.text.message', 'invalid_value');
-        $this->assertInvalid(['text' => ['source' => 'custom', 'message' => "\xC3\x28"]], 'config.text.message', 'invalid_value');
-        $this->assertInvalid(['text' => ['source' => 'core', 'title' => 'Hi']], 'config.text.title', 'unknown_key');
+        $this->assertInvalid(['text' => ['title' => "Two\nlines"]], 'config.text.title', 'invalid_value');
+        $this->assertInvalid(['text' => ['title' => str_repeat('é', 101)]], 'config.text.title', 'too_long');
+        $this->assertInvalid(['text' => ['message' => "Bell\x07"]], 'config.text.message', 'invalid_value');
+        $this->assertInvalid(['text' => ['message' => "\xC3\x28"]], 'config.text.message', 'invalid_value');
+        $this->assertInvalid(['text' => ['afterClose' => 'hide']], 'config.text.afterClose', 'invalid_value');
+        $this->assertInvalid(['text' => ['source' => 'core']], 'config.text.source', 'unknown_key');
     }
 
     // Logo ---------------------------------------------------------------------
@@ -545,12 +547,6 @@ class ConfigValidatorTest extends TestCase
     }
 
     // Misc ---------------------------------------------------------------------
-
-    public function test_dismissible_is_a_boolean(): void
-    {
-        $this->assertSame(['dismissible' => false], $this->valid(['dismissible' => false]));
-        $this->assertInvalid(['dismissible' => 'false'], 'config.dismissible', 'invalid_value');
-    }
 
     public function test_all_errors_are_reported(): void
     {

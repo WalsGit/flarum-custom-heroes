@@ -89,7 +89,7 @@ class SaveConfigTest extends TestCase
     #[Test]
     public function guest_cannot_save_a_config(): void
     {
-        $response = $this->save(['scope' => 'welcome', 'config' => ['dismissible' => false]], null);
+        $response = $this->save(['scope' => 'welcome', 'config' => ['text' => ['afterClose' => 'none']]], null);
 
         $this->assertGreaterThanOrEqual(400, $response->getStatusCode());
         $this->assertSame([], $this->forumPayload()['configs']);
@@ -98,7 +98,7 @@ class SaveConfigTest extends TestCase
     #[Test]
     public function non_admin_cannot_save_a_config(): void
     {
-        $response = $this->save(['scope' => 'welcome', 'config' => ['dismissible' => false]], 2);
+        $response = $this->save(['scope' => 'welcome', 'config' => ['text' => ['afterClose' => 'none']]], 2);
 
         $this->assertSame(403, $response->getStatusCode());
         $this->assertSame([], $this->forumPayload()['configs']);
@@ -139,7 +139,7 @@ class SaveConfigTest extends TestCase
     public function null_or_empty_config_deletes_the_stored_one(): void
     {
         $this->save(['scope' => 'global', 'config' => ['height' => ['preset' => 's']]]);
-        $this->save(['scope' => 'welcome', 'config' => ['dismissible' => false]]);
+        $this->save(['scope' => 'welcome', 'config' => ['text' => ['afterClose' => 'none']]]);
 
         $this->assertSame(200, $this->save(['scope' => 'global', 'config' => null])->getStatusCode());
         $this->assertSame(200, $this->save(['scope' => 'welcome', 'config' => []])->getStatusCode());

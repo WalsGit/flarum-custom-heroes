@@ -76,7 +76,7 @@ enum Scope: string
         }
 
         if ($this === self::Welcome) {
-            return [...self::COMMON_SECTIONS, 'text', 'dismissible'];
+            return [...self::COMMON_SECTIONS, 'text'];
         }
 
         return self::COMMON_SECTIONS;

@@ -7,7 +7,7 @@ import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
 import type Mithril from 'mithril';
 import { normalizeConfigs, resolveConfig, sectionOwner } from '../../common/resolveConfig';
-import type { ForumPayload, HeroConfig, HeroConfigs } from '../../common/types';
+import { DEFAULT_TEXT, type ForumPayload, type HeroConfig, type HeroConfigs, type TextSection } from '../../common/types';
 import { parentChain, targetOf } from '../utils/scopes';
 import { uploadLimits } from '../utils/uploadLimits';
 import BackgroundForm from './BackgroundForm';
@@ -18,7 +18,7 @@ import TextForm from './TextForm';
 import TextStyleForm from './TextStyleForm';
 
 /** The sections this page edits. Other sections of a config are kept as they are. */
-type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'text';
+type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle';
 
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.${key}`, params, true);
 
@@ -104,12 +104,7 @@ export default class HeroesPage extends ExtensionPage {
                   <HeightForm value={value} onchange={set} />
                 )
               )}
-              {this.key === 'welcome' &&
-                this.section(
-                  'text',
-                  (parent) => parent ?? { source: 'core' },
-                  (value, set) => <TextForm value={value} onchange={set} />
-                )}
+              {this.key === 'welcome' && this.textSection()}
               {/* Not per tag (D4). */}
               {!targetOf(this.key).scopeId &&
                 this.section(
@@ -118,8 +113,6 @@ export default class HeroesPage extends ExtensionPage {
                   (parent) => parent ?? { align: 'center', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
                   (value, set) => <TextStyleForm value={value} onchange={set} />
                 )}
-              {/* A custom text is permanent: the button only closes the core text. */}
-              {this.key === 'welcome' && this.draft.text?.source !== 'custom' && this.dismissibleSection()}
             </div>
 
             <div className="Form-group Form-controls wch-HeroesPage-controls">
@@ -179,20 +172,18 @@ export default class HeroesPage extends ExtensionPage {
     );
   }
 
-  /** Welcome only, with no level to inherit from: a missing value is the core's behavior (a close button). */
-  dismissibleSection() {
-    const toggle = (dismissible: boolean) => {
-      const { dismissible: _, ...rest } = this.draft;
-      this.draft = dismissible ? rest : { ...rest, dismissible: false };
+  /** Welcome only, with no level to inherit from: the default is stored as a missing section. */
+  textSection() {
+    const set = (text: TextSection) => {
+      const { text: _, ...rest } = this.draft;
+      const isDefault = text.afterClose === DEFAULT_TEXT.afterClose && !text.title && !text.message;
+      this.draft = isDefault ? rest : { ...rest, text };
     };
 
     return (
-      <fieldset className="wch-Section wch-Section--dismissible">
-        <legend>{t('dismissible.title')}</legend>
-        <Switch state={this.draft.dismissible !== false} onchange={toggle}>
-          {t('dismissible.label')}
-        </Switch>
-        <p className="helpText">{t('dismissible.help')}</p>
+      <fieldset className="wch-Section wch-Section--text">
+        <legend>{t('text.title')}</legend>
+        <TextForm value={this.draft.text ?? DEFAULT_TEXT} onchange={set} />
       </fieldset>
     );
   }

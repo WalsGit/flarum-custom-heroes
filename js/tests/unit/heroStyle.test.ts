@@ -27,7 +27,7 @@ describe('heroStyle', () => {
   });
 
   it('ignores the sections that have no variable yet', () => {
-    expect(heroStyle({ dismissible: false, overlay: { type: 'none' } })).toEqual({});
+    expect(heroStyle({ text: { afterClose: 'none', title: '', message: '' }, overlay: { type: 'none' } })).toEqual({});
   });
 
   it('sets the background position only when there is an image', () => {

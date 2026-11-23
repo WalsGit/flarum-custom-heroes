@@ -24,6 +24,19 @@
   }
 }
 
+// Flarum's height on the home hero: never lower than a tag hero (padding,
+// one title line and the always present subtitle margin), so that it does
+// not shrink without text. A taller welcome banner keeps its own height.
+.wch-Hero--global:not(.wch-Hero--fixedHeight) > .container {
+  min-height: calc(40px + 1.5 * var(--wch-title-size-mobile, 16px) + 8px);
+}
+
+@container (min-width: @screen-tablet) {
+  .wch-Hero--global:not(.wch-Hero--fixedHeight) > .container {
+    min-height: calc(70px + 1.5 * var(--wch-title-size, 22px) + 8px);
+  }
+}
+
 // Background image and overlay, under the content. From bottom to top: hero
 // color (visible while the image loads), image, overlay, content.
 .wch-Hero--image,

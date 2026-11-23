@@ -101,7 +101,10 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
           {closable && <i className="Hero-close fas fa-times" aria-hidden="true" />}
           <div className="containerNarrow">
             {content.title && <h1 className="Hero-title">{content.title}</h1>}
-            {content.subtitle && <div className={classList('Hero-subtitle', closed && 'wch-Hero-message')}>{content.subtitle}</div>}
+            {/* Like the core: kept even when empty (but discussions have none). */}
+            {(content.subtitle || (content.title && scope !== 'discussion')) && (
+              <div className={classList('Hero-subtitle', closed && 'wch-Hero-message')}>{content.subtitle}</div>
+            )}
           </div>
         </div>
       </header>

@@ -7,9 +7,7 @@ import { configChain, normalizeConfigs, resolveConfig } from '../common/resolveC
 import type { ForumPayload, HeroConfig } from '../common/types';
 
 /** The core's key (not exported), set when a visitor dismisses the Welcome hero. */
-const CORE_DISMISSED_KEY = 'welcomeHidden';
-/** Holds the custom text the visitor dismissed: a new text shows again. */
-const CUSTOM_DISMISSED_KEY = 'wchWelcomeTextHidden';
+const DISMISSED_KEY = 'welcomeHidden';
 
 /** The resolved Welcome config, or null when the Welcome hero is not customized. */
 function welcomeConfig(): HeroConfig | null {
@@ -19,42 +17,20 @@ function welcomeConfig(): HeroConfig | null {
   return Object.keys(config).length > 0 ? config : null;
 }
 
-/** The custom text as one string, or null when the core text is used. */
-function customText(config: HeroConfig): string | null {
-  return config.text?.source === 'custom' ? `${config.text.title}\n${config.text.message}` : null;
-}
-
-function wasDismissed(config: HeroConfig): boolean {
-  const custom = customText(config);
-
+function wasDismissed(): boolean {
   try {
-    return custom === null ? !!localStorage.getItem(CORE_DISMISSED_KEY) : localStorage.getItem(CUSTOM_DISMISSED_KEY) === custom;
+    return !!localStorage.getItem(DISMISSED_KEY);
   } catch (e) {
     // The browser blocks storage.
     return false;
   }
 }
 
-function dismiss(config: HeroConfig, hero: WelcomeHero) {
-  const custom = customText(config);
-
-  if (custom === null) {
-    hero.hide();
-
-    return;
-  }
-
-  try {
-    localStorage.setItem(CUSTOM_DISMISSED_KEY, custom);
-  } catch (e) {
-    // The browser blocks storage: the text is shown again next time.
-  }
-}
-
 /**
- * A customized Welcome hero is always shown, even without a core title. Its
- * text is the core's or a custom one; the close button only hides that text,
- * and `dismissible: false` removes the button.
+ * A customized Welcome hero is always shown, even without a core title. Only
+ * the core text can be closed (the close button hides that text, not the
+ * hero); a custom text is permanent, and `dismissible: false` removes the
+ * button.
  */
 export default function extendWelcomeHero() {
   // Even with an empty core title: the hero shows its own settings.
@@ -88,16 +64,16 @@ export default function extendWelcomeHero() {
       // No text: nothing to close.
       items.remove('dismiss-button');
       items.remove('content');
-    } else if (config.dismissible === false) {
+    } else if (config.dismissible === false || config.text?.source === 'custom') {
       items.remove('dismiss-button');
-    } else if (wasDismissed(config)) {
+    } else if (wasDismissed()) {
       items.remove('dismiss-button');
       items.remove('content');
     } else {
       // Collapses the text instead of the whole hero, then redraws without it.
       (items.get('dismiss-button') as Mithril.Vnode<{ onclick: () => void }>).attrs.onclick = () => {
         this.$('.containerNarrow').slideUp(() => {
-          dismiss(config, this);
+          this.hide();
           m.redraw();
         });
       };

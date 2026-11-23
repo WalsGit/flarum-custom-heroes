@@ -98,7 +98,7 @@ walsgit-custom-heroes:
       source_label: Texte
       source_core: Texte d'accueil de Flarum (Apparence)
       source_custom: Texte personnalisé
-      source_help: "Le texte personnalisé remplace le texte d'accueil de Flarum dans ce hero uniquement. Un visiteur qui avait fermé le texte de Flarum voit quand même le texte personnalisé."
+      source_help: "Le texte personnalisé remplace le texte d'accueil de Flarum dans ce hero uniquement. Il est permanent : il n'a pas de bouton fermer."
       title_label: Titre
       message_label: Message
       message_help: Texte brut, les retours à la ligne sont conservés. Laisser le titre et le message vides pour un hero sans texte.
@@ -125,7 +125,7 @@ walsgit-custom-heroes:
     dismissible:
       title: Bouton fermer
       label: Afficher le bouton fermer (✕)
-      help: "Une fois ce hero personnalisé, il est toujours affiché : le bouton fermer ne masque que son texte, pour le visiteur qui clique dessus. Sans le bouton, le texte est toujours affiché."
+      help: "Une fois ce hero personnalisé, il est toujours affiché : le bouton fermer ne masque que le texte d'accueil de Flarum, pour le visiteur qui clique dessus. Sans le bouton, le texte est toujours affiché."
 
   api:
     validation:

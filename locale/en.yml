@@ -100,7 +100,7 @@ walsgit-custom-heroes:
       source_label: Text
       source_core: "Flarum's welcome text (Appearance)"
       source_custom: Custom text
-      source_help: "The custom text replaces Flarum's welcome text in this hero only. A visitor who closed Flarum's text still sees the custom one."
+      source_help: "The custom text replaces Flarum's welcome text in this hero only. It is permanent: it has no close button."
       title_label: Title
       message_label: Message
       message_help: Plain text, line breaks are kept. Leave the title and the message empty for a hero without text.
@@ -127,7 +127,7 @@ walsgit-custom-heroes:
     dismissible:
       title: Close button
       label: Show the close button (✕)
-      help: "Once this hero is customized, it is always shown: the close button only hides its text, for the visitor who clicks it. Without the button, the text is always shown."
+      help: "Once this hero is customized, it is always shown: the close button only hides Flarum's welcome text, for the visitor who clicks it. Without the button, the text is always shown."
 
   api:
     validation:

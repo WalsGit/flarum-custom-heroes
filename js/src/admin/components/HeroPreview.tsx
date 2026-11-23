@@ -67,8 +67,9 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     const decoration = heroDecoration(configs, chain, scope, payload.assetsUrl);
     const config = resolveConfig(configs, chain);
     const content = this.content(scope, scopeId, config);
-    // Like on the forum: no close button without a text to hide.
-    const dismissible = scope === 'welcome' && !!(content.title || content.subtitle) && config.dismissible !== false;
+    // Like on the forum: only the core text can be closed.
+    const dismissible =
+      scope === 'welcome' && config.text?.source !== 'custom' && !!(content.title || content.subtitle) && config.dismissible !== false;
 
     return (
       <header

@@ -118,7 +118,8 @@ export default class HeroesPage extends ExtensionPage {
                   (parent) => parent ?? { align: 'center', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
                   (value, set) => <TextStyleForm value={value} onchange={set} />
                 )}
-              {this.key === 'welcome' && this.dismissibleSection()}
+              {/* A custom text is permanent: the button only closes the core text. */}
+              {this.key === 'welcome' && this.draft.text?.source !== 'custom' && this.dismissibleSection()}
             </div>
 
             <div className="Form-group Form-controls wch-HeroesPage-controls">

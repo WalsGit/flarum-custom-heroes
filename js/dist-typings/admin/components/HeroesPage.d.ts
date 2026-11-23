@@ -2,7 +2,7 @@ import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 import type Mithril from 'mithril';
 import { type HeroConfig, type HeroConfigs } from '../../common/types';
 /** The sections this page edits. Other sections of a config are kept as they are. */
-type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle';
+type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo';
 /**
  * Edits the hero config of one target at a time (global, a hero type or a
  * tag). Each section is either inherited from the level above or defined
@@ -21,8 +21,10 @@ export default class HeroesPage extends ExtensionPage {
     content(): JSX.Element;
     /**
      * A section card: inherited (with where it comes from) or defined here.
+     * With `addLabel`, a section that has nothing to inherit is switched on to
+     * be added ("Add a logo") rather than off to stop using Flarum's default.
      */
-    section<K extends EditedSection>(name: K, initial: (parent: HeroConfig[K] | undefined) => NonNullable<HeroConfig[K]>, form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children): JSX.Element;
+    section<K extends EditedSection>(name: K, initial: (parent: HeroConfig[K] | undefined) => NonNullable<HeroConfig[K]>, form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children, addLabel?: string): JSX.Element;
     /** Default level only (home hero), with no level to inherit from: the default is stored as a missing section. */
     textSection(): JSX.Element;
     tagsEnabled(): boolean;

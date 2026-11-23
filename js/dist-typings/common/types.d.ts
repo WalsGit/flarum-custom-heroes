@@ -81,7 +81,8 @@ export interface TextSection {
 /** What a Welcome hero without `text` section does: it stays, without text. */
 export declare const DEFAULT_TEXT: TextSection;
 export interface LogoSection {
-    image: ImageRef;
+    /** null: no logo, instead of the one of the level above. */
+    image: ImageRef | null;
     side: 'left' | 'right';
     size: Size;
     alt: string;

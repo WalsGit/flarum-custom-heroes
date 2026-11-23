@@ -34,6 +34,12 @@ export declare const TEXT_SIZES: {
         readonly l: readonly [0.9375, 1.125];
     };
 };
+/** Displayed logo heights in pixels (reduced on mobile by the CSS). */
+export declare const LOGO_HEIGHTS: {
+    readonly s: 64;
+    readonly m: 96;
+    readonly l: 128;
+};
 /**
  * The CSS variables of a resolved config, set on the hero element. Values
  * come from a validated config, never from raw CSS.

@@ -7,10 +7,6 @@ export interface BackgroundFormAttrs extends ComponentAttrs {
     target: string;
 }
 export default class BackgroundForm extends Component<BackgroundFormAttrs> {
-    loading: boolean;
-    url: string;
     view(): JSX.Element;
     update(changes: Partial<BackgroundSection>): void;
-    pickFile(): void;
-    send(body: FormData | Record<string, string>): void;
 }

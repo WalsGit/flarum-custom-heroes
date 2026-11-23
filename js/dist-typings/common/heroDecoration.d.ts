@@ -10,7 +10,14 @@ export interface HeroDecoration {
     style: Record<string, string>;
     /** The background image, to put first in the header. */
     background: Mithril.Vnode | null;
+    /** The logo, to put next to the content with `withLogo()`. */
+    logo: Mithril.Vnode | null;
 }
+/**
+ * Groups the logo with the content of a hero container, so that both are
+ * placed together; the close button stays apart.
+ */
+export declare function withLogo(children: Mithril.ChildArray, logo: Mithril.Vnode): Mithril.Children[];
 /**
  * Resolves the config of a hero from its chain (`['global', 'tag', 'tag:12']`),
  * or null when nothing is configured for it.

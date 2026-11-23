@@ -403,10 +403,10 @@ class ConfigValidatorTest extends TestCase
         );
     }
 
-    public function test_logo_requires_an_existing_image(): void
+    public function test_logo_requires_an_existing_image_or_null(): void
     {
+        $this->assertNull($this->valid(['logo' => ['image' => null]])['logo']['image']);
         $this->assertInvalid(['logo' => []], 'config.logo.image', 'missing_key');
-        $this->assertInvalid(['logo' => ['image' => null]], 'config.logo.image', 'invalid_value');
         $this->assertInvalid(['logo' => ['image' => ['id' => self::BG_ID] + self::logoImage()]], 'config.logo.image', 'image_not_found');
     }
 

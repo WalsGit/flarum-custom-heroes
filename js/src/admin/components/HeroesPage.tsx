@@ -13,12 +13,13 @@ import { uploadLimits } from '../utils/uploadLimits';
 import BackgroundForm from './BackgroundForm';
 import HeightForm from './HeightForm';
 import HeroPreview from './HeroPreview';
+import LogoForm from './LogoForm';
 import OverlayForm from './OverlayForm';
 import TextForm from './TextForm';
 import TextStyleForm from './TextStyleForm';
 
 /** The sections this page edits. Other sections of a config are kept as they are. */
-type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle';
+type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo';
 
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.${key}`, params, true);
 
@@ -112,6 +113,14 @@ export default class HeroesPage extends ExtensionPage {
                   // Top, like the core, so that unticking changes nothing at first.
                   (parent) => parent ?? { align: 'center', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
                   (value, set) => <TextStyleForm value={value} onchange={set} />
+                )}
+              {/* Not per tag (D4). */}
+              {!targetOf(this.key).scopeId &&
+                this.section(
+                  'logo',
+                  // The logo of the level above belongs to it: never copied.
+                  (parent) => ({ side: 'left', size: 'm', alt: '', hideOnMobile: false, ...parent, image: null }),
+                  (value, set) => <LogoForm value={value} onchange={set} target={this.key} />
                 )}
             </div>
 

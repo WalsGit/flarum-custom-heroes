@@ -147,6 +147,73 @@
   }
 }
 
+// Logo next to the text: both are placed together, like the text alone
+// (centered by default, or by the text alignment).
+.wch-Hero-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.wch-Hero--align-left .wch-Hero-group {
+  justify-content: flex-start;
+}
+
+.wch-Hero--align-right .wch-Hero-group {
+  justify-content: flex-end;
+}
+
+.wch-Hero-groupText {
+  min-width: 0;
+
+  // No text: the logo alone, centered without the gap.
+  &:empty {
+    display: none;
+  }
+}
+
+.wch-Hero-logo {
+  flex: none;
+  width: auto;
+  max-width: 40%;
+  height: calc(var(--wch-logo-height) * 0.75);
+  object-fit: contain;
+}
+
+.wch-Hero--logo-right .wch-Hero-logo {
+  order: 1;
+}
+
+.wch-Hero--logoHideMobile .wch-Hero-logo {
+  display: none;
+}
+
+// With a fixed height, the logo never overflows the hero.
+.wch-Hero--fixedHeight .wch-Hero-logo {
+  max-height: calc(var(--wch-height-mobile) - 40px);
+}
+
+@container (min-width: @screen-tablet) {
+  .wch-Hero-logo {
+    height: var(--wch-logo-height);
+  }
+
+  .wch-Hero--logoHideMobile .wch-Hero-logo {
+    display: block;
+  }
+
+  .wch-Hero--fixedHeight .wch-Hero-logo {
+    max-height: calc(var(--wch-height-tablet) - 70px);
+  }
+}
+
+@container (min-width: @screen-desktop) {
+  .wch-Hero--fixedHeight .wch-Hero-logo {
+    max-height: calc(var(--wch-height-desktop) - 70px);
+  }
+}
+
 // Plain text, with its line breaks.
 .wch-Hero-message {
   white-space: pre-line;

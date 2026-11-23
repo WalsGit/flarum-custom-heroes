@@ -35,17 +35,18 @@ walsgit-custom-heroes:
       title: Background image
       no_image: No image
       small_image_warning: "This image is only {width} px wide: it may look blurry on large screens ({recommended} px or more recommended). It is still used."
-      upload_button: Upload an image
-      remove_button: No image
-      upload_help: "JPEG, PNG or WebP, up to {size} MB and 4000 px per side. Optimized to WebP in several sizes."
-      too_large: "This image is too large: {size} MB maximum."
-      url_label: Or import from a URL
-      url_help: The image is downloaded once and stored on your forum.
-      import_button: Import
       position_label: Position
       position_center: Center
       position_top: Top
       position_bottom: Bottom
+    image:
+      upload_button: Upload an image
+      remove_button: No image
+      upload_help: "JPEG, PNG or WebP, up to {size} MB and 4000 px per side. Optimized to WebP."
+      too_large: "This image is too large: {size} MB maximum."
+      url_label: Or import from a URL
+      url_help: The image is downloaded once and stored on your forum.
+      import_button: Import
     overlay:
       title: Overlay
       type_label: Type
@@ -97,6 +98,21 @@ walsgit-custom-heroes:
       desktop_label: Desktop
       tablet_label: Tablet
       mobile_label: Mobile
+    logo:
+      title: Logo
+      no_logo: No logo
+      image_help: "JPEG, PNG or WebP. Transparency is kept. Stored at most 256 px high (twice the largest size, for sharp screens)."
+      side_label: Side
+      side_left: Left of the text
+      side_right: Right of the text
+      side_help: The logo and the text are placed together, following the text alignment.
+      size_label: Size
+      size_s: "Small ({height} px high)"
+      size_m: "Medium ({height} px high)"
+      size_l: "Large ({height} px high)"
+      alt_label: Alternative text
+      alt_help: "Read by screen readers, for example your forum's name. Leave empty if the logo is only decorative."
+      hide_on_mobile_label: Hide on mobile
     text:
       title: Text
       intro: "Flarum's welcome banner (Basics) is shown first and can be closed with ✕, like in Flarum. This sets what the hero does once it is closed, or when the welcome banner has no title."

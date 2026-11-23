@@ -33,17 +33,18 @@ walsgit-custom-heroes:
       title: Image de fond
       no_image: Aucune image
       small_image_warning: "Cette image ne fait que {width} px de large : elle risque d'être floue sur les grands écrans ({recommended} px ou plus recommandés). Elle est tout de même utilisée."
-      upload_button: Téléverser une image
-      remove_button: Sans image
-      upload_help: "JPEG, PNG ou WebP, jusqu'à {size} Mo et 4000 px de côté. Optimisée en WebP en plusieurs tailles."
-      too_large: "Cette image est trop lourde : {size} Mo maximum."
-      url_label: Ou importer depuis une URL
-      url_help: L'image est téléchargée une seule fois et stockée sur votre forum.
-      import_button: Importer
       position_label: Position
       position_center: Centre
       position_top: Haut
       position_bottom: Bas
+    image:
+      upload_button: Téléverser une image
+      remove_button: Sans image
+      upload_help: "JPEG, PNG ou WebP, jusqu'à {size} Mo et 4000 px de côté. Optimisée en WebP."
+      too_large: "Cette image est trop lourde : {size} Mo maximum."
+      url_label: Ou importer depuis une URL
+      url_help: L'image est téléchargée une seule fois et stockée sur votre forum.
+      import_button: Importer
     overlay:
       title: Filtre
       type_label: Type
@@ -95,6 +96,21 @@ walsgit-custom-heroes:
       desktop_label: Ordinateur
       tablet_label: Tablette
       mobile_label: Mobile
+    logo:
+      title: Logo
+      no_logo: Pas de logo
+      image_help: "JPEG, PNG ou WebP. La transparence est conservée. Stocké en 256 px de haut au maximum (le double de la plus grande taille, pour les écrans nets)."
+      side_label: Côté
+      side_left: À gauche du texte
+      side_right: À droite du texte
+      side_help: Le logo et le texte sont placés ensemble, selon l'alignement du texte.
+      size_label: Taille
+      size_s: "Petit ({height} px de haut)"
+      size_m: "Moyen ({height} px de haut)"
+      size_l: "Grand ({height} px de haut)"
+      alt_label: Texte alternatif
+      alt_help: "Lu par les lecteurs d'écran, par exemple le nom de votre forum. Laisser vide si le logo est purement décoratif."
+      hide_on_mobile_label: Masquer sur mobile
     text:
       title: Texte
       intro: "La bannière de bienvenue de Flarum (Essentiels) s'affiche d'abord et se ferme avec ✕, comme dans Flarum. Ce réglage définit ce que fait le hero une fois la bannière fermée, ou si elle n'a pas de titre."

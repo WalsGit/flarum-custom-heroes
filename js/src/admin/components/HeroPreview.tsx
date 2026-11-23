@@ -66,7 +66,8 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     const payload = app.forum.attribute<ForumPayload>('walsgitCustomHeroes');
     const decoration = heroDecoration(configs, chain, scope, payload.assetsUrl);
     const content = this.content(scope, scopeId);
-    const dismissible = scope === 'welcome' && resolveConfig(configs, chain).dismissible !== false;
+    // Like on the forum: no close button without a text to hide.
+    const dismissible = scope === 'welcome' && !!(content.title || content.subtitle) && resolveConfig(configs, chain).dismissible !== false;
 
     return (
       <header
@@ -77,7 +78,7 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
         <div className="container">
           {dismissible && <i className="Hero-close fas fa-times" aria-hidden="true" />}
           <div className="containerNarrow">
-            <h1 className="Hero-title">{content.title}</h1>
+            {content.title && <h1 className="Hero-title">{content.title}</h1>}
             {content.subtitle && <div className="Hero-subtitle">{content.subtitle}</div>}
           </div>
         </div>
@@ -106,7 +107,8 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     // The Welcome message is HTML: the preview only needs its text.
     const message = new DOMParser().parseFromString(app.forum.attribute<string>('welcomeMessage') ?? '', 'text/html').body.textContent ?? '';
 
-    return { title: app.forum.attribute<string>('welcomeTitle') || t('welcome_title'), subtitle: message };
+    // Like on the forum: an empty core title or message is not shown.
+    return { title: app.forum.attribute<string>('welcomeTitle')?.trim() ?? '', subtitle: message.trim() || undefined };
   }
 
   oncreate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>) {

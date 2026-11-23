@@ -2,7 +2,7 @@ import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 import type Mithril from 'mithril';
 import { type HeroConfig, type HeroConfigs } from '../../common/types';
 /** The sections this page edits. Other sections of a config are kept as they are. */
-type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo';
+type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo' | 'socials';
 /**
  * Edits the hero config of one target at a time (global, a hero type or a
  * tag). Each section is either inherited from the level above or defined

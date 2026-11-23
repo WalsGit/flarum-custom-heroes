@@ -34,6 +34,12 @@ export declare const TEXT_SIZES: {
         readonly l: readonly [0.9375, 1.125];
     };
 };
+/** Social icon sizes in pixels. */
+export declare const SOCIAL_SIZES: {
+    readonly xs: 14;
+    readonly s: 18;
+    readonly m: 24;
+};
 /** Displayed logo heights in pixels (reduced on mobile by the CSS). */
 export declare const LOGO_HEIGHTS: {
     readonly s: 64;

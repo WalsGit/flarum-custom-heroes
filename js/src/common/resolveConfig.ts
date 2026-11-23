@@ -1,4 +1,4 @@
-import type { HeroConfig, HeroConfigs, HeroScope } from './types';
+import type { HeroConfig, HeroConfigs, HeroScope, ResolvedConfig } from './types';
 
 /**
  * Returns the configs of the forum payload as an object. The API sends an
@@ -29,21 +29,38 @@ export function configChain(scope: HeroScope, scopeId?: string | null): string[]
   return chain;
 }
 
+/** Sections the default level gives to the home hero only: the other heroes opt in at their own level (buttons: `inherit`). */
+const HOME_ONLY: (keyof HeroConfig)[] = ['buttons'];
+
+/** What a config of the chain gives to the hero: the default level keeps its home-only sections for the home hero. */
+function inheritedPart(configs: HeroConfigs, chain: string[], key: string): HeroConfig | undefined {
+  const config = Object.prototype.hasOwnProperty.call(configs, key) ? configs[key] : undefined;
+
+  if (!config || key !== 'global' || chain.length === 1) return config;
+
+  return Object.fromEntries(Object.entries(config).filter(([section]) => !HOME_ONLY.includes(section as keyof HeroConfig)));
+}
+
 /**
  * Applies the inheritance: each section comes from the most specific config
  * of the chain that defines it. Sections are replaced as a whole, never
  * merged key by key.
  */
-export function resolveConfig(configs: HeroConfigs, chain: string[]): HeroConfig {
+export function resolveConfig(configs: HeroConfigs, chain: string[]): ResolvedConfig {
   const resolved: HeroConfig = {};
 
   for (const key of chain) {
-    if (Object.prototype.hasOwnProperty.call(configs, key)) {
-      Object.assign(resolved, configs[key]);
-    }
+    Object.assign(resolved, inheritedPart(configs, chain, key));
   }
 
-  return resolved;
+  if (resolved.buttons === 'inherit') {
+    const buttons = configs.global?.buttons;
+
+    if (buttons && buttons !== 'inherit') resolved.buttons = buttons;
+    else delete resolved.buttons;
+  }
+
+  return resolved as ResolvedConfig;
 }
 
 /**
@@ -52,5 +69,5 @@ export function resolveConfig(configs: HeroConfigs, chain: string[]): HeroConfig
  * config: an inherited background uses the file of the level above.
  */
 export function sectionOwner(configs: HeroConfigs, chain: string[], section: keyof HeroConfig): string | null {
-  return [...chain].reverse().find((key) => configs[key]?.[section] !== undefined) ?? null;
+  return [...chain].reverse().find((key) => inheritedPart(configs, chain, key)?.[section] !== undefined) ?? null;
 }

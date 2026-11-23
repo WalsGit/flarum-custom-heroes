@@ -7,10 +7,19 @@ import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
 import type Mithril from 'mithril';
 import { normalizeConfigs, resolveConfig, sectionOwner } from '../../common/resolveConfig';
-import { DEFAULT_TEXT, type ForumPayload, type HeroConfig, type HeroConfigs, type TextSection } from '../../common/types';
+import {
+  DEFAULT_TEXT,
+  type ForumPayload,
+  type HeroConfig,
+  type HeroConfigs,
+  type Placement,
+  type TextSection,
+  type ButtonsSection,
+} from '../../common/types';
 import { parentChain, targetOf } from '../utils/scopes';
 import { uploadLimits } from '../utils/uploadLimits';
 import BackgroundForm from './BackgroundForm';
+import ButtonsForm from './ButtonsForm';
 import HeightForm from './HeightForm';
 import HeroPreview from './HeroPreview';
 import LogoForm from './LogoForm';
@@ -129,9 +138,11 @@ export default class HeroesPage extends ExtensionPage {
                 this.section(
                   'socials',
                   (parent) => parent ?? { size: 's', placement: 'below-text', color: null, mobile: 'same', items: [] },
-                  (value, set) => <SocialsForm value={value} onchange={set} />,
+                  (value, set) => <SocialsForm value={value} onchange={set} taken={this.takenCorner('buttons')} />,
                   t('socials.add_label')
                 )}
+              {/* Not per tag (D4). */}
+              {!targetOf(this.key).scopeId && this.buttonsSection()}
             </div>
 
             <div className="Form-group Form-controls wch-HeroesPage-controls">
@@ -170,14 +181,16 @@ export default class HeroesPage extends ExtensionPage {
     addLabel?: string
   ) {
     const value = this.draft[name];
-    const chain = parentChain(this.key);
-    const owner = sectionOwner(this.configs, chain, name);
+    // The hero's whole chain without the edited config: some sections are not inherited by every hero (buttons).
+    const chain = [...parentChain(this.key), this.key];
+    const parents = { ...this.configs, [this.key]: {} };
+    const owner = sectionOwner(parents, chain, name);
     const set = (section: NonNullable<HeroConfig[K]>) => (this.draft = { ...this.draft, [name]: section });
 
     const toggle = (inherit: boolean) => {
       const { [name]: _, ...rest } = this.draft;
       // Starts from what the hero shows now, so that unticking changes nothing at first.
-      this.draft = inherit ? rest : { ...rest, [name]: initial(structuredClone(resolveConfig(this.configs, chain)[name])) };
+      this.draft = inherit ? rest : { ...rest, [name]: initial(structuredClone(resolveConfig(parents, chain)[name])) };
     };
 
     return (
@@ -196,6 +209,54 @@ export default class HeroesPage extends ExtensionPage {
         )}
 
         {value !== undefined && form(value as NonNullable<HeroConfig[K]>, set)}
+      </fieldset>
+    );
+  }
+
+  /**
+   * The corner used by the buttons or the icons in the config this hero
+   * will use (draft and inherited), which the other one cannot take.
+   */
+  takenCorner(name: 'socials' | 'buttons'): Placement | null {
+    const placement = resolveConfig({ ...this.configs, [this.key]: this.draft }, [...parentChain(this.key), this.key])[name]?.placement;
+
+    return placement && placement !== 'below-text' ? placement : null;
+  }
+
+  /**
+   * Buttons are opt-in on tags and discussions (the default ones are for the
+   * home hero): shown or not, then the default buttons or their own.
+   */
+  buttonsSection() {
+    const value = this.draft.buttons;
+    const isDefault = this.key === 'global';
+    const set = (buttons?: ButtonsSection | 'inherit') => {
+      const { buttons: _, ...rest } = this.draft;
+      this.draft = buttons === undefined ? rest : { ...rest, buttons };
+    };
+    // Own buttons start from a copy of the default ones.
+    const own = (): ButtonsSection => {
+      const defaults = this.configs.global?.buttons;
+
+      return !isDefault && defaults && defaults !== 'inherit' ? structuredClone(defaults) : { placement: 'below-text', mobile: 'same', items: [] };
+    };
+
+    return (
+      <fieldset className="wch-Section wch-Section--buttons">
+        <legend>{t('buttons.title')}</legend>
+
+        <Switch state={value !== undefined} onchange={(on: boolean) => set(on ? (isDefault ? own() : 'inherit') : undefined)}>
+          {t('buttons.add_label')}
+        </Switch>
+        {!isDefault && value === undefined && <p className="helpText">{t('buttons.opt_in_help')}</p>}
+
+        {!isDefault && value !== undefined && (
+          <Switch state={value === 'inherit'} onchange={(inherit: boolean) => set(inherit ? 'inherit' : own())}>
+            {t('inherit_from_label', { source: this.scopeLabel('global') })}
+          </Switch>
+        )}
+
+        {value !== undefined && value !== 'inherit' && <ButtonsForm value={value} onchange={set} taken={this.takenCorner('socials')} />}
       </fieldset>
     );
   }

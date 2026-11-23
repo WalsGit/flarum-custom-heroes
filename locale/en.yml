@@ -156,23 +156,60 @@ walsgit-custom-heroes:
       move_up_button: Move up
       move_down_button: Move down
       remove_button: Remove this icon
-      placement_label: Placement
-      placement_below_text: Below the text
-      placement_top_left: Top left corner
-      placement_top_right: Top right corner
-      placement_bottom_left: Bottom left corner
-      placement_bottom_right: Bottom right corner
-      placement_help: "In a corner, the icons are over the hero and take no space: pick a corner free of text and logo."
       size_label: Size
       size_xs: "Extra small ({size} px)"
       size_s: "Small ({size} px)"
       size_m: "Medium ({size} px)"
+      custom_color_label: Change icon color
+      color_label: Icon color
+    placement:
+      label: Placement
+      below_text: Below the text
+      top_left: Top left corner
+      top_right: Top right corner
+      bottom_left: Bottom left corner
+      bottom_right: Bottom right corner
+      help: "In a corner, they sit over the hero and take no space: pick a corner free of text and logo. Buttons and social icons cannot share a corner (below the text, the buttons come first)."
       mobile_label: On mobile
       mobile_same: Same as on larger screens
       mobile_below_text: Below the text
       mobile_hide: Hidden
-      custom_color_label: Change icon color
-      color_label: Icon color
+    buttons:
+      title: Buttons
+      add_label: Add buttons to the hero
+      opt_in_help: "The default buttons are only shown on the home hero: switch this on to show buttons on these heroes too."
+      items_label: Buttons
+      items_help: "Log in and Sign up open Flarum's dialogs and are only shown to guests (Sign up is hidden when sign-ups are closed). The preview shows every button."
+      item_title: "Button {number}"
+      add_button: Add a button
+      move_up_button: Move up
+      move_down_button: Move down
+      remove_button: Remove this button
+      label_label: Label
+      action_label: Action
+      action_link: Link
+      action_login: Log in
+      action_signup: Sign up
+      url_label: Link
+      visibility_label: Shown to
+      visibility_all: Everyone
+      visibility_guest: Guests only
+      visibility_user: Logged-in users only
+      icon_label: Icon (optional)
+      icon_placeholder: "fas fa-rocket"
+      style_label: Style
+      style_primary: "Primary (forum's color)"
+      style_default: Standard
+      style_outline: Outline (text color)
+      size_label: Size
+      size_s: Small
+      size_m: Medium
+      size_l: Large
+      new_tab_label: Open in a new tab
+      custom_bg_label: Change background color
+      bg_label: "Button {number}: background color"
+      custom_color_label: Change text color
+      color_label: "Button {number}: text color"
 
   api:
     validation:

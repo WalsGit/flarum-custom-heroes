@@ -33,6 +33,11 @@ final class ConfigValidator
     private const HEIGHT_PRESETS = ['auto', 's', 'm', 'l', 'custom'];
     private const SIZES = ['s', 'm', 'l'];
     private const BUTTON_ACTIONS = ['link', 'login', 'signup'];
+    /** On mobile: like on wider screens, below the text instead of a corner, or hidden. */
+    private const MOBILE_BEHAVIORS = ['same', 'below-text', 'hide'];
+
+    private const BUTTON_STYLES = ['primary', 'default', 'outline'];
+
     private const VISIBILITIES = ['all', 'guest', 'user'];
 
     private const COLOR_PATTERN = '/^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i';
@@ -350,18 +355,24 @@ final class ConfigValidator
             'size' => $this->enum($object['size'] ?? 's', ['xs', 's', 'm'], "$path.size"),
             'placement' => $this->enum($object['placement'] ?? 'below-text', self::PLACEMENTS, "$path.placement"),
             'color' => $this->nullableColor($object['color'] ?? null, "$path.color"),
-            // On mobile: like on wider screens, below the text instead of a corner, or hidden.
-            'mobile' => $this->enum($object['mobile'] ?? 'same', ['same', 'below-text', 'hide'], "$path.mobile"),
+            'mobile' => $this->enum($object['mobile'] ?? 'same', self::MOBILE_BEHAVIORS, "$path.mobile"),
             'items' => $items,
         ];
     }
 
     /**
-     * @return array<string, mixed>|null
+     * Tags and discussions do not inherit the default buttons: they define
+     * their own, or show the default ones with `"inherit"`.
+     *
+     * @return array<string, mixed>|string|null
      */
-    private function buttons(mixed $value, string $path): ?array
+    private function buttons(mixed $value, string $path): array|string|null
     {
-        $object = $this->object($value, $path, ['items'], ['placement']);
+        if ($value === 'inherit' && $this->scope !== Scope::Global) {
+            return 'inherit';
+        }
+
+        $object = $this->object($value, $path, ['items'], ['placement', 'mobile']);
 
         if ($object === null) {
             return null;
@@ -379,6 +390,7 @@ final class ConfigValidator
 
         return [
             'placement' => $this->enum($object['placement'] ?? 'below-text', self::PLACEMENTS, "$path.placement"),
+            'mobile' => $this->enum($object['mobile'] ?? 'same', self::MOBILE_BEHAVIORS, "$path.mobile"),
             'items' => $items,
         ];
     }
@@ -396,7 +408,7 @@ final class ConfigValidator
             return null;
         }
 
-        $common = ['icon', 'size', 'bg', 'color'];
+        $common = ['icon', 'style', 'size', 'bg', 'color'];
 
         // Log in and sign up buttons are always for guests only: they have no
         // URL, target or visibility of their own.
@@ -421,6 +433,7 @@ final class ConfigValidator
         }
 
         return $button + [
+            'style' => $this->enum($object['style'] ?? 'primary', self::BUTTON_STYLES, "$path.style"),
             'size' => $this->enum($object['size'] ?? 'm', self::SIZES, "$path.size"),
             'bg' => $this->nullableColor($object['bg'] ?? null, "$path.bg"),
             'color' => $this->nullableColor($object['color'] ?? null, "$path.color"),

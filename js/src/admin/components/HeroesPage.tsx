@@ -15,11 +15,12 @@ import HeightForm from './HeightForm';
 import HeroPreview from './HeroPreview';
 import LogoForm from './LogoForm';
 import OverlayForm from './OverlayForm';
+import SocialsForm from './SocialsForm';
 import TextForm from './TextForm';
 import TextStyleForm from './TextStyleForm';
 
 /** The sections this page edits. Other sections of a config are kept as they are. */
-type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo';
+type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo' | 'socials';
 
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.${key}`, params, true);
 
@@ -122,6 +123,14 @@ export default class HeroesPage extends ExtensionPage {
                   (parent) => ({ side: 'left', size: 'm', alt: '', hideOnMobile: false, ...parent, image: null }),
                   (value, set) => <LogoForm value={value} onchange={set} target={this.key} />,
                   t('logo.add_label')
+                )}
+              {/* Not per tag (D4). */}
+              {!targetOf(this.key).scopeId &&
+                this.section(
+                  'socials',
+                  (parent) => parent ?? { size: 's', placement: 'below-text', color: null, mobile: 'same', items: [] },
+                  (value, set) => <SocialsForm value={value} onchange={set} />,
+                  t('socials.add_label')
                 )}
             </div>
 

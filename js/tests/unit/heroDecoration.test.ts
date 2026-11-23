@@ -1,4 +1,4 @@
-import { heroDecoration, withLogo } from '../../src/common/heroDecoration';
+import { decorateContent, heroDecoration } from '../../src/common/heroDecoration';
 import type { HeroConfigs } from '../../src/common/types';
 
 const assets = 'https://example.com/assets/extensions/walsgit-custom-heroes';
@@ -62,10 +62,80 @@ describe('heroDecoration', () => {
   it('groups the logo with the content, apart from the close button', () => {
     const close = m('button', { className: 'Hero-close Button' });
     const content = m('.containerNarrow');
-    const [first, group] = withLogo([close, content], m('img.wch-Hero-logo')) as any[];
+    const decoration = { logo: m('img.wch-Hero-logo'), belowText: null, corners: [] } as any;
+    const [first, group] = decorateContent([close, content], decoration) as any[];
 
     expect(first).toBe(close);
     expect(group.attrs.className).toBe('wch-Hero-group');
     expect(group.children[1].children[0]).toBe(content);
+  });
+
+  const socials = (placement: string) =>
+    ({
+      size: 'm',
+      placement,
+      color: null,
+      mobile: 'same',
+      items: [
+        { icon: 'fab fa-github', url: 'https://github.com/example', label: 'GitHub' },
+        { icon: 'fas fa-envelope', url: 'mailto:team@example.com', label: 'Email' },
+      ],
+    }) as any;
+
+  it('renders the social links, web links in a new tab', () => {
+    const decoration = heroDecoration({ global: { socials: socials('below-text') } }, ['global'], 'global', assets)!;
+    const [web, mail] = (decoration.belowText as any).children[0].children.map((item: any) => item.children[0].attrs);
+
+    expect(decoration.className).toContain('wch-Hero--socials');
+    expect(decoration.style['--wch-socials-size']).toBe('24px');
+    expect(decoration.corners).toEqual([]);
+    expect(web).toMatchObject({ href: 'https://github.com/example', 'aria-label': 'GitHub', target: '_blank', rel: 'noopener noreferrer' });
+    expect(mail).toMatchObject({ href: 'mailto:team@example.com', 'aria-label': 'Email' });
+    expect(mail.target).toBeUndefined();
+  });
+
+  it('puts corner icons over the content and icons below the text with it', () => {
+    const corner = heroDecoration({ global: { socials: socials('top-right') } }, ['global'], 'global', assets)!;
+
+    expect(corner.belowText).toBeNull();
+    expect((corner.corners[0] as any).attrs.className).toBe('wch-Hero-slot wch-Hero-slot--top-right');
+
+    const close = m('button', { className: 'Hero-close Button' });
+    const content = m('.containerNarrow');
+    const below = heroDecoration({ global: { socials: socials('below-text') } }, ['global'], 'global', assets)!;
+    const [first, body] = decorateContent([close, content], below) as any[];
+
+    expect(first).toBe(close);
+    expect(body.attrs.className).toBe('wch-Hero-body');
+    expect(body.children.map((child: any) => child.attrs.className)).toEqual(['containerNarrow', 'wch-Hero-slot wch-Hero-slot--below-text']);
+    // Corners go in the header, not in the content.
+    expect(decorateContent([content], corner)).toEqual([content]);
+  });
+
+  it('hides the icons on mobile or moves them below the text', () => {
+    const classes = (placement: string, mobile: string) => {
+      const decoration = heroDecoration({ global: { socials: { ...socials(placement), mobile } } }, ['global'], 'global', assets)!;
+
+      return [(decoration.belowText as any)?.attrs.className ?? null, ...decoration.corners.map((corner: any) => corner.attrs.className)];
+    };
+
+    expect(classes('top-left', 'hide')).toEqual([null, 'wch-Hero-slot wch-Hero-slot--top-left wch-Hero-slot--hideMobile']);
+    expect(classes('top-left', 'below-text')).toEqual([
+      'wch-Hero-slot wch-Hero-slot--below-text wch-Hero-slot--mobileOnly',
+      'wch-Hero-slot wch-Hero-slot--top-left wch-Hero-slot--hideMobile',
+    ]);
+    // Mithril cannot render one vnode in two places.
+    const both = heroDecoration({ global: { socials: { ...socials('top-left'), mobile: 'below-text' } } }, ['global'], 'global', assets)!;
+    expect((both.belowText as any).children[0]).not.toBe((both.corners[0] as any).children[0]);
+
+    expect(classes('below-text', 'hide')).toEqual(['wch-Hero-slot wch-Hero-slot--below-text wch-Hero-slot--hideMobile']);
+    expect(classes('below-text', 'below-text')).toEqual(['wch-Hero-slot wch-Hero-slot--below-text']);
+  });
+
+  it('adds nothing without social links', () => {
+    const decoration = heroDecoration({ global: { socials: { ...socials('top-left'), items: [] } } }, ['global'], 'global', assets);
+
+    expect(decoration?.corners ?? []).toEqual([]);
+    expect(decoration?.className ?? '').not.toContain('wch-Hero--socials');
   });
 });

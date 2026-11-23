@@ -141,6 +141,36 @@ walsgit-custom-heroes:
       auto_color_label: Couleur automatique (celle de Flarum)
       color_label: Couleur du texte
       color_help: Une couleur claire sur une image ou un filtre sombre garde le texte lisible.
+    socials:
+      title: Icônes de réseaux sociaux
+      add_label: Ajouter des icônes de réseaux sociaux au hero
+      items_label: Icônes
+      items_help: "Icône : une classe Font Awesome Free, par exemple <code>fab fa-github</code> (<a>chercher les icônes</a>). Le libellé nomme le lien pour les lecteurs d'écran. Liens : https://…, mailto:… ou tel:… ; les liens web s'ouvrent dans un nouvel onglet."
+      icon_label: "Icône {number} : icône"
+      label_label: "Icône {number} : libellé"
+      url_label: "Icône {number} : lien"
+      label_placeholder: Libellé
+      add_button: Ajouter une icône
+      move_up_button: Monter
+      move_down_button: Descendre
+      remove_button: Supprimer cette icône
+      placement_label: Emplacement
+      placement_below_text: Sous le texte
+      placement_top_left: Coin haut gauche
+      placement_top_right: Coin haut droit
+      placement_bottom_left: Coin bas gauche
+      placement_bottom_right: Coin bas droit
+      placement_help: "Dans un coin, les icônes sont posées sur le hero sans prendre de place : choisissez un coin libre de texte et de logo."
+      size_label: Taille
+      size_xs: "Très petite ({size} px)"
+      size_s: "Petite ({size} px)"
+      size_m: "Moyenne ({size} px)"
+      mobile_label: Sur mobile
+      mobile_same: Comme sur les grands écrans
+      mobile_below_text: Sous le texte
+      mobile_hide: Masquées
+      custom_color_label: Changer la couleur des icônes
+      color_label: Couleur des icônes
 
   api:
     validation:

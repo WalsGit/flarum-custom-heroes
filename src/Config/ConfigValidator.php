@@ -325,7 +325,7 @@ final class ConfigValidator
      */
     private function socials(mixed $value, string $path): ?array
     {
-        $object = $this->object($value, $path, ['items'], ['size', 'placement', 'color']);
+        $object = $this->object($value, $path, ['items'], ['size', 'placement', 'color', 'mobile']);
 
         if ($object === null) {
             return null;
@@ -350,6 +350,8 @@ final class ConfigValidator
             'size' => $this->enum($object['size'] ?? 's', ['xs', 's', 'm'], "$path.size"),
             'placement' => $this->enum($object['placement'] ?? 'below-text', self::PLACEMENTS, "$path.placement"),
             'color' => $this->nullableColor($object['color'] ?? null, "$path.color"),
+            // On mobile: like on wider screens, below the text instead of a corner, or hidden.
+            'mobile' => $this->enum($object['mobile'] ?? 'same', ['same', 'below-text', 'hide'], "$path.mobile"),
             'items' => $items,
         ];
     }

@@ -77,10 +77,13 @@
   .Hero-subtitle {
     font-size: var(--wch-subtitle-size-mobile);
   }
+}
 
-  // The text block takes the free height (min-height) to place itself;
-  // the close button leaves the flow, where the core puts it, so that it
-  // does not push the text down.
+// The text block takes the free height to place itself (text style) or to
+// shrink in it (fixed height); the close button leaves the flow, where the
+// core puts it, so that it does not push the text down.
+.wch-Hero.wch-Hero--text,
+.wch-Hero.wch-Hero--fixedHeight {
   > .container {
     position: relative;
     display: flex;
@@ -109,7 +112,10 @@
     .Hero-subtitle {
       font-size: var(--wch-subtitle-size);
     }
+  }
 
+  .wch-Hero.wch-Hero--text,
+  .wch-Hero.wch-Hero--fixedHeight {
     .Hero-close {
       top: 30px;
       right: 15px;
@@ -240,5 +246,140 @@
   .Hero-subtitle {
     -webkit-line-clamp: 3;
     line-clamp: 3;
+  }
+}
+
+// Social icons, in one slot per placement: a corner of the hero, over
+// everything (no space taken), or below the text.
+.wch-Hero--socials {
+  position: relative;
+}
+
+.wch-Hero-slot {
+  position: absolute;
+  z-index: 2;
+
+  &--top-left,
+  &--bottom-left {
+    left: 5px;
+  }
+
+  &--top-right,
+  &--bottom-right {
+    right: 5px;
+  }
+
+  &--top-left,
+  &--top-right {
+    top: 5px;
+  }
+
+  &--bottom-left,
+  &--bottom-right {
+    bottom: 5px;
+  }
+
+  &--below-text {
+    position: static;
+    margin-top: 6px;
+  }
+
+  &--hideMobile {
+    display: none;
+  }
+}
+
+@container (min-width: @screen-tablet) {
+  .wch-Hero-slot--hideMobile {
+    display: block;
+  }
+
+  .wch-Hero-slot--mobileOnly {
+    display: none;
+  }
+}
+
+// Icons in the top right corner sit where the close button of the welcome
+// banner is: it moves below them (only where they are shown).
+.wch-Hero:has(> .wch-Hero-slot--top-right:not(.wch-Hero-slot--hideMobile)) {
+  > .container {
+    position: relative;
+  }
+
+  .Hero-close {
+    position: absolute;
+    top: ~"max(10px, var(--wch-socials-size) + 15px)";
+    right: 5px;
+    margin: 0;
+  }
+}
+
+@container (min-width: @screen-tablet) {
+  // Doubled class: as specific as the mobile rule (its :not), to win over it.
+  .wch-Hero.wch-Hero:has(> .wch-Hero-slot--top-right) {
+    > .container {
+      position: relative;
+    }
+
+    .Hero-close {
+      position: absolute;
+      top: ~"max(30px, var(--wch-socials-size) + 15px)";
+      right: 15px;
+      margin: 0;
+    }
+  }
+}
+
+.wch-Socials {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--wch-socials-size);
+  line-height: 1;
+}
+
+// Padded to a touch target of at least 24 px.
+.wch-Socials-link {
+  display: block;
+  padding: 5px;
+  color: var(--wch-socials-color, inherit);
+
+  &:hover,
+  &:focus {
+    color: var(--wch-socials-color, inherit);
+    text-decoration: none;
+    opacity: 0.75;
+  }
+}
+
+// Fixed height: the icons stay visible, the text is cut first. Each level
+// shrinks into the height of the one above.
+.wch-Hero--fixedHeight {
+  > .container > :not(.Hero-close) {
+    min-height: 0;
+  }
+
+  .wch-Hero-groupText {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+  }
+
+  .wch-Hero-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    > :not(.wch-Hero-slot) {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    > .wch-Hero-slot {
+      flex: none;
+    }
   }
 }

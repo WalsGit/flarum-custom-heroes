@@ -424,7 +424,14 @@ class ConfigValidatorTest extends TestCase
 
         $this->assertSame('s', $socials['size']);
         $this->assertSame('below-text', $socials['placement']);
+        $this->assertSame('same', $socials['mobile']);
         $this->assertSame($items, $socials['items']);
+    }
+
+    public function test_social_icons_mobile_behavior_is_checked(): void
+    {
+        $this->assertSame('hide', $this->valid(['socials' => ['mobile' => 'hide', 'items' => []]])['socials']['mobile']);
+        $this->assertInvalid(['socials' => ['mobile' => 'top-left', 'items' => []]], 'config.socials.mobile', 'invalid_value');
     }
 
     #[DataProvider('invalidSocialUrls')]

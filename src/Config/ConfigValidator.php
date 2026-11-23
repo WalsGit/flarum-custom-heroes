@@ -98,7 +98,6 @@ final class ConfigValidator
                     'logo' => $this->logo($value, $path),
                     'socials' => $this->socials($value, $path),
                     'buttons' => $this->buttons($value, $path),
-                    'dismissible' => $this->bool($value, $path),
                     // Every allowed section must have its own validation.
                     default => throw new LogicException("No validation for the section $section."),
                 };
@@ -287,25 +286,17 @@ final class ConfigValidator
      */
     private function text(mixed $value, string $path): ?array
     {
-        $source = $this->isObject($value) ? ($value['source'] ?? null) : null;
+        $object = $this->object($value, $path, [], ['afterClose', 'title', 'message']);
 
-        if ($source === 'core') {
-            return $this->object($value, $path, ['source']) === null ? null : ['source' => 'core'];
+        if ($object === null) {
+            return null;
         }
 
-        if ($source === 'custom') {
-            $object = $this->object($value, $path, ['source'], ['title', 'message']);
-
-            return $object === null ? null : [
-                'source' => 'custom',
-                'title' => $this->string($object['title'] ?? '', "$path.title", 0, 100, false),
-                'message' => $this->string($object['message'] ?? '', "$path.message", 0, 500, true),
-            ];
-        }
-
-        $this->fail($this->isObject($value) ? "$path.source" : $path, 'invalid_value');
-
-        return null;
+        return [
+            'afterClose' => $this->enum($object['afterClose'] ?? 'hero', ['hero', 'none'], "$path.afterClose"),
+            'title' => $this->string($object['title'] ?? '', "$path.title", 0, 100, false),
+            'message' => $this->string($object['message'] ?? '', "$path.message", 0, 500, true),
+        ];
     }
 
     /**

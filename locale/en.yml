@@ -28,6 +28,9 @@ walsgit-custom-heroes:
       mobile: Mobile
       tag_title: Tag name
       tag_subtitle: The description of the tag.
+      state_welcome: Welcome text
+      state_closed: Once closed
+      hidden: "Once the welcome text is closed, this hero is hidden (Flarum's behavior)."
       discussion_title: The title of a discussion
     background:
       title: Background image
@@ -95,10 +98,35 @@ walsgit-custom-heroes:
       desktop_label: Desktop
       tablet_label: Tablet
       mobile_label: Mobile
-    dismissible:
-      title: Close button
-      label: Show the close button (✕)
-      help: "Once this hero is customized, it is always shown: the close button only hides its text, for the visitor who clicks it. Without the button, the text is always shown."
+    text:
+      title: Text
+      intro: "Flarum's welcome text (Appearance) is shown first and can be closed with ✕, like in Flarum. This sets what the hero does once it is closed, or when Flarum's welcome title is empty."
+      after_close_label: Once the welcome text is closed
+      after_close_hero: Keep the hero, with the text below
+      after_close_none: "Hide the hero (Flarum's behavior)"
+      title_label: Title
+      message_label: Message
+      message_help: Plain text, line breaks are kept. Leave both empty for a hero without text (background only).
+    text_style:
+      title: Text style
+      align_label: Horizontal alignment
+      align_left: Left
+      align_center: Center
+      align_right: Right
+      v_align_label: Vertical position
+      v_align_top: Top
+      v_align_middle: Middle
+      v_align_bottom: Bottom
+      v_align_help: Only visible when the hero is taller than its text (see Height).
+      title_size_label: Title size
+      subtitle_size_label: Message size
+      size_s: Small
+      size_m: "Medium (Flarum's size)"
+      size_l: Large
+      size_xl: Extra large
+      auto_color_label: "Automatic color (Flarum's)"
+      color_label: Text color
+      color_help: A light color on a dark image or overlay keeps the text readable.
 
   api:
     validation:

@@ -26,6 +26,9 @@ walsgit-custom-heroes:
       mobile: Mobile
       tag_title: Nom du tag
       tag_subtitle: La description du tag.
+      state_welcome: Texte d'accueil
+      state_closed: Une fois fermé
+      hidden: Une fois le texte d'accueil fermé, ce hero est masqué (comportement de Flarum).
       discussion_title: Le titre d'une discussion
     background:
       title: Image de fond
@@ -93,10 +96,35 @@ walsgit-custom-heroes:
       desktop_label: Ordinateur
       tablet_label: Tablette
       mobile_label: Mobile
-    dismissible:
-      title: Bouton fermer
-      label: Afficher le bouton fermer (✕)
-      help: "Une fois ce hero personnalisé, il est toujours affiché : le bouton fermer ne masque que son texte, pour le visiteur qui clique dessus. Sans le bouton, le texte est toujours affiché."
+    text:
+      title: Texte
+      intro: "Le texte d'accueil de Flarum (Apparence) s'affiche d'abord et se ferme avec ✕, comme dans Flarum. Ce réglage définit ce que fait le hero une fois ce texte fermé, ou si le titre d'accueil de Flarum est vide."
+      after_close_label: Une fois le texte d'accueil fermé
+      after_close_hero: Garder le hero, avec le texte ci-dessous
+      after_close_none: Masquer le hero (comportement de Flarum)
+      title_label: Titre
+      message_label: Message
+      message_help: Texte brut, les retours à la ligne sont conservés. Laisser les deux vides pour un hero sans texte (fond seul).
+    text_style:
+      title: Style du texte
+      align_label: Alignement horizontal
+      align_left: Gauche
+      align_center: Centre
+      align_right: Droite
+      v_align_label: Position verticale
+      v_align_top: Haut
+      v_align_middle: Milieu
+      v_align_bottom: Bas
+      v_align_help: Visible seulement si le hero est plus haut que son texte (voir Hauteur).
+      title_size_label: Taille du titre
+      subtitle_size_label: Taille du message
+      size_s: Petite
+      size_m: Moyenne (taille de Flarum)
+      size_l: Grande
+      size_xl: Très grande
+      auto_color_label: Couleur automatique (celle de Flarum)
+      color_label: Couleur du texte
+      color_help: Une couleur claire sur une image ou un filtre sombre garde le texte lisible.
 
   api:
     validation:

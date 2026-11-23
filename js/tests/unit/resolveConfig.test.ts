@@ -15,7 +15,7 @@ const configs: HeroConfigs = {
     overlay: { type: 'none' },
   },
   welcome: {
-    dismissible: false,
+    text: { afterClose: 'none', title: '', message: '' },
   },
 };
 
@@ -73,7 +73,7 @@ describe('resolveConfig', () => {
     const resolved = resolveConfig(configs, configChain('discussion'));
 
     expect(resolved.height).toEqual({ preset: 's' });
-    expect(resolved).not.toHaveProperty('dismissible');
+    expect(resolved).not.toHaveProperty('text');
   });
 
   it('returns an empty config when nothing applies', () => {

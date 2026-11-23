@@ -1,4 +1,5 @@
 import { HEIGHT_PRESETS, heroStyle } from '../../src/common/heroStyle';
+import type { TextStyleSection } from '../../src/common/types';
 
 describe('heroStyle', () => {
   it('sets no variable without config', () => {
@@ -26,7 +27,7 @@ describe('heroStyle', () => {
   });
 
   it('ignores the sections that have no variable yet', () => {
-    expect(heroStyle({ dismissible: false, overlay: { type: 'none' } })).toEqual({});
+    expect(heroStyle({ text: { afterClose: 'none', title: '', message: '' }, overlay: { type: 'none' } })).toEqual({});
   });
 
   it('sets the background position only when there is an image', () => {
@@ -95,5 +96,17 @@ describe('heroStyle', () => {
       'radial-gradient(at top left, #ff0000, transparent 70%), radial-gradient(at top right, #00ff00, transparent 70%), ' +
         'radial-gradient(at bottom left, #0000ff, transparent 70%), radial-gradient(at bottom right, #ffffff80, transparent 70%)'
     );
+  });
+
+  it('sets the text sizes per breakpoint, and the color only when it is not automatic', () => {
+    const textStyle: TextStyleSection = { align: 'left', vAlign: 'middle', titleSize: 'xl', subtitleSize: 'm', color: null };
+
+    expect(heroStyle({ textStyle })).toEqual({
+      '--wch-title-size': '2.25rem',
+      '--wch-title-size-mobile': '1.5rem',
+      '--wch-subtitle-size': '0.9375rem',
+      '--wch-subtitle-size-mobile': '0.8125rem',
+    });
+    expect(heroStyle({ textStyle: { ...textStyle, color: '#ffffffcc' } })['--wch-text-color']).toBe('#ffffffcc');
   });
 });

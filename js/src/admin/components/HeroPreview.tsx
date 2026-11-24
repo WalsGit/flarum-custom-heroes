@@ -89,12 +89,17 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     }
 
     const content = this.content(scope, scopeId, config, closed);
-    const closable = scope === 'global' && !closed;
+    // Flarum's deck hero can be closed too (for good, like in Flarum).
+    const closable = (scope === 'global' && !closed) || scope === 'deck';
 
     const children = [
       closable && <i className="Hero-close fas fa-times" aria-hidden="true" />,
       <div className="containerNarrow">
-        {content.title && <h1 className="Hero-title">{content.title}</h1>}
+        {content.title && (
+          <h1 className="Hero-title">
+            {content.icon && <i className={content.icon} aria-hidden="true" />} {content.title}
+          </h1>
+        )}
         {/* Like the core: kept even when empty (but discussions have none). */}
         {(content.subtitle || (content.title && scope !== 'discussion')) && (
           <div className={classList('Hero-subtitle', closed && 'wch-Hero-message')}>{content.subtitle}</div>
@@ -116,8 +121,8 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     );
   }
 
-  /** What the hero shows: the Welcome texts (default level), a tag, or a sample discussion. */
-  content(scope: string, scopeId: string, config: HeroConfig, closed: boolean): { title: string; subtitle?: string; color?: string } {
+  /** What the hero shows: the Welcome texts (default level), a tag, or a sample of the other heroes. */
+  content(scope: string, scopeId: string, config: HeroConfig, closed: boolean): { title: string; subtitle?: string; color?: string; icon?: string } {
     if (scope === 'tag') {
       const tag = scopeId ? app.store.getById('tags', scopeId) : null;
 
@@ -132,6 +137,15 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
 
     if (scope === 'discussion') {
       return { title: t('discussion_title') };
+    }
+
+    // Like Flarum's heroes of these extensions (their texts are not loaded in the admin).
+    if (scope === 'messages' || scope === 'deck') {
+      return {
+        title: t(`${scope}_title`),
+        subtitle: t(`${scope}_subtitle`),
+        icon: scope === 'messages' ? 'fas fa-envelope' : 'fas fa-table-columns',
+      };
     }
 
     if (closed) {

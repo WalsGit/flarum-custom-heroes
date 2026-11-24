@@ -3,12 +3,14 @@ walsgit-custom-heroes:
   # Checkout https://docs.flarum.org/2.x/extend/i18n/#appendix-a-standard-key-format
   admin:
     scope_label: Hero to customize
-    scope_help: "Settings of Default apply to the home hero and to every hero. Tags and Discussions inherit them, then each tag inherits from Tags, and each child tag from its parent tag."
+    scope_help: "Settings of Default apply to the home hero and to every hero, which inherit them. Each tag inherits from Tags, and each child tag from its parent tag."
     scopes:
       global: Default (home and all heroes)
       tag: Tags (default)
       tag_instance: "Tag: {name}"
       discussion: Discussions
+      messages: Private messages
+      deck: Deck
       customized: "{label} — customized"
     inherit_from_label: "Inherit from \"{source}\""
     inherit_core_label: "Use Flarum's default"
@@ -31,6 +33,10 @@ walsgit-custom-heroes:
       state_closed: Once closed
       hidden: "Once the welcome banner is closed, this hero is hidden (Flarum's behavior)."
       discussion_title: The title of a discussion
+      messages_title: Messages
+      messages_subtitle: Your private conversations.
+      deck_title: Deck
+      deck_subtitle: Your discussions, side by side.
     background:
       title: Background image
       no_image: No image

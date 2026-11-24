@@ -5,7 +5,7 @@
  */
 
 /** `global` is also the config of the home (Welcome) hero. */
-export type HeroScope = 'global' | 'tag' | 'discussion';
+export type HeroScope = 'global' | 'tag' | 'discussion' | 'messages' | 'deck';
 
 /** `#rgb`, `#rrggbb` or `#rrggbbaa`, lowercase. */
 export type Color = string;
@@ -136,7 +136,7 @@ export interface HeroConfig {
   text?: TextSection;
   logo?: LogoSection;
   socials?: SocialsSection;
-  /** Tags and discussions do not inherit the default buttons: `inherit` shows them there. */
+  /** The heroes other than the home one do not inherit the default buttons: `inherit` shows them there. */
   buttons?: ButtonsSection | 'inherit';
 }
 

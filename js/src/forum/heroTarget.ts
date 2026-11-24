@@ -25,9 +25,14 @@ export function heroTarget(hero: Hero): HeroTarget | null {
     return { scope: 'discussion', scopeId: null };
   }
 
-  // flarum/tags is optional: its hero is recognized by its class name, so
-  // that the extension does not import it.
-  if (hero.className().split(' ').includes('TagHero')) {
+  // flarum/tags, flarum/messages and flarum/deck are optional: their heroes
+  // are recognized by their class name, so that the extension does not import them.
+  const classes = hero.className().split(' ');
+
+  if (classes.includes('MessagesPageHero')) return { scope: 'messages', scopeId: null };
+  if (classes.includes('DeckPageHero')) return { scope: 'deck', scopeId: null };
+
+  if (classes.includes('TagHero')) {
     const model = (hero.attrs as { model?: { id(): string | undefined; data: { relationships?: Record<string, unknown> } } }).model;
 
     return { scope: 'tag', scopeId: model?.id() ?? null, parentId: tagParentId(model) };

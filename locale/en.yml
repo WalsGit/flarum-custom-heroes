@@ -3,7 +3,7 @@ walsgit-custom-heroes:
   # Checkout https://docs.flarum.org/2.x/extend/i18n/#appendix-a-standard-key-format
   admin:
     scope_label: Hero to customize
-    scope_help: "Settings of Default apply to the home hero and to every hero. Tags and Discussions inherit them, then each tag inherits from Tags."
+    scope_help: "Settings of Default apply to the home hero and to every hero. Tags and Discussions inherit them, then each tag inherits from Tags, and each child tag from its parent tag."
     scopes:
       global: Default (home and all heroes)
       tag: Tags (default)

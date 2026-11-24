@@ -14,19 +14,28 @@ export function normalizeConfigs(configs: unknown): HeroConfigs {
 
 /**
  * The keys of the configs that apply to a hero, from the most general to the
- * most specific. For example `['global', 'tag', 'tag:12']`.
+ * most specific. For example `['global', 'tag', 'tag:12']`, or
+ * `['global', 'tag', 'tag:3', 'tag:12']` for a child of tag 3.
  */
-export function configChain(scope: HeroScope, scopeId?: string | null): string[] {
+export function configChain(scope: HeroScope, scopeId?: string | null, parentId?: string | null): string[] {
   // The home (Welcome) hero uses the default config itself.
   if (scope === 'global') return ['global'];
 
   const chain = ['global', scope];
 
   if (scopeId) {
+    if (parentId) chain.push(`${scope}:${parentId}`);
     chain.push(`${scope}:${scopeId}`);
   }
 
   return chain;
+}
+
+/** The id of a tag's parent, read from the relationship data: the parent model may not be in the store. */
+export function tagParentId(tag: { data: { relationships?: Record<string, unknown> } } | null | undefined): string | null {
+  const parent = tag?.data.relationships?.parent as { data?: { id?: string } | null } | undefined;
+
+  return parent?.data?.id ?? null;
 }
 
 /** Sections the default level gives to the home hero only: the other heroes opt in at their own level (buttons: `inherit`). */

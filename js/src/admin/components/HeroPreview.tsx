@@ -6,13 +6,15 @@ import type Mithril from 'mithril';
 import { decorateContent, heroDecoration } from '../../common/heroDecoration';
 import { resolveConfig } from '../../common/resolveConfig';
 import { DEFAULT_TEXT, type ForumPayload, type HeroConfig, type HeroConfigs } from '../../common/types';
-import { parentChain, targetOf } from '../utils/scopes';
+import { targetOf } from '../utils/scopes';
 
 export interface HeroPreviewAttrs extends ComponentAttrs {
   /** The stored configs, with the draft of the edited target in place. */
   configs: HeroConfigs;
   /** The edited target: `global`, `discussion`, `tag:12`… */
   target: string;
+  /** The keys of the configs the target uses, itself last. */
+  chain: string[];
 }
 
 type Device = 'desktop' | 'tablet' | 'mobile';
@@ -74,10 +76,8 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
   }
 
   hero() {
-    const { configs, target } = this.attrs;
+    const { configs, target, chain } = this.attrs;
     const { scope, scopeId } = targetOf(target);
-    // The default config is previewed as the home hero, the others with what they inherit.
-    const chain = [...parentChain(target), target];
     const payload = app.forum.attribute<ForumPayload>('walsgitCustomHeroes');
     const decoration = heroDecoration(configs, chain, scope, payload.assetsUrl);
     const config = resolveConfig(configs, chain);

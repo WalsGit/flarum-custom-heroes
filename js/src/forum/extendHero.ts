@@ -29,7 +29,13 @@ function customizeHero(this: Hero, vdom: Mithril.Children) {
   const payload = app.forum.attribute<ForumPayload | undefined>('walsgitCustomHeroes');
   const decoration =
     target && payload
-      ? heroDecoration(normalizeConfigs(payload.configs), configChain(target.scope, target.scopeId), target.scope, payload.assetsUrl, viewer())
+      ? heroDecoration(
+          normalizeConfigs(payload.configs),
+          configChain(target.scope, target.scopeId, target.parentId),
+          target.scope,
+          payload.assetsUrl,
+          viewer()
+        )
       : null;
 
   if (!decoration) return;

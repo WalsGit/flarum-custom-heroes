@@ -6,7 +6,7 @@ import Button from 'flarum/common/components/Button';
 import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
 import type Mithril from 'mithril';
-import { normalizeConfigs, resolveConfig, sectionOwner } from '../../common/resolveConfig';
+import { normalizeConfigs, resolveConfig, sectionOwner, tagParentId } from '../../common/resolveConfig';
 import {
   DEFAULT_TEXT,
   type ForumPayload,
@@ -16,7 +16,7 @@ import {
   type TextSection,
   type ButtonsSection,
 } from '../../common/types';
-import { parentChain, targetOf } from '../utils/scopes';
+import { parentChain, tagOrder, targetOf } from '../utils/scopes';
 import { uploadLimits } from '../utils/uploadLimits';
 import BackgroundForm from './BackgroundForm';
 import ButtonsForm from './ButtonsForm';
@@ -90,7 +90,7 @@ export default class HeroesPage extends ExtensionPage {
               <p className="helpText">{t('scope_help')}</p>
             </div>
 
-            <HeroPreview configs={{ ...this.configs, [this.key]: this.draft }} target={this.key} />
+            <HeroPreview configs={{ ...this.configs, [this.key]: this.draft }} target={this.key} chain={this.chain(this.key)} />
 
             <div className="wch-HeroesPage-sections">
               {this.section(
@@ -182,7 +182,7 @@ export default class HeroesPage extends ExtensionPage {
   ) {
     const value = this.draft[name];
     // The hero's whole chain without the edited config: some sections are not inherited by every hero (buttons).
-    const chain = [...parentChain(this.key), this.key];
+    const chain = this.chain(this.key);
     const parents = { ...this.configs, [this.key]: {} };
     const owner = sectionOwner(parents, chain, name);
     const set = (section: NonNullable<HeroConfig[K]>) => (this.draft = { ...this.draft, [name]: section });
@@ -218,7 +218,7 @@ export default class HeroesPage extends ExtensionPage {
    * will use (draft and inherited), which the other one cannot take.
    */
   takenCorner(name: 'socials' | 'buttons'): Placement | null {
-    const placement = resolveConfig({ ...this.configs, [this.key]: this.draft }, [...parentChain(this.key), this.key])[name]?.placement;
+    const placement = resolveConfig({ ...this.configs, [this.key]: this.draft }, this.chain(this.key))[name]?.placement;
 
     return placement && placement !== 'below-text' ? placement : null;
   }
@@ -281,6 +281,14 @@ export default class HeroesPage extends ExtensionPage {
     return isExtensionEnabled('flarum-tags');
   }
 
+  /** The keys of the configs a target uses, itself last: a child tag inherits from its parent. */
+  chain(key: string): string[] {
+    const { scope, scopeId } = targetOf(key);
+    const parentId = scope === 'tag' && scopeId ? tagParentId(app.store.getById('tags', scopeId)) : null;
+
+    return [...parentChain(key, parentId), key];
+  }
+
   scopeLabel(key: string): string {
     const { scope, scopeId } = targetOf(key);
 
@@ -297,15 +305,20 @@ export default class HeroesPage extends ExtensionPage {
     const keys = ['global', 'discussion'];
 
     if (this.tagsEnabled()) {
-      const tags = app.store.all('tags').sort((a, b) => (a.attribute('name') as string).localeCompare(b.attribute('name') as string));
+      const tags = app.store.all('tags').map((tag) => ({
+        id: tag.id()!,
+        name: tag.attribute('name') as string,
+        position: tag.attribute('position') as number | null,
+        parentId: tagParentId(tag),
+      }));
 
-      keys.push('tag', ...tags.map((tag) => `tag:${tag.id()}`));
+      keys.push('tag', ...tagOrder(tags).map((id) => `tag:${id}`));
     }
 
     return Object.fromEntries(
       keys.map((key) => {
         // Indented under the level it inherits from (spaces would collapse in an option).
-        const depth = parentChain(key).length;
+        const depth = this.chain(key).length - 1;
         const indent = depth > 0 ? '\u00a0\u00a0\u00a0\u00a0'.repeat(depth - 1) + '└\u00a0' : '';
         // Customized targets are marked, so that they are easy to find.
         const label = this.configs[key] ? t('scopes.customized', { label: this.scopeLabel(key) }) : this.scopeLabel(key);

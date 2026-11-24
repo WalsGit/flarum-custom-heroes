@@ -14,11 +14,15 @@ export default class HeroesPage extends ExtensionPage {
     /** The stored configs, kept in sync with the server after each save. */
     configs: HeroConfigs;
     draft: HeroConfig;
+    /** The open section tab. */
+    tab: EditedSection | 'text' | 'buttons';
     saving: boolean;
     oninit(vnode: Mithril.Vnode<any, this>): void;
     className(): string;
     sections(vnode: Mithril.VnodeDOM<any, this>): import("flarum/common/utils/ItemList").default<unknown>;
     content(): JSX.Element;
+    /** The sections of this target, one tab each, only the open one rendered. */
+    tabs(): JSX.Element;
     /**
      * A section card: inherited (with where it comes from) or defined here.
      * With `addLabel`, a section that has nothing to inherit is switched on to

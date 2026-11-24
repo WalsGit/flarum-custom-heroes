@@ -33,6 +33,9 @@ import TextStyleForm from './TextStyleForm';
 /** The sections this page edits. Other sections of a config are kept as they are. */
 type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo' | 'socials';
 
+/** Locale keys use underscores: `textStyle` → `text_style`. */
+const localeKey = (name: string) => name.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
+
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.${key}`, params, true);
 
 /**
@@ -46,6 +49,8 @@ export default class HeroesPage extends ExtensionPage {
   /** The stored configs, kept in sync with the server after each save. */
   configs: HeroConfigs = {};
   draft: HeroConfig = {};
+  /** The open section tab. */
+  tab: EditedSection | 'text' | 'buttons' = 'background';
   saving = false;
 
   oninit(vnode: Mithril.Vnode<any, this>) {
@@ -94,84 +99,129 @@ export default class HeroesPage extends ExtensionPage {
 
             <HeroPreview configs={{ ...this.configs, [this.key]: this.draft }} target={this.key} chain={this.chain(this.key)} />
 
-            <div className="wch-HeroesPage-sections">
-              {this.section(
-                'background',
-                // The image of the level above belongs to it: never copied, used through `inherit`.
-                (parent) => ({ image: parent?.image ? 'inherit' : null, position: parent?.position ?? CENTER }),
-                (value, set) => (
-                  <BackgroundForm
-                    value={value}
-                    onchange={set}
-                    target={this.key}
-                    inherited={this.inheritedBackground()}
-                    preview={{ configs: { ...this.configs, [this.key]: this.draft }, target: this.key, chain: this.chain(this.key) }}
-                  />
-                )
-              )}
-              {this.section(
-                'overlay',
-                (parent) => parent ?? { type: 'none' },
-                (value, set) => (
-                  <OverlayForm value={value} onchange={set} />
-                )
-              )}
-              {this.section(
-                'height',
-                (parent) => parent ?? { preset: 'auto' },
-                (value, set) => (
-                  <HeightForm value={value} onchange={set} />
-                )
-              )}
-              {this.key === 'global' && this.textSection()}
-              {/* Not per tag (D4). */}
-              {!targetOf(this.key).scopeId &&
-                this.section(
-                  'textStyle',
-                  // Top, like the core, so that unticking changes nothing at first.
-                  (parent) => parent ?? { align: 'center', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
-                  (value, set) => <TextStyleForm value={value} onchange={set} />
-                )}
-              {/* Not per tag (D4). */}
-              {!targetOf(this.key).scopeId &&
-                this.section(
-                  'logo',
-                  // The logo of the level above belongs to it: never copied.
-                  (parent) => ({ side: 'left', size: 'm', alt: '', hideOnMobile: false, ...parent, image: null }),
-                  (value, set) => <LogoForm value={value} onchange={set} target={this.key} />,
-                  t('logo.add_label')
-                )}
-              {/* Not per tag (D4). */}
-              {!targetOf(this.key).scopeId &&
-                this.section(
-                  'socials',
-                  (parent) => parent ?? { size: 's', placement: 'below-text', color: null, mobile: 'same', items: [] },
-                  (value, set) => <SocialsForm value={value} onchange={set} taken={this.takenCorner('buttons')} />,
-                  t('socials.add_label')
-                )}
-              {/* Not per tag (D4). */}
-              {!targetOf(this.key).scopeId && this.buttonsSection()}
-            </div>
+            {this.tabs()}
 
-            <div className="Form-group Form-controls wch-HeroesPage-controls">
-              <Button
-                className="Button Button--primary"
-                loading={this.saving}
-                disabled={!this.isDirty() || this.saving}
-                onclick={() => this.save(this.draft)}
-              >
-                {t('save_button')}
-              </Button>
-              <Button className="Button" disabled={!this.isDirty() || this.saving} onclick={() => this.load(this.key)}>
-                {t('cancel_button')}
-              </Button>
-              {stored && (
-                <Button className="Button" icon="fas fa-undo" disabled={this.saving} onclick={() => this.reset()}>
-                  {this.key === 'global' ? t('reset_global_button') : t('reset_button')}
-                </Button>
-              )}
+            {/* Always at the bottom of the window, so that saving needs no scrolling. */}
+            <div className="wch-HeroesPage-controls">
+              <div className="container">
+                <div className="Form-group Form-controls wch-HeroesPage-controlsInner">
+                  <Button
+                    className="Button Button--primary"
+                    loading={this.saving}
+                    disabled={!this.isDirty() || this.saving}
+                    onclick={() => this.save(this.draft)}
+                  >
+                    {t('save_button')}
+                  </Button>
+                  <Button className="Button" disabled={!this.isDirty() || this.saving} onclick={() => this.load(this.key)}>
+                    {t('cancel_button')}
+                  </Button>
+                  {stored && (
+                    <Button className="Button" icon="fas fa-undo" disabled={this.saving} onclick={() => this.reset()}>
+                      {this.key === 'global' ? t('reset_global_button') : t('reset_button')}
+                    </Button>
+                  )}
+                  {this.isDirty() && <span className="wch-HeroesPage-unsaved">{t('unsaved_label')}</span>}
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  /** The sections of this target, one tab each, only the open one rendered. */
+  tabs() {
+    const isInstance = !!targetOf(this.key).scopeId;
+    const sections: Partial<Record<EditedSection | 'text' | 'buttons', () => Mithril.Children>> = {
+      background: () =>
+        this.section(
+          'background',
+          // The image of the level above belongs to it: never copied, used through `inherit`.
+          (parent) => ({ image: parent?.image ? 'inherit' : null, position: parent?.position ?? CENTER }),
+          (value, set) => (
+            <BackgroundForm
+              value={value}
+              onchange={set}
+              target={this.key}
+              inherited={this.inheritedBackground()}
+              preview={{ configs: { ...this.configs, [this.key]: this.draft }, target: this.key, chain: this.chain(this.key) }}
+            />
+          )
+        ),
+      overlay: () =>
+        this.section(
+          'overlay',
+          (parent) => parent ?? { type: 'none' },
+          (value, set) => <OverlayForm value={value} onchange={set} />
+        ),
+      height: () =>
+        this.section(
+          'height',
+          (parent) => parent ?? { preset: 'auto' },
+          (value, set) => <HeightForm value={value} onchange={set} />
+        ),
+    };
+
+    if (this.key === 'global') sections.text = () => this.textSection();
+
+    // Not per tag (D4).
+    if (!isInstance) {
+      sections.textStyle = () =>
+        this.section(
+          'textStyle',
+          // Top, like the core, so that unticking changes nothing at first.
+          (parent) => parent ?? { align: 'center', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
+          (value, set) => <TextStyleForm value={value} onchange={set} />
+        );
+      sections.logo = () =>
+        this.section(
+          'logo',
+          // The logo of the level above belongs to it: never copied.
+          (parent) => ({ side: 'left', size: 'm', alt: '', hideOnMobile: false, ...parent, image: null }),
+          (value, set) => <LogoForm value={value} onchange={set} target={this.key} />,
+          t('logo.add_label')
+        );
+      sections.socials = () =>
+        this.section(
+          'socials',
+          (parent) => parent ?? { size: 's', placement: 'below-text', color: null, mobile: 'same', items: [] },
+          (value, set) => <SocialsForm value={value} onchange={set} taken={this.takenCorner('buttons')} />,
+          t('socials.add_label')
+        );
+      sections.buttons = () => this.buttonsSection();
+    }
+
+    const names = Object.keys(sections) as (keyof typeof sections)[];
+    // The open tab is kept from one target to the next when it has it.
+    const open = names.includes(this.tab) ? this.tab : names[0];
+
+    return (
+      <div className="Tabs wch-Tabs">
+        <div className="Tabs-nav" role="tablist">
+          {names.map((name) => (
+            <Button
+              className="Button Button--link"
+              id={`wch-tab-${name}`}
+              role="tab"
+              active={name === open}
+              aria-selected={name === open}
+              aria-controls="wch-tabpanel"
+              onclick={() => (this.tab = name)}
+            >
+              {t(`${localeKey(name)}.title`)}
+              {/* Defined here rather than inherited. */}
+              {this.draft[name] !== undefined && (
+                <span className="wch-Tabs-dot" title={t('tab_customized')}>
+                  <span className="visually-hidden">{t('tab_customized')}</span>
+                </span>
+              )}
+            </Button>
+          ))}
+        </div>
+        <div id="wch-tabpanel" role="tabpanel" aria-labelledby={`wch-tab-${open}`}>
+          {sections[open]!()}
         </div>
       </div>
     );
@@ -203,9 +253,6 @@ export default class HeroesPage extends ExtensionPage {
 
     return (
       <fieldset className={`wch-Section wch-Section--${name}`}>
-        {/* Locale keys use underscores: `textStyle` → `text_style`. */}
-        <legend>{t(`${name.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`)}.title`)}</legend>
-
         {!owner && addLabel ? (
           <Switch state={value !== undefined} onchange={(add: boolean) => toggle(!add)}>
             {addLabel}
@@ -258,8 +305,6 @@ export default class HeroesPage extends ExtensionPage {
 
     return (
       <fieldset className="wch-Section wch-Section--buttons">
-        <legend>{t('buttons.title')}</legend>
-
         <Switch state={value !== undefined} onchange={(on: boolean) => set(on ? (isDefault ? own() : 'inherit') : undefined)}>
           {t('buttons.add_label')}
         </Switch>
@@ -286,7 +331,6 @@ export default class HeroesPage extends ExtensionPage {
 
     return (
       <fieldset className="wch-Section wch-Section--text">
-        <legend>{t('text.title')}</legend>
         <TextForm value={this.draft.text ?? DEFAULT_TEXT} onchange={set} />
       </fieldset>
     );

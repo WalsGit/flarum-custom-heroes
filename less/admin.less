@@ -2,7 +2,7 @@
 @import "common/hero";
 
 .wch-HeroesPage-body {
-  max-width: 760px;
+  max-width: 860px;
 }
 
 .wch-HeroesPage-scope {
@@ -13,19 +13,58 @@
   }
 }
 
-// One card per section.
+// Outline of the open tab and its section, darker than the tinted bar.
+@wch-tab-border: ~"color-mix(in srgb, var(--control-bg), var(--control-color) 25%)";
+
+// One tab per section, on a tinted bar like the preview; the open tab joins its section.
+.wch-Tabs {
+  .Tabs-nav {
+    padding: 0 6px;
+    margin-bottom: 0;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    background: var(--control-bg);
+    // Too many tabs for a small window: they scroll rather than wrap.
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+
+    > .Button {
+      flex-shrink: 0;
+      margin-top: 6px;
+      padding: 10px 9px;
+      font-size: 14px;
+      border: 1px solid transparent;
+      border-top-width: 2px;
+      border-bottom: 0;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+
+      &[active] {
+        border-color: @wch-tab-border;
+        border-top-color: var(--primary-color);
+        background: var(--body-bg);
+      }
+    }
+  }
+}
+
+// The section is defined at this level (not inherited).
+.wch-Tabs-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 6px;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: var(--primary-color);
+}
+
+// The open section, under its tab.
 .wch-Section {
   margin: 0 0 20px;
-  padding: 15px 20px 5px;
-  border: 1px solid var(--control-bg);
-  border-radius: var(--border-radius);
-
-  > legend {
-    padding: 0 6px;
-    margin-left: -6px;
-    font-weight: bold;
-    font-size: 15px;
-  }
+  padding: 20px 20px 5px;
+  border: 1px solid @wch-tab-border;
+  border-top: 0;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 
   > .Checkbox,
   .Form-group {
@@ -215,10 +254,46 @@
   }
 }
 
+// Fixed rather than sticky: always at the bottom, even under a short tab (and
+// Flarum makes the body a scroll container on phones, where sticky never sticks).
 .wch-HeroesPage-controls {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 10px 0;
+  background: var(--control-bg);
+  box-shadow: 0 -2px 6px var(--shadow-color);
+
+  // Beside the admin menu, which is a drawer below desktop.
+  @media @desktop-up {
+    left: var(--admin-pane-width);
+  }
+}
+
+// Lined up with the forms above.
+.wch-HeroesPage-controlsInner {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+  max-width: 860px;
+  margin: 0;
+}
+
+// Room for the fixed save bar (it can wrap on two lines on phones).
+.wch-HeroesPage-body {
+  padding-bottom: 80px;
+
+  @media @phone {
+    padding-bottom: 120px;
+  }
+}
+
+.wch-HeroesPage-unsaved {
+  color: var(--muted-color);
+  font-size: 13px;
 }
 
 .wch-BackgroundForm-warning {
@@ -288,7 +363,9 @@
   z-index: 2;
   margin: 0 -10px 20px;
   padding: 10px;
-  background: var(--body-bg);
+  border-radius: var(--border-radius);
+  // Tinted, so that the hero stands out from the page.
+  background: var(--control-bg);
   transition: box-shadow 0.2s;
 
   &--stuck {
@@ -488,4 +565,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+// On the tinted bars, plain buttons would vanish into the background.
+.wch-HeroesPage-controls,
+.wch-Preview-toolbar {
+  .Button:not(.Button--primary):not(.active) {
+    --button-bg: var(--body-bg);
+    --button-bg-disabled: var(--body-bg);
+  }
 }

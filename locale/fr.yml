@@ -19,6 +19,8 @@ walsgit-custom-heroes:
     reset_confirm: "Supprimer tous les réglages de « {target} » ? Ses images seront supprimées."
     discard_confirm: Abandonner les modifications non enregistrées ?
     saved_message: Les réglages du hero ont été enregistrés.
+    unsaved_label: Modifications non enregistrées
+    tab_customized: Personnalisé à ce niveau
     webp_unsupported: "Ce serveur ne sait pas encoder les images WebP (GD ou Imagick sans WebP) : l'envoi d'images échouera."
     preview:
       title: Aperçu
@@ -161,7 +163,7 @@ walsgit-custom-heroes:
       color_label: Couleur du texte
       color_help: Une couleur claire sur une image ou un filtre sombre garde le texte lisible.
     socials:
-      title: Icônes de réseaux sociaux
+      title: Réseaux sociaux
       add_label: Ajouter des icônes de réseaux sociaux au hero
       items_label: Icônes
       items_help: "Icône : une classe Font Awesome Free, par exemple <code>fab fa-github</code> (<a>chercher les icônes</a>). Le libellé nomme le lien pour les lecteurs d'écran. Liens : https://…, mailto:… ou tel:… ; les liens web s'ouvrent dans un nouvel onglet."

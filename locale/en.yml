@@ -109,16 +109,19 @@ walsgit-custom-heroes:
       add_label: Add a logo to the hero
       no_logo: No logo
       image_help: "JPEG, PNG or WebP. Transparency is kept. Stored at most 256 px high (twice the largest size, for sharp screens)."
-      side_label: Side
+      side_label: Position
       side_left: Left of the text
       side_right: Right of the text
-      side_help: The logo and the text are placed together, following the text alignment.
+      side_above: Above the title
+      side_title: Instead of the title
+      side_help: "The logo and the text are placed together, following the text alignment. Instead of the title: the title is still read by screen readers, and discussions show the logo above their title."
       size_label: Size
       size_s: "Small ({height} px high)"
       size_m: "Medium ({height} px high)"
       size_l: "Large ({height} px high)"
       alt_label: Alternative text
       alt_help: "Read by screen readers, for example your forum's name. Leave empty if the logo is only decorative."
+      alt_title_help: "Read by screen readers after the title, which stays in the page: leave empty if the logo only shows the title."
       hide_on_mobile_label: Hide on mobile
     text:
       title: Text

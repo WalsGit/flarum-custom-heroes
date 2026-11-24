@@ -318,7 +318,8 @@ final class ConfigValidator
         return [
             // null: no logo, instead of the one of the level above.
             'image' => $object['image'] === null ? null : $this->imageRef($object['image'], "$path.image", false),
-            'side' => $this->enum($object['side'] ?? 'left', ['left', 'right'], "$path.side"),
+            // above / title: above the title, or instead of it (still read by screen readers).
+            'side' => $this->enum($object['side'] ?? 'left', ['left', 'right', 'above', 'title'], "$path.side"),
             'size' => $this->enum($object['size'] ?? 'm', self::SIZES, "$path.size"),
             'alt' => $this->string($object['alt'] ?? '', "$path.alt", 0, 100, false),
             'hideOnMobile' => $this->bool($object['hideOnMobile'] ?? false, "$path.hideOnMobile"),

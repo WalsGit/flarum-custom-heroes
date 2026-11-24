@@ -84,7 +84,8 @@ export const DEFAULT_TEXT: TextSection = { afterClose: 'hero', title: '', messag
 export interface LogoSection {
   /** null: no logo, instead of the one of the level above. */
   image: ImageRef | null;
-  side: 'left' | 'right';
+  /** Next to the text, above the title, or instead of it (discussions: above their title). */
+  side: 'left' | 'right' | 'above' | 'title';
   size: Size;
   alt: string;
   hideOnMobile: boolean;

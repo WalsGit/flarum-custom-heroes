@@ -406,6 +406,15 @@ class ConfigValidatorTest extends TestCase
         );
     }
 
+    public function test_logo_positions(): void
+    {
+        foreach (['left', 'right', 'above', 'title'] as $side) {
+            $this->assertSame($side, $this->valid(['logo' => ['image' => null, 'side' => $side]])['logo']['side']);
+        }
+
+        $this->assertInvalid(['logo' => ['image' => null, 'side' => 'below']], 'config.logo.side', 'invalid_value');
+    }
+
     public function test_logo_requires_an_existing_image_or_null(): void
     {
         $this->assertNull($this->valid(['logo' => ['image' => null]])['logo']['image']);

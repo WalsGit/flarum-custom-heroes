@@ -1,6 +1,7 @@
 import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import type Mithril from 'mithril';
-import { type HeroConfig, type HeroConfigs } from '../../common/types';
+import { type HeroConfigs } from '../../common/types';
+import { type Device } from '../utils/visibleArea';
 export interface HeroPreviewAttrs extends ComponentAttrs {
     /** The stored configs, with the draft of the edited target in place. */
     configs: HeroConfigs;
@@ -9,7 +10,6 @@ export interface HeroPreviewAttrs extends ComponentAttrs {
     /** The keys of the configs the target uses, itself last. */
     chain: string[];
 }
-type Device = 'desktop' | 'tablet' | 'mobile';
 /**
  * A live preview of the edited hero, rendered like on the forum (same
  * classes, variables and container queries) at the real width of each device.
@@ -22,13 +22,6 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     onscroll: () => void;
     view(): JSX.Element;
     hero(): JSX.Element;
-    /** What the hero shows: the Welcome texts (default level), a tag, or a sample of the other heroes. */
-    content(scope: string, scopeId: string, config: HeroConfig, closed: boolean): {
-        title: string;
-        subtitle?: string;
-        color?: string;
-        icon?: string;
-    };
     oncreate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;
     onupdate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;
     onremove(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;
@@ -36,4 +29,8 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     markStuck(): void;
     fit(): void;
 }
-export {};
+/**
+ * The hero of a target, rendered like on the forum. Home (default level):
+ * `closed` shows it once Flarum's welcome text is closed.
+ */
+export declare function previewHero({ configs, target, chain }: Pick<HeroPreviewAttrs, 'configs' | 'target' | 'chain'>, closed: boolean): JSX.Element;

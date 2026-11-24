@@ -28,3 +28,9 @@ export declare function resolveConfig(configs: HeroConfigs, chain: string[]): Re
  * config: an inherited background uses the file of the level above.
  */
 export declare function sectionOwner(configs: HeroConfigs, chain: string[], section: keyof HeroConfig): string | null;
+/**
+ * The key of the config whose background image a hero shows: the most
+ * specific one that sets an image (`inherit` passes to the level above), or
+ * null when there is none. Files are named after it.
+ */
+export declare function backgroundOwner(configs: HeroConfigs, chain: string[]): string | null;

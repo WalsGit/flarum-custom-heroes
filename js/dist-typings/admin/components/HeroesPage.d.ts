@@ -1,6 +1,6 @@
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 import type Mithril from 'mithril';
-import { type HeroConfig, type HeroConfigs, type Placement } from '../../common/types';
+import { type ImageRef, type HeroConfig, type HeroConfigs, type Placement } from '../../common/types';
 /** The sections this page edits. Other sections of a config are kept as they are. */
 type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo' | 'socials';
 /**
@@ -25,6 +25,12 @@ export default class HeroesPage extends ExtensionPage {
      * be added ("Add a logo") rather than off to stop using Flarum's default.
      */
     section<K extends EditedSection>(name: K, initial: (parent: HeroConfig[K] | undefined) => NonNullable<HeroConfig[K]>, form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children, addLabel?: string): JSX.Element;
+    /** The background image of the level above, which this target can use with its own position. */
+    inheritedBackground(): {
+        image: ImageRef;
+        owner: string;
+        label: string;
+    } | null;
     /**
      * The corner used by the buttons or the icons in the config this hero
      * will use (draft and inherited), which the other one cannot take.

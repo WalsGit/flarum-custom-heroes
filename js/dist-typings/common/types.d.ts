@@ -19,9 +19,16 @@ export interface ImageRef {
     /** Background images only: the generated widths, ascending. */
     widths?: number[];
 }
+/** A point of the image in percent, kept visible by the crop (CSS `object-position`). */
+export interface FocalPoint {
+    x: number;
+    y: number;
+}
+export declare const CENTER: FocalPoint;
 export interface BackgroundSection {
-    image: ImageRef | null;
-    position: 'center' | 'top' | 'bottom';
+    /** `inherit` (not on the default level): the image of the level above, with this level's own position. */
+    image: ImageRef | null | 'inherit';
+    position: FocalPoint;
 }
 export interface GradientStop {
     color: Color;
@@ -140,8 +147,11 @@ export interface HeroConfig {
     /** The heroes other than the home one do not inherit the default buttons: `inherit` shows them there. */
     buttons?: ButtonsSection | 'inherit';
 }
-/** The config a hero uses, once inherited: `inherit` is replaced by the default buttons. */
-export type ResolvedConfig = Omit<HeroConfig, 'buttons'> & {
+/** The config a hero uses, once inherited: `inherit` is replaced by the default buttons and the image of the level above. */
+export type ResolvedConfig = Omit<HeroConfig, 'background' | 'buttons'> & {
+    background?: Omit<BackgroundSection, 'image'> & {
+        image: ImageRef | null;
+    };
     buttons?: ButtonsSection;
 };
 /** Configs keyed by `scope` or `scope:scopeId`. */

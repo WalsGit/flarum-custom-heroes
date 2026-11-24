@@ -1,4 +1,4 @@
-import type { HeroConfig } from './types';
+import type { ResolvedConfig } from './types';
 /** Heights of the presets in pixels, per breakpoint. */
 export declare const HEIGHT_PRESETS: {
     readonly s: {
@@ -50,4 +50,4 @@ export declare const LOGO_HEIGHTS: {
  * The CSS variables of a resolved config, set on the hero element. Values
  * come from a validated config, never from raw CSS.
  */
-export declare function heroStyle(config: HeroConfig): Record<string, string>;
+export declare function heroStyle(config: ResolvedConfig): Record<string, string>;

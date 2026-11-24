@@ -3,6 +3,8 @@ import type { HeroScope } from '../common/types';
 export interface HeroTarget {
     scope: HeroScope;
     scopeId: string | null;
+    /** A child tag's parent, which it inherits from. */
+    parentId?: string | null;
 }
 /**
  * Tells which config scope a hero belongs to, or null for the heroes the

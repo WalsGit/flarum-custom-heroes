@@ -38,6 +38,8 @@ export default class HeroesPage extends ExtensionPage {
     /** Default level only (home hero), with no level to inherit from: the default is stored as a missing section. */
     textSection(): JSX.Element;
     tagsEnabled(): boolean;
+    /** The keys of the configs a target uses, itself last: a child tag inherits from its parent. */
+    chain(key: string): string[];
     scopeLabel(key: string): string;
     scopeOptions(): Record<string, string>;
     load(key: string): void;

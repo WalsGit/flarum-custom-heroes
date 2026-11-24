@@ -6,6 +6,8 @@ export interface HeroPreviewAttrs extends ComponentAttrs {
     configs: HeroConfigs;
     /** The edited target: `global`, `discussion`, `tag:12`… */
     target: string;
+    /** The keys of the configs the target uses, itself last. */
+    chain: string[];
 }
 type Device = 'desktop' | 'tablet' | 'mobile';
 /**

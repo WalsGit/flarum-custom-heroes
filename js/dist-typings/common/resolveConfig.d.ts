@@ -6,9 +6,16 @@ import type { HeroConfig, HeroConfigs, HeroScope, ResolvedConfig } from './types
 export declare function normalizeConfigs(configs: unknown): HeroConfigs;
 /**
  * The keys of the configs that apply to a hero, from the most general to the
- * most specific. For example `['global', 'tag', 'tag:12']`.
+ * most specific. For example `['global', 'tag', 'tag:12']`, or
+ * `['global', 'tag', 'tag:3', 'tag:12']` for a child of tag 3.
  */
-export declare function configChain(scope: HeroScope, scopeId?: string | null): string[];
+export declare function configChain(scope: HeroScope, scopeId?: string | null, parentId?: string | null): string[];
+/** The id of a tag's parent, read from the relationship data: the parent model may not be in the store. */
+export declare function tagParentId(tag: {
+    data: {
+        relationships?: Record<string, unknown>;
+    };
+} | null | undefined): string | null;
 /**
  * Applies the inheritance: each section comes from the most specific config
  * of the chain that defines it. Sections are replaced as a whole, never

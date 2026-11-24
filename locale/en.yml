@@ -21,6 +21,8 @@ walsgit-custom-heroes:
     reset_confirm: "Remove all the settings of \"{target}\"? Its images will be deleted."
     discard_confirm: Discard your unsaved changes?
     saved_message: The hero settings have been saved.
+    unsaved_label: Unsaved changes
+    tab_customized: Customized at this level
     webp_unsupported: "This server cannot encode WebP images (GD or Imagick without WebP support): image uploads will fail."
     preview:
       title: Preview

@@ -17,8 +17,8 @@ use Walsgit\CustomHeroes\Config\Scope;
 use Walsgit\CustomHeroes\Image\HeroImages;
 
 /**
- * Removes the hero config and images of a tag when the tag is deleted. Only registered
- * when flarum/tags is enabled.
+ * Removes the hero config and images of a tag when the tag is deleted (only
+ * registered when flarum/tags is enabled), or when it no longer exists.
  */
 final class DeleteTagHeroConfig
 {
@@ -30,7 +30,12 @@ final class DeleteTagHeroConfig
 
     public function handle(Deleting $event): void
     {
-        $this->configs->delete(Scope::Tag, (string) $event->tag->id);
-        $this->images->cleanup(Scope::Tag, (string) $event->tag->id, []);
+        $this->delete((string) $event->tag->id);
+    }
+
+    public function delete(string $tagId): void
+    {
+        $this->configs->delete(Scope::Tag, $tagId);
+        $this->images->cleanup(Scope::Tag, $tagId, []);
     }
 }

@@ -15,12 +15,15 @@ use Flarum\Api\Context;
 use Flarum\Api\Resource\ForumResource;
 use Flarum\Api\Schema;
 use Flarum\Extend;
+use Flarum\Extension\Event\Uninstalled;
 use Flarum\Tags\Event\Deleting;
 use Walsgit\CustomHeroes\Api\Controller\SaveConfigController;
 use Walsgit\CustomHeroes\Api\Controller\UploadImageController;
 use Walsgit\CustomHeroes\Api\ForumPayload;
+use Walsgit\CustomHeroes\Extend\PruneOrphanTagConfigs;
 use Walsgit\CustomHeroes\Image\UploadLimits;
 use Walsgit\CustomHeroes\Listener\DeleteTagHeroConfig;
+use Walsgit\CustomHeroes\Listener\PruneTagConfigsOnTagsUninstall;
 use Walsgit\CustomHeroes\Providers\CustomHeroesServiceProvider;
 
 return [
@@ -48,6 +51,11 @@ return [
                 ->visible(fn ($model, Context $context) => $context->getActor()->isAdmin())
                 ->get(fn () => resolve(UploadLimits::class)()),
         ]),
+
+    // Tag configs left behind while the extension was disabled, or by uninstalling flarum/tags.
+    new PruneOrphanTagConfigs(),
+    (new Extend\Event())
+        ->listen(Uninstalled::class, PruneTagConfigsOnTagsUninstall::class),
 
     // flarum/tags is optional: tag related extenders only apply when enabled.
     (new Extend\Conditional())

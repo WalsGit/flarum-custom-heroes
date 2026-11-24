@@ -41,10 +41,20 @@ walsgit-custom-heroes:
       title: Background image
       no_image: No image
       small_image_warning: "This image is only {width} px wide: it may look blurry on large screens ({recommended} px or more recommended). It is still used."
-      position_label: Position
-      position_center: Center
-      position_top: Top
-      position_bottom: Bottom
+      inherited_image: "Image of “{source}”, with this hero's own position."
+      use_inherited_button: "Use the image of “{source}”"
+      position_button: Adjust the position
+      position_value: "Focal point: {x} % across, {y} % down."
+      position_title: Background position
+      position_help: Click or drag on the image to choose the point to keep visible. The frame shows what the chosen device displays, at the hero's real height.
+      position_x_label: Horizontal (%)
+      position_x_help: "The horizontal position only changes something on: {devices}. Elsewhere, the image already fills the whole width."
+      position_y_label: Vertical (%)
+      position_center_button: Center
+      position_center_y_button: Center vertically
+      position_note: "For guidance only: the result can vary slightly with the screen, the window size and the text."
+      position_apply_button: Apply
+      position_cancel_button: Cancel
     image:
       upload_button: Upload an image
       remove_button: No image

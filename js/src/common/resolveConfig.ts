@@ -1,4 +1,4 @@
-import type { HeroConfig, HeroConfigs, HeroScope, ResolvedConfig } from './types';
+import type { HeroConfig, HeroConfigs, HeroScope, ImageRef, ResolvedConfig } from './types';
 
 /**
  * Returns the configs of the forum payload as an object. The API sends an
@@ -62,6 +62,11 @@ export function resolveConfig(configs: HeroConfigs, chain: string[]): ResolvedCo
     Object.assign(resolved, inheritedPart(configs, chain, key));
   }
 
+  if (resolved.background?.image === 'inherit') {
+    const owner = backgroundOwner(configs, chain);
+    resolved.background = { ...resolved.background, image: owner ? (configs[owner].background!.image as ImageRef) : null };
+  }
+
   if (resolved.buttons === 'inherit') {
     const buttons = configs.global?.buttons;
 
@@ -79,4 +84,20 @@ export function resolveConfig(configs: HeroConfigs, chain: string[]): ResolvedCo
  */
 export function sectionOwner(configs: HeroConfigs, chain: string[], section: keyof HeroConfig): string | null {
   return [...chain].reverse().find((key) => inheritedPart(configs, chain, key)?.[section] !== undefined) ?? null;
+}
+
+/**
+ * The key of the config whose background image a hero shows: the most
+ * specific one that sets an image (`inherit` passes to the level above), or
+ * null when there is none. Files are named after it.
+ */
+export function backgroundOwner(configs: HeroConfigs, chain: string[]): string | null {
+  for (const key of [...chain].reverse()) {
+    const image = inheritedPart(configs, chain, key)?.background?.image;
+
+    if (image === null) return null;
+    if (image && image !== 'inherit') return key;
+  }
+
+  return null;
 }

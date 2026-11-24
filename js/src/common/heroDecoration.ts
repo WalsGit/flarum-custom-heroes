@@ -3,7 +3,7 @@ import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { backgroundImageAttrs, logoImageUrl } from './backgroundImage';
 import { heroStyle } from './heroStyle';
-import { resolveConfig, sectionOwner } from './resolveConfig';
+import { backgroundOwner, resolveConfig, sectionOwner } from './resolveConfig';
 import type { ButtonItem, Corner, HeroConfig, HeroConfigs, HeroScope, MobileBehavior, Placement, SocialsSection } from './types';
 
 /**
@@ -189,7 +189,7 @@ export function heroDecoration(
   if (Object.keys(config).length === 0) return null;
 
   // An inherited image belongs to the config that defines it.
-  const owner = sectionOwner(configs, chain, 'background');
+  const owner = backgroundOwner(configs, chain);
   const image = config.background?.image && owner ? backgroundImageAttrs(assetsUrl, owner, config.background.image) : null;
   const style = heroStyle(config);
   const logo = config.logo?.image ? config.logo : null;

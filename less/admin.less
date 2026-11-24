@@ -46,16 +46,107 @@
   background: var(--control-bg);
   color: var(--control-color);
 
+  // The whole image, whatever its focal point (the live preview shows the crop).
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
   }
+}
+
+// Focal point of the background image (position modal).
+.wch-FocalPicker {
+  text-align: center;
+}
+
+.wch-FocalPicker-image {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden; // clips the darkened outside of the frame
+  line-height: 0;
+  cursor: crosshair;
+  touch-action: none; // dragging with a finger moves the point, not the page
+  user-select: none;
+
+  img {
+    display: block;
+    max-width: 100%;
+    max-height: 55vh;
+  }
+}
+
+// What the chosen device shows; the rest of the image is darkened.
+.wch-FocalPicker-frame {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid #fff;
+  box-shadow:
+    0 0 0 9999px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.wch-FocalPicker-marker {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.7);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.wch-PositionModal-devices {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+// Out of sight, at full size: only there to measure the hero.
+.wch-PositionModal-measure {
+  position: absolute;
+  top: 0;
+  left: -10000px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.wch-PositionModal-note {
+  margin: 8px 0 20px;
+  text-align: center;
+}
+
+.wch-PositionModal-xHelp {
+  margin-top: 10px;
+}
+
+.wch-FocalPicker-fields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 15px;
+
+  .Form-group {
+    margin-bottom: 0;
+  }
+
+  input {
+    width: 100px;
+  }
+}
+
+.wch-PositionModal-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .wch-LogoForm-preview img {
   padding: 10px;
-  object-fit: contain;
 }
 
 .wch-ImageInput-buttons {
@@ -131,7 +222,7 @@
 }
 
 .wch-BackgroundForm-warning {
-  margin-top: -5px;
+  margin-top: 10px;
   color: var(--alert-color, var(--muted-color));
 
   &::before {
@@ -221,6 +312,11 @@
     background: var(--control-color);
     color: var(--control-bg);
   }
+}
+
+.wch-PositionModal-devices .Button.active {
+  background: var(--control-color);
+  color: var(--control-bg);
 }
 
 .wch-Preview-frame {

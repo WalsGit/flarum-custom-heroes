@@ -6,9 +6,11 @@ import Button from 'flarum/common/components/Button';
 import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
 import type Mithril from 'mithril';
-import { normalizeConfigs, resolveConfig, sectionOwner, tagParentId } from '../../common/resolveConfig';
+import { backgroundOwner, normalizeConfigs, resolveConfig, sectionOwner, tagParentId } from '../../common/resolveConfig';
 import {
+  CENTER,
   DEFAULT_TEXT,
+  type ImageRef,
   type ForumPayload,
   type HeroConfig,
   type HeroConfigs,
@@ -95,10 +97,16 @@ export default class HeroesPage extends ExtensionPage {
             <div className="wch-HeroesPage-sections">
               {this.section(
                 'background',
-                // The image of the level above belongs to it: never copied.
-                (parent) => ({ image: null, position: parent?.position ?? 'center' }),
+                // The image of the level above belongs to it: never copied, used through `inherit`.
+                (parent) => ({ image: parent?.image ? 'inherit' : null, position: parent?.position ?? CENTER }),
                 (value, set) => (
-                  <BackgroundForm value={value} onchange={set} target={this.key} />
+                  <BackgroundForm
+                    value={value}
+                    onchange={set}
+                    target={this.key}
+                    inherited={this.inheritedBackground()}
+                    preview={{ configs: { ...this.configs, [this.key]: this.draft }, target: this.key, chain: this.chain(this.key) }}
+                  />
                 )
               )}
               {this.section(
@@ -211,6 +219,13 @@ export default class HeroesPage extends ExtensionPage {
         {value !== undefined && form(value as NonNullable<HeroConfig[K]>, set)}
       </fieldset>
     );
+  }
+
+  /** The background image of the level above, which this target can use with its own position. */
+  inheritedBackground() {
+    const owner = backgroundOwner({ ...this.configs, [this.key]: {} }, this.chain(this.key));
+
+    return owner ? { image: this.configs[owner].background!.image as ImageRef, owner, label: this.scopeLabel(owner) } : null;
   }
 
   /**

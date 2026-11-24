@@ -5,7 +5,7 @@ const assets = 'https://example.com/assets/extensions/walsgit-custom-heroes';
 const image = { id: '3f2a9c1d7b4e6a05', width: 1440, height: 540, widths: [640, 1024, 1440] };
 
 const configs: HeroConfigs = {
-  global: { background: { image, position: 'center' }, overlay: { type: 'solid', color: '#00000080' } },
+  global: { background: { image, position: { x: 50, y: 50 } }, overlay: { type: 'solid', color: '#00000080' } },
   'tag:12': { overlay: { type: 'none' } },
 };
 
@@ -29,16 +29,43 @@ describe('heroDecoration', () => {
     expect((decoration.background as any).attrs.src).toContain('bg-global-');
   });
 
+  it('shows the image of the level above with the own position of an `inherit` background', () => {
+    const own = {
+      ...configs,
+      tag: { background: { image: 'inherit', position: { x: 50, y: 0 } } },
+      'tag:12': { background: { image: 'inherit', position: { x: 20, y: 80 } } },
+    } as HeroConfigs;
+    const decoration = heroDecoration(own, ['global', 'tag', 'tag:12'], 'tag', assets)!;
+
+    expect((decoration.background as any).attrs.src).toBe(`${assets}/bg-global-${image.id}-1440.webp`);
+    expect(decoration.style['--wch-bg-position']).toBe('20% 80%');
+  });
+
+  it('shows no image when `inherit` finds none above', () => {
+    const none = { 'tag:12': { background: { image: 'inherit', position: { x: 20, y: 80 } } } } as HeroConfigs;
+    const decoration = heroDecoration(none, ['global', 'tag', 'tag:12'], 'tag', assets)!;
+
+    expect(decoration.background).toBeNull();
+    expect(decoration.style).toEqual({});
+
+    const removed = { ...configs, tag: { background: { image: null, position: { x: 50, y: 50 } } }, ...none } as HeroConfigs;
+    expect(heroDecoration(removed, ['global', 'tag', 'tag:12'], 'tag', assets)!.background).toBeNull();
+  });
+
   it('adds the text style classes', () => {
     const textStyle = { align: 'right', vAlign: 'bottom', titleSize: 'm', subtitleSize: 'm', color: '#fff' } as const;
     const decoration = heroDecoration({ discussion: { textStyle } }, ['global', 'discussion'], 'discussion', assets)!;
 
-    expect(decoration.className).toBe('wch-Hero wch-Hero--discussion wch-Hero--textColor wch-Hero--text wch-Hero--align-right wch-Hero--vAlign-bottom');
+    expect(decoration.className).toBe(
+      'wch-Hero wch-Hero--discussion wch-Hero--textColor wch-Hero--text wch-Hero--align-right wch-Hero--vAlign-bottom'
+    );
   });
 
   it('marks a fixed height, but not the height of Flarum', () => {
     expect(heroDecoration({ global: { height: { preset: 'm' } } }, ['global'], 'global', assets)!.className).toContain('wch-Hero--fixedHeight');
-    expect(heroDecoration({ global: { height: { preset: 'auto' } } }, ['global'], 'global', assets)!.className).not.toContain('wch-Hero--fixedHeight');
+    expect(heroDecoration({ global: { height: { preset: 'auto' } } }, ['global'], 'global', assets)!.className).not.toContain(
+      'wch-Hero--fixedHeight'
+    );
   });
 
   it('adds the logo of the config that defines it, and its classes', () => {
@@ -47,13 +74,23 @@ describe('heroDecoration', () => {
 
     expect(decoration.className).toBe('wch-Hero wch-Hero--tag wch-Hero--logo wch-Hero--logo-right wch-Hero--logoHideMobile');
     expect(decoration.style['--wch-logo-height']).toBe('128px');
-    expect((decoration.logo as any).attrs).toMatchObject({ src: `${assets}/logo-global-${logo.image.id}.webp`, alt: 'Forum', width: 240, height: 120 });
+    expect((decoration.logo as any).attrs).toMatchObject({
+      src: `${assets}/logo-global-${logo.image.id}.webp`,
+      alt: 'Forum',
+      width: 240,
+      height: 120,
+    });
   });
 
   it('shows no logo when a more specific config removes it', () => {
     const image = { id: '1b4f0e9851971998', width: 240, height: 120 };
     const logo = { side: 'left', size: 'm', alt: '', hideOnMobile: false } as const;
-    const decoration = heroDecoration({ global: { logo: { ...logo, image } }, tag: { logo: { ...logo, image: null } } }, ['global', 'tag'], 'tag', assets)!;
+    const decoration = heroDecoration(
+      { global: { logo: { ...logo, image } }, tag: { logo: { ...logo, image: null } } },
+      ['global', 'tag'],
+      'tag',
+      assets
+    )!;
 
     expect(decoration.logo).toBeNull();
     expect(decoration.className).not.toContain('wch-Hero--logo');
@@ -80,12 +117,24 @@ describe('heroDecoration', () => {
         { icon: 'fab fa-github', url: 'https://github.com/example', label: 'GitHub' },
         { icon: 'fas fa-envelope', url: 'mailto:team@example.com', label: 'Email' },
       ],
-    }) as any;
+    } as any);
 
   const button = (changes = {}) =>
-    ({ label: 'Docs', icon: null, action: 'link', url: 'https://example.com', newTab: false, visibility: 'all', style: 'primary', size: 'm', bg: null, color: null, ...changes }) as any;
+    ({
+      label: 'Docs',
+      icon: null,
+      action: 'link',
+      url: 'https://example.com',
+      newTab: false,
+      visibility: 'all',
+      style: 'primary',
+      size: 'm',
+      bg: null,
+      color: null,
+      ...changes,
+    } as any);
 
-  const buttons = (items: any[], placement = 'below-text', mobile = 'same') => ({ placement, mobile, items }) as any;
+  const buttons = (items: any[], placement = 'below-text', mobile = 'same') => ({ placement, mobile, items } as any);
 
   it('renders the social links, web links in a new tab', () => {
     const decoration = heroDecoration({ global: { socials: socials('below-text') } }, ['global'], 'global', assets)!;

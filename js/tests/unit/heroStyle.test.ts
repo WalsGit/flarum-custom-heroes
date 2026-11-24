@@ -33,8 +33,8 @@ describe('heroStyle', () => {
   it('sets the background position only when there is an image', () => {
     const image = { id: '3f2a9c1d7b4e6a05', width: 1920, height: 640, widths: [640, 1024, 1440, 1920] };
 
-    expect(heroStyle({ background: { image, position: 'top' } })).toEqual({ '--wch-bg-position': 'center top' });
-    expect(heroStyle({ background: { image: null, position: 'top' } })).toEqual({});
+    expect(heroStyle({ background: { image, position: { x: 50, y: 0 } } })).toEqual({ '--wch-bg-position': '50% 0%' });
+    expect(heroStyle({ background: { image: null, position: { x: 50, y: 0 } } })).toEqual({});
   });
 
   it('sets a solid overlay color', () => {

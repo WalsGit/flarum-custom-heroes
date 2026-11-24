@@ -39,10 +39,20 @@ walsgit-custom-heroes:
       title: Image de fond
       no_image: Aucune image
       small_image_warning: "Cette image ne fait que {width} px de large : elle risque d'être floue sur les grands écrans ({recommended} px ou plus recommandés). Elle est tout de même utilisée."
-      position_label: Position
-      position_center: Centre
-      position_top: Haut
-      position_bottom: Bas
+      inherited_image: "Image de « {source} », avec la position propre à ce hero."
+      use_inherited_button: "Utiliser l'image de « {source} »"
+      position_button: Ajuster la position
+      position_value: "Point focal : {x} % horizontalement, {y} % verticalement."
+      position_title: Position de l'image de fond
+      position_help: Cliquez ou faites glisser sur l'image pour choisir le point à garder visible. Le cadre montre ce qu'affiche l'appareil choisi, à la hauteur réelle du hero.
+      position_x_label: Horizontal (%)
+      position_x_help: "La position horizontale n'agit que sur : {devices}. Ailleurs, l'image occupe déjà toute la largeur."
+      position_y_label: Vertical (%)
+      position_center_y_button: Centrer verticalement
+      position_center_button: Centrer
+      position_note: "À titre indicatif : le rendu peut varier légèrement selon l'écran, la taille de la fenêtre et le texte."
+      position_apply_button: Appliquer
+      position_cancel_button: Annuler
     image:
       upload_button: Téléverser une image
       remove_button: Sans image

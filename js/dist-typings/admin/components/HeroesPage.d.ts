@@ -31,7 +31,7 @@ export default class HeroesPage extends ExtensionPage {
      */
     takenCorner(name: 'socials' | 'buttons'): Placement | null;
     /**
-     * Buttons are opt-in on tags and discussions (the default ones are for the
+     * Buttons are opt-in on the other heroes (the default ones are for the
      * home hero): shown or not, then the default buttons or their own.
      */
     buttonsSection(): JSX.Element;

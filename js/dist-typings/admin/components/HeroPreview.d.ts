@@ -22,11 +22,12 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     onscroll: () => void;
     view(): JSX.Element;
     hero(): JSX.Element;
-    /** What the hero shows: the Welcome texts (default level), a tag, or a sample discussion. */
+    /** What the hero shows: the Welcome texts (default level), a tag, or a sample of the other heroes. */
     content(scope: string, scopeId: string, config: HeroConfig, closed: boolean): {
         title: string;
         subtitle?: string;
         color?: string;
+        icon?: string;
     };
     oncreate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;
     onupdate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;

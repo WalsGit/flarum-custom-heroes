@@ -39,7 +39,7 @@ export default class LogoForm extends Component<LogoFormAttrs> {
           <label>{t('side_label')}</label>
           <Select
             value={value.side}
-            options={{ left: t('side_left'), right: t('side_right') }}
+            options={{ left: t('side_left'), right: t('side_right'), above: t('side_above'), title: t('side_title') }}
             onchange={(side: LogoSection['side']) => this.update({ side })}
           />
           <p className="helpText">{t('side_help')}</p>
@@ -63,7 +63,7 @@ export default class LogoForm extends Component<LogoFormAttrs> {
             value={value.alt}
             oninput={(e: InputEvent) => this.update({ alt: (e.target as HTMLInputElement).value })}
           />
-          <p className="helpText">{t('alt_help')}</p>
+          <p className="helpText">{t(value.side === 'title' ? 'alt_title_help' : 'alt_help')}</p>
         </div>
 
         <Switch state={value.hideOnMobile} onchange={(hideOnMobile: boolean) => this.update({ hideOnMobile })}>

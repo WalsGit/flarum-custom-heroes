@@ -195,9 +195,56 @@
   display: none;
 }
 
+// Above the title, or instead of it: the logo on top of the text, placed by
+// the text alignment.
+.wch-Hero--logo-above,
+.wch-Hero--logo-title {
+  .wch-Hero-group {
+    flex-direction: column;
+    // From the top: with a fixed height, the text is cut at the bottom, never the logo.
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  &.wch-Hero--align-left .wch-Hero-group {
+    align-items: flex-start;
+  }
+
+  &.wch-Hero--align-right .wch-Hero-group {
+    align-items: flex-end;
+  }
+
+  .wch-Hero-logo {
+    max-width: 100%;
+  }
+}
+
+// Instead of the title: still read by screen readers. Shown again on mobile
+// when the logo is hidden there. (Discussion titles are not `.Hero-title`:
+// the logo goes above them.)
+.wch-visually-hidden() {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.wch-Hero.wch-Hero--logo-title:not(.wch-Hero--logoHideMobile) .Hero-title {
+  .wch-visually-hidden();
+}
+
 // With a fixed height, the logo never overflows the hero.
 .wch-Hero--fixedHeight .wch-Hero-logo {
   max-height: calc(var(--wch-height-mobile) - 40px);
+}
+
+// Above (or instead of) the title: room is left for a line of text below it.
+.wch-Hero--fixedHeight.wch-Hero--logo-above .wch-Hero-logo,
+.wch-Hero--fixedHeight.wch-Hero--logo-title .wch-Hero-logo {
+  max-height: calc(var(--wch-height-mobile) - 70px);
 }
 
 @container (min-width: @screen-tablet) {
@@ -209,14 +256,28 @@
     display: block;
   }
 
+  .wch-Hero.wch-Hero--logo-title .Hero-title {
+    .wch-visually-hidden();
+  }
+
   .wch-Hero--fixedHeight .wch-Hero-logo {
     max-height: calc(var(--wch-height-tablet) - 70px);
+  }
+
+  .wch-Hero--fixedHeight.wch-Hero--logo-above .wch-Hero-logo,
+  .wch-Hero--fixedHeight.wch-Hero--logo-title .wch-Hero-logo {
+    max-height: calc(var(--wch-height-tablet) - 110px);
   }
 }
 
 @container (min-width: @screen-desktop) {
   .wch-Hero--fixedHeight .wch-Hero-logo {
     max-height: calc(var(--wch-height-desktop) - 70px);
+  }
+
+  .wch-Hero--fixedHeight.wch-Hero--logo-above .wch-Hero-logo,
+  .wch-Hero--fixedHeight.wch-Hero--logo-title .wch-Hero-logo {
+    max-height: calc(var(--wch-height-desktop) - 110px);
   }
 }
 

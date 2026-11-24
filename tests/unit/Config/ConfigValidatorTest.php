@@ -125,6 +125,8 @@ class ConfigValidatorTest extends TestCase
         return [
             'global with id' => [Scope::Global, '1'],
             'discussion with id' => [Scope::Discussion, '1'],
+            'messages with id' => [Scope::Messages, '1'],
+            'deck with id' => [Scope::Deck, '1'],
             'tag with text id' => [Scope::Tag, 'abc'],
             'tag with zero id' => [Scope::Tag, '0'],
             'tag with leading zero' => [Scope::Tag, '012'],
@@ -147,6 +149,7 @@ class ConfigValidatorTest extends TestCase
             'unknown section' => [Scope::Global, '', 'script'],
             'text on discussion' => [Scope::Discussion, '', 'text'],
             'text on tag' => [Scope::Tag, '', 'text'],
+            'text on deck' => [Scope::Deck, '', 'text'],
             'dismissible (removed)' => [Scope::Global, '', 'dismissible'],
             'logo on tag instance' => [Scope::Tag, '12', 'logo'],
             'text style on tag instance' => [Scope::Tag, '12', 'textStyle'],
@@ -531,6 +534,8 @@ class ConfigValidatorTest extends TestCase
 
     public function test_tags_and_discussions_can_show_the_default_buttons(): void
     {
+        $this->assertSame('inherit', $this->valid(['buttons' => 'inherit'], Scope::Messages)['buttons']);
+        $this->assertSame('inherit', $this->valid(['buttons' => 'inherit'], Scope::Deck)['buttons']);
         $this->assertSame('inherit', $this->valid(['buttons' => 'inherit'], Scope::Tag)['buttons']);
         $this->assertSame('inherit', $this->valid(['buttons' => 'inherit'], Scope::Discussion)['buttons']);
         $this->assertInvalid(['buttons' => 'inherit'], 'config.buttons', 'invalid_value');

@@ -26,6 +26,9 @@ enum Scope: string
     case Global = 'global';
     case Tag = 'tag';
     case Discussion = 'discussion';
+    // Heroes of flarum/messages and flarum/deck (optional extensions).
+    case Messages = 'messages';
+    case Deck = 'deck';
 
     private const COMMON_SECTIONS = ['background', 'overlay', 'height', 'textStyle', 'logo', 'socials', 'buttons'];
 

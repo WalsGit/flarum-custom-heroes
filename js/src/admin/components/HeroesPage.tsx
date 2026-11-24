@@ -224,7 +224,7 @@ export default class HeroesPage extends ExtensionPage {
   }
 
   /**
-   * Buttons are opt-in on tags and discussions (the default ones are for the
+   * Buttons are opt-in on the other heroes (the default ones are for the
    * home hero): shown or not, then the default buttons or their own.
    */
   buttonsSection() {
@@ -303,6 +303,10 @@ export default class HeroesPage extends ExtensionPage {
 
   scopeOptions(): Record<string, string> {
     const keys = ['global', 'discussion'];
+
+    // Heroes of optional extensions, only when they are enabled.
+    if (isExtensionEnabled('flarum-messages')) keys.push('messages');
+    if (isExtensionEnabled('flarum-deck')) keys.push('deck');
 
     if (this.tagsEnabled()) {
       const tags = app.store.all('tags').map((tag) => ({

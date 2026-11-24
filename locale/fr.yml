@@ -1,12 +1,14 @@
 walsgit-custom-heroes:
   admin:
     scope_label: Hero à personnaliser
-    scope_help: "Les réglages Par défaut s'appliquent au hero d'accueil et à tous les heroes. Tags et Discussions en héritent, puis chaque tag hérite de Tags, et chaque sous-tag de son tag parent."
+    scope_help: "Les réglages Par défaut s'appliquent au hero d'accueil et à tous les heroes, qui en héritent. Chaque tag hérite de Tags, et chaque sous-tag de son tag parent."
     scopes:
       global: Par défaut (accueil et tous les heroes)
       tag: Tags (par défaut)
       tag_instance: "Tag : {name}"
       discussion: Discussions
+      messages: Messages privés
+      deck: Deck
       customized: "{label} — personnalisé"
     inherit_from_label: "Hériter de « {source} »"
     inherit_core_label: Utiliser le rendu par défaut de Flarum
@@ -29,6 +31,10 @@ walsgit-custom-heroes:
       state_closed: Une fois fermé
       hidden: Une fois la bannière de bienvenue fermée, ce hero est masqué (comportement de Flarum).
       discussion_title: Le titre d'une discussion
+      messages_title: Messages
+      messages_subtitle: Vos conversations privées.
+      deck_title: Deck
+      deck_subtitle: Vos discussions, côte à côte.
     background:
       title: Image de fond
       no_image: Aucune image

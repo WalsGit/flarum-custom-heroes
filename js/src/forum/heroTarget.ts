@@ -1,11 +1,14 @@
 import DiscussionHero from 'flarum/forum/components/DiscussionHero';
 import type Hero from 'flarum/forum/components/Hero';
 import WelcomeHero from 'flarum/forum/components/WelcomeHero';
+import { tagParentId } from '../common/resolveConfig';
 import type { HeroScope } from '../common/types';
 
 export interface HeroTarget {
   scope: HeroScope;
   scopeId: string | null;
+  /** A child tag's parent, which it inherits from. */
+  parentId?: string | null;
 }
 
 /**
@@ -25,9 +28,9 @@ export function heroTarget(hero: Hero): HeroTarget | null {
   // flarum/tags is optional: its hero is recognized by its class name, so
   // that the extension does not import it.
   if (hero.className().split(' ').includes('TagHero')) {
-    const model = (hero.attrs as { model?: { id(): string | undefined } }).model;
+    const model = (hero.attrs as { model?: { id(): string | undefined; data: { relationships?: Record<string, unknown> } } }).model;
 
-    return { scope: 'tag', scopeId: model?.id() ?? null };
+    return { scope: 'tag', scopeId: model?.id() ?? null, parentId: tagParentId(model) };
   }
 
   return null;

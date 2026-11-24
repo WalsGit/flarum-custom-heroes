@@ -1,4 +1,4 @@
-import { configChain, normalizeConfigs, resolveConfig, sectionOwner } from '../../src/common/resolveConfig';
+import { configChain, normalizeConfigs, resolveConfig, sectionOwner, tagParentId } from '../../src/common/resolveConfig';
 import type { HeroConfigs } from '../../src/common/types';
 
 const configs: HeroConfigs = {
@@ -43,6 +43,26 @@ describe('configChain', () => {
   it('has no instance level without an id', () => {
     expect(configChain('tag', null)).toEqual(['global', 'tag']);
     expect(configChain('tag', '')).toEqual(['global', 'tag']);
+  });
+
+  it('puts the parent of a child tag between the type and the tag', () => {
+    expect(configChain('tag', '12', '3')).toEqual(['global', 'tag', 'tag:3', 'tag:12']);
+    expect(configChain('tag', '12', null)).toEqual(['global', 'tag', 'tag:12']);
+  });
+
+  it('lets a child tag inherit a section from its parent', () => {
+    const resolved = resolveConfig({ tag: { height: { preset: 's' } }, 'tag:3': { height: { preset: 'l' } } }, configChain('tag', '12', '3'));
+
+    expect(resolved.height).toEqual({ preset: 'l' });
+  });
+});
+
+describe('tagParentId', () => {
+  it('reads the parent id from the relationship data', () => {
+    expect(tagParentId({ data: { relationships: { parent: { data: { type: 'tags', id: '3' } } } } })).toBe('3');
+    expect(tagParentId({ data: { relationships: { parent: { data: null } } } })).toBeNull();
+    expect(tagParentId({ data: {} })).toBeNull();
+    expect(tagParentId(null)).toBeNull();
   });
 });
 

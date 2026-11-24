@@ -1,5 +1,5 @@
 import { joinColor, splitColor } from '../../src/admin/utils/color';
-import { parentChain, targetOf } from '../../src/admin/utils/scopes';
+import { parentChain, tagOrder, targetOf } from '../../src/admin/utils/scopes';
 
 describe('splitColor / joinColor', () => {
   it('splits a color into its rgb part and opacity', () => {
@@ -32,5 +32,21 @@ describe('targetOf / parentChain', () => {
     expect(parentChain('global')).toEqual([]);
     expect(parentChain('tag')).toEqual(['global']);
     expect(parentChain('tag:12')).toEqual(['global', 'tag']);
+    expect(parentChain('tag:12', '3')).toEqual(['global', 'tag', 'tag:3']);
+  });
+});
+
+describe('tagOrder', () => {
+  it('follows Flarum: primary tags by position with their children, then secondary tags by name', () => {
+    const tags = [
+      { id: '1', name: 'Zeta', position: null, parentId: null },
+      { id: '2', name: 'B', position: 1, parentId: null },
+      { id: '3', name: 'A', position: 0, parentId: null },
+      { id: '4', name: 'B-2', position: 1, parentId: '2' },
+      { id: '5', name: 'B-1', position: 0, parentId: '2' },
+      { id: '6', name: 'Alpha', position: null, parentId: null },
+    ];
+
+    expect(tagOrder(tags)).toEqual(['3', '2', '5', '4', '6', '1']);
   });
 });

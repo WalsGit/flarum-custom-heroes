@@ -1,7 +1,7 @@
 walsgit-custom-heroes:
   admin:
     scope_label: Hero à personnaliser
-    scope_help: "Les réglages Par défaut s'appliquent au hero d'accueil et à tous les heroes. Tags et Discussions en héritent, puis chaque tag hérite de Tags."
+    scope_help: "Les réglages Par défaut s'appliquent au hero d'accueil et à tous les heroes. Tags et Discussions en héritent, puis chaque tag hérite de Tags, et chaque sous-tag de son tag parent."
     scopes:
       global: Par défaut (accueil et tous les heroes)
       tag: Tags (par défaut)

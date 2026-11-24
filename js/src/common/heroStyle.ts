@@ -1,4 +1,4 @@
-import type { BackgroundSection, Corner, GradientStop, HeightSection, HeroConfig, OverlaySection, SocialsSection, TextStyleSection } from './types';
+import type { Corner, GradientStop, HeightSection, ResolvedConfig, OverlaySection, SocialsSection, TextStyleSection } from './types';
 
 /** Heights of the presets in pixels, per breakpoint. */
 export const HEIGHT_PRESETS = {
@@ -56,12 +56,6 @@ function socialsVariables(socials: SocialsSection): Record<string, string> {
 /** Displayed logo heights in pixels (reduced on mobile by the CSS). */
 export const LOGO_HEIGHTS = { s: 64, m: 96, l: 128 } as const;
 
-const BACKGROUND_POSITIONS: Record<BackgroundSection['position'], string> = {
-  center: 'center center',
-  top: 'center top',
-  bottom: 'center bottom',
-};
-
 /** A linear gradient from a corner goes to the opposite one. */
 const OPPOSITE_CORNERS: Record<Corner, string> = {
   'top-left': 'bottom right',
@@ -105,12 +99,12 @@ function overlayBackground(overlay: OverlaySection): string | null {
  * The CSS variables of a resolved config, set on the hero element. Values
  * come from a validated config, never from raw CSS.
  */
-export function heroStyle(config: HeroConfig): Record<string, string> {
+export function heroStyle(config: ResolvedConfig): Record<string, string> {
   const overlay = config.overlay ? overlayBackground(config.overlay) : null;
 
   return {
     ...(config.height ? heightVariables(config.height) : {}),
-    ...(config.background?.image ? { '--wch-bg-position': BACKGROUND_POSITIONS[config.background.position] } : {}),
+    ...(config.background?.image ? { '--wch-bg-position': `${config.background.position.x}% ${config.background.position.y}%` } : {}),
     ...(overlay ? { '--wch-overlay': overlay } : {}),
     ...(config.textStyle ? textVariables(config.textStyle) : {}),
     ...(config.logo?.image ? { '--wch-logo-height': `${LOGO_HEIGHTS[config.logo.size]}px` } : {}),

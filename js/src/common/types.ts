@@ -27,9 +27,18 @@ export interface ImageRef {
   widths?: number[];
 }
 
+/** A point of the image in percent, kept visible by the crop (CSS `object-position`). */
+export interface FocalPoint {
+  x: number;
+  y: number;
+}
+
+export const CENTER: FocalPoint = { x: 50, y: 50 };
+
 export interface BackgroundSection {
-  image: ImageRef | null;
-  position: 'center' | 'top' | 'bottom';
+  /** `inherit` (not on the default level): the image of the level above, with this level's own position. */
+  image: ImageRef | null | 'inherit';
+  position: FocalPoint;
 }
 
 export interface GradientStop {
@@ -141,8 +150,11 @@ export interface HeroConfig {
   buttons?: ButtonsSection | 'inherit';
 }
 
-/** The config a hero uses, once inherited: `inherit` is replaced by the default buttons. */
-export type ResolvedConfig = Omit<HeroConfig, 'buttons'> & { buttons?: ButtonsSection };
+/** The config a hero uses, once inherited: `inherit` is replaced by the default buttons and the image of the level above. */
+export type ResolvedConfig = Omit<HeroConfig, 'background' | 'buttons'> & {
+  background?: Omit<BackgroundSection, 'image'> & { image: ImageRef | null };
+  buttons?: ButtonsSection;
+};
 
 /** Configs keyed by `scope` or `scope:scopeId`. */
 export type HeroConfigs = Record<string, HeroConfig>;

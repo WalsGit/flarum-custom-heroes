@@ -1,6 +1,7 @@
 import app from 'flarum/admin/app';
 import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
+import type Mithril from 'mithril';
 import type { ImageRef } from '../../common/types';
 import { targetOf } from '../utils/scopes';
 import { maxSizeMb, uploadLimits } from '../utils/uploadLimits';
@@ -11,6 +12,8 @@ export interface ImageInputAttrs extends ComponentAttrs {
   onchange: (image: ImageRef | null) => void;
   /** The config being edited: uploaded images belong to it. */
   target: string;
+  /** More buttons, at the end of the row. */
+  actions?: Mithril.Children;
 }
 
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.image.${key}`, params, true);
@@ -36,6 +39,7 @@ export default class ImageInput extends Component<ImageInputAttrs> {
                 {t('remove_button')}
               </Button>
             )}
+            {this.attrs.actions}
           </div>
           <p className="helpText">{t('upload_help', { size: maxSizeMb() })}</p>
         </div>

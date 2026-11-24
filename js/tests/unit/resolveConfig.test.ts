@@ -3,7 +3,7 @@ import type { HeroConfigs } from '../../src/common/types';
 
 const configs: HeroConfigs = {
   global: {
-    background: { image: null, position: 'top' },
+    background: { image: null, position: { x: 50, y: 0 } },
     height: { preset: 's' },
     overlay: { type: 'solid', color: '#00000080' },
   },
@@ -70,7 +70,7 @@ describe('resolveConfig', () => {
   it('takes each section from the most specific config that defines it', () => {
     const resolved = resolveConfig(configs, configChain('tag', '12'));
 
-    expect(resolved.background).toEqual({ image: null, position: 'top' });
+    expect(resolved.background).toEqual({ image: null, position: { x: 50, y: 0 } });
     expect(resolved.height).toEqual({ preset: 'custom', desktop: 400, tablet: 300, mobile: 200 });
     expect(resolved.overlay).toEqual({ type: 'none' });
   });

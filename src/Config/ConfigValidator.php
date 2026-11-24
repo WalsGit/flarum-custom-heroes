@@ -27,7 +27,6 @@ use Walsgit\CustomHeroes\Image\ImagePaths;
  */
 final class ConfigValidator
 {
-    private const POSITIONS = ['center', 'top', 'bottom'];
     private const CORNERS = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
     private const PLACEMENTS = [...self::CORNERS, 'below-text'];
     private const HEIGHT_PRESETS = ['auto', 's', 'm', 'l', 'custom'];
@@ -131,9 +130,36 @@ final class ConfigValidator
             return null;
         }
 
+        $image = $object['image'];
+        // `inherit`: the image of the level above, with this level's own position (the file is never copied).
+        $inherit = $image === 'inherit' && $this->scope !== Scope::Global;
+
         return [
-            'image' => $object['image'] === null ? null : $this->imageRef($object['image'], "$path.image", true),
-            'position' => $this->enum($object['position'] ?? 'center', self::POSITIONS, "$path.position"),
+            'image' => match (true) {
+                $image === null => null,
+                $inherit => 'inherit',
+                default => $this->imageRef($image, "$path.image", true),
+            },
+            'position' => $this->focalPoint($object['position'] ?? ['x' => 50, 'y' => 50], "$path.position"),
+        ];
+    }
+
+    /**
+     * A point of the image in percent, kept visible by the crop (CSS `object-position`).
+     *
+     * @return array{x: int|null, y: int|null}|null
+     */
+    private function focalPoint(mixed $value, string $path): ?array
+    {
+        $object = $this->object($value, $path, ['x', 'y']);
+
+        if ($object === null) {
+            return null;
+        }
+
+        return [
+            'x' => $this->int($object['x'], 0, 100, "$path.x"),
+            'y' => $this->int($object['y'], 0, 100, "$path.y"),
         ];
     }
 

@@ -1,4 +1,5 @@
 import { joinColor, splitColor } from '../../src/admin/utils/color';
+import { visibleArea } from '../../src/admin/utils/visibleArea';
 import { parentChain, tagOrder, targetOf } from '../../src/admin/utils/scopes';
 
 describe('splitColor / joinColor', () => {
@@ -48,5 +49,17 @@ describe('tagOrder', () => {
     ];
 
     expect(tagOrder(tags)).toEqual(['3', '2', '5', '4', '6', '1']);
+  });
+});
+
+describe('visibleArea', () => {
+  const image = { width: 2000, height: 1000 };
+
+  it('crops the overflowing axis only, placed by the focal point', () => {
+    // A 1280×160 hero shows the full width and a 0.25 high band of a 2:1 image.
+    expect(visibleArea(image, { width: 1280, height: 160 }, { x: 50, y: 0 })).toEqual({ left: 0, top: 0, width: 1, height: 0.25 });
+    expect(visibleArea(image, { width: 1280, height: 160 }, { x: 50, y: 100 })).toEqual({ left: 0, top: 0.75, width: 1, height: 0.25 });
+    // A 390×390 hero shows half of the width.
+    expect(visibleArea(image, { width: 390, height: 390 }, { x: 20, y: 50 })).toEqual({ left: 0.1, top: 0, width: 0.5, height: 1 });
   });
 });

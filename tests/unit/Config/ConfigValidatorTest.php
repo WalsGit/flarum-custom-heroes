@@ -172,12 +172,32 @@ class ConfigValidatorTest extends TestCase
     public function test_background_defaults_and_image(): void
     {
         $this->assertSame(
-            ['background' => ['image' => null, 'position' => 'center']],
+            ['background' => ['image' => null, 'position' => ['x' => 50, 'y' => 50]]],
             $this->valid(['background' => ['image' => null]])
         );
 
-        $config = $this->valid(['background' => ['image' => self::backgroundImage(), 'position' => 'top']]);
+        $config = $this->valid(['background' => ['image' => self::backgroundImage(), 'position' => ['x' => 0, 'y' => 100]]]);
         $this->assertSame(self::backgroundImage(), $config['background']['image']);
+        $this->assertSame(['x' => 0, 'y' => 100], $config['background']['position']);
+    }
+
+    public function test_background_position_is_a_point_in_percent(): void
+    {
+        $this->assertInvalid(['background' => ['image' => null, 'position' => 'top']], 'config.background.position', 'invalid_value');
+        $this->assertInvalid(['background' => ['image' => null, 'position' => ['x' => 50]]], 'config.background.position.y', 'missing_key');
+        $this->assertInvalid(['background' => ['image' => null, 'position' => ['x' => 50, 'y' => 50, 'z' => 1]]], 'config.background.position.z', 'unknown_key');
+        $this->assertInvalid(['background' => ['image' => null, 'position' => ['x' => 101, 'y' => 50]]], 'config.background.position.x', 'invalid_value');
+        $this->assertInvalid(['background' => ['image' => null, 'position' => ['x' => 50, 'y' => -1]]], 'config.background.position.y', 'invalid_value');
+        $this->assertInvalid(['background' => ['image' => null, 'position' => ['x' => 50, 'y' => '50']]], 'config.background.position.y', 'invalid_value');
+    }
+
+    public function test_background_can_inherit_the_image_except_on_global(): void
+    {
+        $background = ['image' => 'inherit', 'position' => ['x' => 30, 'y' => 70]];
+
+        $this->assertSame($background, $this->valid(['background' => $background], Scope::Tag, '12')['background']);
+        $this->assertSame($background, $this->valid(['background' => $background], Scope::Discussion)['background']);
+        $this->assertInvalid(['background' => $background], 'config.background.image', 'invalid_value');
     }
 
     public function test_background_image_must_exist(): void

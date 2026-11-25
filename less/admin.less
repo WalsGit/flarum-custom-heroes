@@ -73,6 +73,49 @@
 }
 
 
+// Thumbnail beside the fields, to keep the tab short.
+.wch-BackgroundForm {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+
+  > .wch-BackgroundForm-preview {
+    flex: 0 0 280px;
+  }
+
+  @media @phone {
+    flex-direction: column;
+    gap: 0;
+
+    > .wch-BackgroundForm-preview {
+      flex: none;
+      width: 100%;
+    }
+  }
+}
+
+.wch-BackgroundForm-fields {
+  flex: 1;
+  min-width: 0;
+
+  > .helpText:first-child {
+    margin-top: 0;
+  }
+}
+
+// The thumbnail opens the position modal.
+button.wch-BackgroundForm-preview {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+  }
+}
+
 .wch-BackgroundForm-preview {
   display: flex;
   align-items: center;
@@ -574,4 +617,9 @@
     --button-bg: var(--body-bg);
     --button-bg-disabled: var(--body-bg);
   }
+}
+
+// What the section does, at the top of its tab.
+.wch-Section-intro {
+  margin: 0 0 15px;
 }

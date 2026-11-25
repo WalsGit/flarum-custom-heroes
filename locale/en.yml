@@ -41,12 +41,13 @@ walsgit-custom-heroes:
       deck_subtitle: Your discussions, side by side.
     background:
       title: Background image
+      intro: "Add an image behind the hero. It is cropped to fit each screen: choose the point to keep in view."
+      add_label: Use a background image
       no_image: No image
       small_image_warning: "This image is only {width} px wide: it may look blurry on large screens ({recommended} px or more recommended). It is still used."
       inherited_image: "Image of “{source}”, with this hero's own position."
       use_inherited_button: "Use the image of “{source}”"
       position_button: Adjust the position
-      position_value: "Focal point: {x} % across, {y} % down."
       position_title: Background position
       position_help: Click or drag on the image to choose the point to keep visible. The frame shows what the chosen device displays, at the hero's real height.
       position_x_label: Horizontal (%)
@@ -67,6 +68,7 @@ walsgit-custom-heroes:
       import_button: Import
     overlay:
       title: Overlay
+      intro: "Lay a color or a gradient over the image (or the hero's color), for example to make the text easier to read."
       type_label: Type
       type_none: None
       type_solid: Solid color
@@ -106,6 +108,7 @@ walsgit-custom-heroes:
       remove_stop_button: Remove this color
     height:
       title: Height
+      intro: "Set the height of the hero on desktop, tablet and mobile."
       preset_label: Height
       preset_auto: "Flarum's default (follows the text)"
       preset_s: "Small ({desktop} / {tablet} / {mobile} px)"
@@ -118,6 +121,7 @@ walsgit-custom-heroes:
       mobile_label: Mobile
     logo:
       title: Logo
+      intro: "Add a logo or an image beside the title, above it or in its place."
       add_label: Add a logo to the hero
       no_logo: No logo
       image_help: "JPEG, PNG or WebP. Transparency is kept. Stored at most 256 px high (twice the largest size, for sharp screens)."
@@ -137,7 +141,7 @@ walsgit-custom-heroes:
       hide_on_mobile_label: Hide on mobile
     text:
       title: Text
-      intro: "Flarum's welcome banner (Basics) is shown first and can be closed with ✕, like in Flarum. This sets what the hero does once it is closed, or when the welcome banner has no title."
+      intro: "Set a title and a message to show on the home hero. Flarum's welcome banner (configurable in <a>Basics</a>) comes first and can be closed with ✕, like in Flarum: this text is shown once it is closed, or when the banner has no title. You can also hide the hero instead."
       after_close_label: Once the welcome banner is closed
       after_close_hero: Keep the hero, with the text below
       after_close_none: "Hide the hero (Flarum's behavior)"
@@ -146,6 +150,7 @@ walsgit-custom-heroes:
       message_help: Plain text, line breaks are kept. Leave both empty for a hero without text (background only).
     text_style:
       title: Text style
+      intro: "Adjust the alignment, position, size and color of the title and the subtitle."
       align_label: Horizontal alignment
       align_left: Left
       align_center: Center
@@ -166,6 +171,7 @@ walsgit-custom-heroes:
       color_help: A light color on a dark image or overlay keeps the text readable.
     socials:
       title: Social icons
+      intro: "Add clickable icons to the hero banner (social media links)."
       add_label: Add social icons to the hero
       items_label: Icons
       items_help: "Icon: a Font Awesome Free class, for example <code>fab fa-github</code> (<a>search the icons</a>). The label names the link for screen readers. Links: https://…, mailto:… or tel:…; web links open in a new tab."
@@ -197,6 +203,7 @@ walsgit-custom-heroes:
       mobile_hide: Hidden
     buttons:
       title: Buttons
+      intro: "Add buttons (sign up, log in or links) to the hero banner."
       add_label: Add buttons to the hero
       opt_in_help: "The default buttons are only shown on the home hero: switch this on to show buttons on these heroes too."
       items_label: Buttons

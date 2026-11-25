@@ -20,7 +20,6 @@ export default class TextForm extends Component<TextFormAttrs> {
 
     return (
       <div className="wch-TextForm">
-        <p className="helpText">{t('intro')}</p>
         <div className="Form-group">
           <label>{t('after_close_label')}</label>
           <Select

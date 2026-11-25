@@ -39,12 +39,13 @@ walsgit-custom-heroes:
       deck_subtitle: Vos discussions, côte à côte.
     background:
       title: Image de fond
+      intro: "Ajouter une image en fond du hero. Elle est recadrée selon l'écran : choisissez le point à garder visible."
+      add_label: Utiliser une image de fond
       no_image: Aucune image
       small_image_warning: "Cette image ne fait que {width} px de large : elle risque d'être floue sur les grands écrans ({recommended} px ou plus recommandés). Elle est tout de même utilisée."
       inherited_image: "Image de « {source} », avec la position propre à ce hero."
       use_inherited_button: "Utiliser l'image de « {source} »"
       position_button: Ajuster la position
-      position_value: "Point focal : {x} % horizontalement, {y} % verticalement."
       position_title: Position de l'image de fond
       position_help: Cliquez ou faites glisser sur l'image pour choisir le point à garder visible. Le cadre montre ce qu'affiche l'appareil choisi, à la hauteur réelle du hero.
       position_x_label: Horizontal (%)
@@ -65,6 +66,7 @@ walsgit-custom-heroes:
       import_button: Importer
     overlay:
       title: Filtre
+      intro: "Poser une couleur ou un dégradé par-dessus l'image (ou la couleur du hero), par exemple pour rendre le texte plus lisible."
       type_label: Type
       type_none: Aucun
       type_solid: Couleur unie
@@ -104,6 +106,7 @@ walsgit-custom-heroes:
       remove_stop_button: Retirer cette couleur
     height:
       title: Hauteur
+      intro: "Régler la hauteur du hero sur ordinateur, tablette et mobile."
       preset_label: Hauteur
       preset_auto: Hauteur par défaut de Flarum (suit le texte)
       preset_s: "Petite ({desktop} / {tablet} / {mobile} px)"
@@ -116,6 +119,7 @@ walsgit-custom-heroes:
       mobile_label: Mobile
     logo:
       title: Logo
+      intro: "Ajouter un logo ou une image à côté du titre, au-dessus ou à sa place."
       add_label: Ajouter un logo au hero
       no_logo: Pas de logo
       image_help: "JPEG, PNG ou WebP. La transparence est conservée. Stocké en 256 px de haut au maximum (le double de la plus grande taille, pour les écrans nets)."
@@ -135,7 +139,7 @@ walsgit-custom-heroes:
       hide_on_mobile_label: Masquer sur mobile
     text:
       title: Texte
-      intro: "La bannière de bienvenue de Flarum (Essentiels) s'affiche d'abord et se ferme avec ✕, comme dans Flarum. Ce réglage définit ce que fait le hero une fois la bannière fermée, ou si elle n'a pas de titre."
+      intro: "Définir un titre et un message à afficher sur le hero d'accueil. La bannière de bienvenue de Flarum (configurable dans <a>Essentiels</a>) s'affiche d'abord et se ferme avec ✕, comme dans Flarum : ce texte s'affiche une fois la bannière fermée, ou si elle n'a pas de titre. Vous pouvez aussi masquer le hero à la place."
       after_close_label: Une fois la bannière de bienvenue fermée
       after_close_hero: Garder le hero, avec le texte ci-dessous
       after_close_none: Masquer le hero (comportement de Flarum)
@@ -144,6 +148,7 @@ walsgit-custom-heroes:
       message_help: Texte brut, les retours à la ligne sont conservés. Laisser les deux vides pour un hero sans texte (fond seul).
     text_style:
       title: Style du texte
+      intro: "Ajuster l'alignement, la position, la taille et la couleur du titre et du sous-titre."
       align_label: Alignement horizontal
       align_left: Gauche
       align_center: Centre
@@ -164,6 +169,7 @@ walsgit-custom-heroes:
       color_help: Une couleur claire sur une image ou un filtre sombre garde le texte lisible.
     socials:
       title: Réseaux sociaux
+      intro: "Ajouter des icônes cliquables au hero (liens vers les réseaux sociaux)."
       add_label: Ajouter des icônes de réseaux sociaux au hero
       items_label: Icônes
       items_help: "Icône : une classe Font Awesome Free, par exemple <code>fab fa-github</code> (<a>chercher les icônes</a>). Le libellé nomme le lien pour les lecteurs d'écran. Liens : https://…, mailto:… ou tel:… ; les liens web s'ouvrent dans un nouvel onglet."
@@ -195,6 +201,7 @@ walsgit-custom-heroes:
       mobile_hide: Masqués
     buttons:
       title: Boutons
+      intro: "Ajouter des boutons (inscription, connexion ou liens) au hero."
       add_label: Ajouter des boutons au hero
       opt_in_help: "Les boutons par défaut ne s'affichent que sur le hero d'accueil : activez cette option pour afficher des boutons sur ces heroes aussi."
       items_label: Boutons

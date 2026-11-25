@@ -153,6 +153,10 @@ class ConfigValidatorTest extends TestCase
             'dismissible (removed)' => [Scope::Global, '', 'dismissible'],
             'logo on tag instance' => [Scope::Tag, '12', 'logo'],
             'text style on tag instance' => [Scope::Tag, '12', 'textStyle'],
+            'tag icon on global' => [Scope::Global, '', 'tagIcon'],
+            'tag icon on tag instance' => [Scope::Tag, '12', 'tagIcon'],
+            'tag description on discussion' => [Scope::Discussion, '', 'tagDescription'],
+            'tag description on tag instance' => [Scope::Tag, '12', 'tagDescription'],
         ];
     }
 
@@ -165,6 +169,14 @@ class ConfigValidatorTest extends TestCase
         ], Scope::Tag, '12');
 
         $this->assertSame(['background', 'overlay', 'height'], array_keys($config));
+    }
+
+    public function test_tag_icon_and_description_are_only_stored_hidden(): void
+    {
+        $this->assertSame(['tagIcon' => false, 'tagDescription' => false], $this->valid(['tagIcon' => false, 'tagDescription' => false], Scope::Tag));
+        $this->assertInvalid(['tagDescription' => true], 'config.tagDescription', 'invalid_value', Scope::Tag);
+        $this->assertInvalid(['tagIcon' => true], 'config.tagIcon', 'invalid_value', Scope::Tag);
+        $this->assertInvalid(['tagIcon' => 'no'], 'config.tagIcon', 'invalid_value', Scope::Tag);
     }
 
     // Background ---------------------------------------------------------------

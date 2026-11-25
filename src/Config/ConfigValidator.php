@@ -102,6 +102,8 @@ final class ConfigValidator
                     'logo' => $this->logo($value, $path),
                     'socials' => $this->socials($value, $path),
                     'buttons' => $this->buttons($value, $path),
+                    // Only stored to hide it: the icon is shown by default.
+                    'tagIcon', 'tagDescription' => $this->hiddenOnly($value, $path),
                     // Every allowed section must have its own validation.
                     default => throw new LogicException("No validation for the section $section."),
                 };
@@ -696,6 +698,20 @@ final class ConfigValidator
     {
         if (is_bool($value)) {
             return $value;
+        }
+
+        $this->fail($path, 'invalid_value');
+
+        return null;
+    }
+
+    /**
+     * A switch on by default, stored only when switched off.
+     */
+    private function hiddenOnly(mixed $value, string $path): ?bool
+    {
+        if ($value === false) {
+            return false;
         }
 
         $this->fail($path, 'invalid_value');

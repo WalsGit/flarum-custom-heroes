@@ -61,6 +61,14 @@ describe('heroDecoration', () => {
     );
   });
 
+  it('marks a hidden tag icon and description', () => {
+    expect(heroDecoration({ tag: { tagIcon: false } }, ['global', 'tag', 'tag:12'], 'tag', assets)!.className).toContain('wch-Hero--noTagIcon');
+    expect(heroDecoration({ tag: { tagDescription: false } }, ['global', 'tag', 'tag:12'], 'tag', assets)!.className).toContain(
+      'wch-Hero--noTagDescription'
+    );
+    expect(heroDecoration({ tag: { height: { preset: 'm' } } }, ['global', 'tag'], 'tag', assets)!.className).not.toContain('wch-Hero--noTagIcon');
+  });
+
   it('marks a fixed height, but not the height of Flarum', () => {
     expect(heroDecoration({ global: { height: { preset: 'm' } } }, ['global'], 'global', assets)!.className).toContain('wch-Hero--fixedHeight');
     expect(heroDecoration({ global: { height: { preset: 'auto' } } }, ['global'], 'global', assets)!.className).not.toContain(

@@ -215,7 +215,7 @@ export default class HeroesPage extends ExtensionPage {
 
     // Not per tag (D4).
     if (!isInstance) {
-      sections.textStyle = () =>
+      sections.textStyle = () => [
         this.section(
           'textStyle',
           // Top, like the core, so that unticking changes nothing at first.
@@ -225,7 +225,9 @@ export default class HeroesPage extends ExtensionPage {
           // Flarum's look: the form's own defaults.
           (value) =>
             value.align === 'center' && value.vAlign === 'top' && value.titleSize === 'm' && value.subtitleSize === 'm' && value.color === null
-        );
+        ),
+        this.key === 'tag' && [this.tagSwitch('tagIcon'), this.tagSwitch('tagDescription')],
+      ];
       sections.logo = () =>
         this.section(
           'logo',
@@ -404,6 +406,23 @@ export default class HeroesPage extends ExtensionPage {
         )}
 
         {value !== undefined && value !== 'inherit' && form}
+      </fieldset>
+    );
+  }
+
+  /** Every tag at once, apart from the text style (which it can inherit): stored only to hide the part. */
+  tagSwitch(name: 'tagIcon' | 'tagDescription') {
+    const set = (show: boolean) => {
+      const { [name]: _, ...rest } = this.draft;
+      this.draft = show ? rest : { ...rest, [name]: false };
+    };
+
+    return (
+      <fieldset className={`wch-Section wch-Section--${name}`}>
+        <Switch state={this.draft[name] !== false} onchange={set}>
+          {t(`text_style.${localeKey(name)}_label`)}
+        </Switch>
+        <p className="helpText">{t(`text_style.${localeKey(name)}_help`)}</p>
       </fieldset>
     );
   }

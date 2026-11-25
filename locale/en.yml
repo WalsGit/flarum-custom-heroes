@@ -160,6 +160,10 @@ walsgit-custom-heroes:
     text_style:
       title: Text style
       intro: "Adjust the alignment, position, size and color of the title and the description."
+      tag_icon_label: Show the tag icon
+      tag_icon_help: "Before the tag name, for the tags that have an icon (set in the Tags settings)."
+      tag_description_label: Show the tag description
+      tag_description_help: "Below the tag name (set in the Tags settings)."
       align_label: Horizontal alignment
       align_left: Left
       align_center: Center

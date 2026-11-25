@@ -163,7 +163,8 @@ export function previewHero({ configs, target, chain }: Pick<HeroPreviewAttrs, '
         </h1>
       )}
       {/* Like the core: kept even when empty (but discussions have none). */}
-      {(content.subtitle || (content.title && scope !== 'discussion')) && (
+      {/* null: hidden (tag description switched off). */}
+      {content.subtitle !== null && (content.subtitle || (content.title && scope !== 'discussion')) && (
         <div className={classList('Hero-subtitle', closed && 'wch-Hero-message')}>{content.subtitle}</div>
       )}
     </div>,
@@ -189,17 +190,23 @@ function heroContent(
   scopeId: string,
   config: HeroConfig,
   closed: boolean
-): { title: string; subtitle?: string; color?: string; icon?: string } {
+): { title: string; subtitle?: string | null; color?: string; icon?: string } {
   if (scope === 'tag') {
     const tag = scopeId ? app.store.getById('tags', scopeId) : null;
 
     return tag
       ? {
           title: tag.attribute('name') as string,
-          subtitle: (tag.attribute('description') as string) || undefined,
+          subtitle: config.tagDescription === false ? null : (tag.attribute('description') as string) || undefined,
           color: (tag.attribute('color') as string) || undefined,
+          // Like Flarum: only when the tag has one.
+          icon: config.tagIcon === false ? undefined : (tag.attribute('icon') as string) || undefined,
         }
-      : { title: t('tag_title'), subtitle: t('tag_subtitle') };
+      : {
+          title: t('tag_title'),
+          subtitle: config.tagDescription === false ? null : t('tag_subtitle'),
+          icon: config.tagIcon === false ? undefined : 'fas fa-tag',
+        };
   }
 
   if (scope === 'discussion') {

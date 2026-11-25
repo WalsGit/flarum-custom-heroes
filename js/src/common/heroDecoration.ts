@@ -218,6 +218,8 @@ export function heroDecoration(
         'wch-Hero--overlay': '--wch-overlay' in style,
         'wch-Hero--fixedHeight': '--wch-height-desktop' in style,
         'wch-Hero--textColor': '--wch-text-color' in style,
+        'wch-Hero--noTagIcon': config.tagIcon === false,
+        'wch-Hero--noTagDescription': config.tagDescription === false,
       },
       config.textStyle && ['wch-Hero--text', `wch-Hero--align-${config.textStyle.align}`, `wch-Hero--vAlign-${config.textStyle.vAlign}`],
       logo && ['wch-Hero--logo', `wch-Hero--logo-${logo.side}`, logo.hideOnMobile && 'wch-Hero--logoHideMobile'],

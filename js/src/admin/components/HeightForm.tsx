@@ -1,5 +1,6 @@
 import app from 'flarum/admin/app';
 import Component, { type ComponentAttrs } from 'flarum/common/Component';
+import Icon from 'flarum/common/components/Icon';
 import Select from 'flarum/common/components/Select';
 import { HEIGHT_PRESETS } from '../../common/heroStyle';
 import type { HeightSection } from '../../common/types';
@@ -14,6 +15,9 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
 /** Bounds of custom heights, as validated by the server. */
 const BOUNDS = { desktop: 800, tablet: 800, mobile: 600 } as const;
 const MIN = 80;
+
+/** Same icons as the preview's device buttons. */
+const ICONS = { desktop: 'fas fa-desktop', tablet: 'fas fa-tablet-alt', mobile: 'fas fa-mobile-alt' } as const;
 
 export default class HeightForm extends Component<HeightFormAttrs> {
   view() {
@@ -31,14 +35,16 @@ export default class HeightForm extends Component<HeightFormAttrs> {
               onchange(choice === 'custom' ? { preset: 'custom', ...HEIGHT_PRESETS.m } : ({ preset: choice } as HeightSection))
             }
           />
-          <p className="helpText">{t('preset_help')}</p>
+          <p className="helpText">{value.preset === 'auto' ? t('auto_help') : t('preset_help')}</p>
         </div>
 
         {value.preset === 'custom' && (
           <div className="Form-group wch-HeightForm-custom">
             {(['desktop', 'tablet', 'mobile'] as const).map((breakpoint) => (
               <label>
-                <span>{t(`${breakpoint}_label`)}</span>
+                <span>
+                  <Icon name={ICONS[breakpoint]} /> {t(`${breakpoint}_label`)}
+                </span>
                 <span className="wch-HeightForm-input">
                   <input
                     className="FormControl"
@@ -55,6 +61,7 @@ export default class HeightForm extends Component<HeightFormAttrs> {
                 </span>
               </label>
             ))}
+            <p className="helpText wch-HeightForm-bounds">{t('custom_help', { min: MIN, max: BOUNDS.desktop, mobile: BOUNDS.mobile })}</p>
           </div>
         )}
       </div>

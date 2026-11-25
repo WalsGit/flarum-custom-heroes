@@ -119,6 +119,8 @@ walsgit-custom-heroes:
       preset_l: "Large ({desktop} / {tablet} / {mobile} px)"
       preset_custom: Custom
       preset_help: "Fixed heights on desktop / tablet / mobile: the hero keeps its height whatever the text (title cut after 2 lines, message after 3)."
+      auto_help: "At least 120 px high on desktop (less on mobile), and the hero expands with its text or logo, like in Flarum."
+      custom_help: "From {min} to {max} px ({mobile} px at most on mobile)."
       desktop_label: Desktop
       tablet_label: Tablet
       mobile_label: Mobile

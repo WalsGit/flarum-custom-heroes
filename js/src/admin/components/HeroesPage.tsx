@@ -189,7 +189,10 @@ export default class HeroesPage extends ExtensionPage {
         this.section(
           'height',
           (parent) => parent ?? { preset: 'auto' },
-          (value, set) => <HeightForm value={value} onchange={set} />
+          (value, set) => <HeightForm value={value} onchange={set} />,
+          undefined,
+          // Flarum's height is the list's own default, like "None" for the overlay.
+          (value) => value.preset === 'auto'
         ),
     };
 

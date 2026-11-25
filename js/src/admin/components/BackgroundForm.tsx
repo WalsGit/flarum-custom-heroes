@@ -25,58 +25,76 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
 
 export default class BackgroundForm extends Component<BackgroundFormAttrs> {
   view() {
-    const { value, target, inherited, preview } = this.attrs;
+    const { value, target, inherited } = this.attrs;
     const assetsUrl = app.forum.attribute<ForumPayload>('walsgitCustomHeroes').assetsUrl;
     const own = value.image !== 'inherit' ? value.image : null;
     const shown = value.image === 'inherit' ? inherited && { image: inherited.image, owner: inherited.owner } : own && { image: own, owner: target };
 
+    const thumbnail = shown ? (
+      <img alt="" {...backgroundImageAttrs(assetsUrl, shown.owner, shown.image)} sizes="320px" />
+    ) : (
+      <span>{t('no_image')}</span>
+    );
+
     return (
       <div className="wch-BackgroundForm">
-        <div className="wch-BackgroundForm-preview">
-          {shown ? <img alt="" {...backgroundImageAttrs(assetsUrl, shown.owner, shown.image)} sizes="320px" /> : <span>{t('no_image')}</span>}
+        {/* A shortcut to the position modal. */}
+        {shown ? (
+          <button type="button" className="wch-BackgroundForm-preview" title={t('position_button')} onclick={() => this.openPosition()}>
+            {thumbnail}
+          </button>
+        ) : (
+          <div className="wch-BackgroundForm-preview">{thumbnail}</div>
+        )}
+
+        <div className="wch-BackgroundForm-fields">
+          {value.image === 'inherit' && inherited && <p className="helpText">{t('inherited_image', { source: inherited.label })}</p>}
+
+          {own && own.width < SHARP_WIDTH && (
+            <p className="helpText wch-BackgroundForm-warning">{t('small_image_warning', { width: own.width, recommended: SHARP_WIDTH })}</p>
+          )}
+
+          {/* A new image, or none, starts centered: the previous focal point was for another image. */}
+          <ImageInput
+            kind="background"
+            image={shown?.image ?? null}
+            target={target}
+            onchange={(image: ImageRef | null) => this.update({ image, position: CENTER })}
+            actions={
+              shown && (
+                <Button className="Button" icon="fas fa-crosshairs" onclick={() => this.openPosition()}>
+                  {t('position_button')}
+                </Button>
+              )
+            }
+          />
+
+          {inherited && value.image !== 'inherit' && (
+            <Button className="Button Button--link" icon="fas fa-level-up-alt" onclick={() => this.update({ image: 'inherit', position: CENTER })}>
+              {t('use_inherited_button', { source: inherited.label })}
+            </Button>
+          )}
         </div>
-
-        {shown && <p className="helpText">{t('position_value', value.position)}</p>}
-
-        {value.image === 'inherit' && inherited && <p className="helpText">{t('inherited_image', { source: inherited.label })}</p>}
-
-        {own && own.width < SHARP_WIDTH && (
-          <p className="helpText wch-BackgroundForm-warning">{t('small_image_warning', { width: own.width, recommended: SHARP_WIDTH })}</p>
-        )}
-
-        {/* A new image, or none, starts centered: the previous focal point was for another image. */}
-        <ImageInput
-          kind="background"
-          image={shown?.image ?? null}
-          target={target}
-          onchange={(image: ImageRef | null) => this.update({ image, position: CENTER })}
-          actions={
-            shown && (
-              <Button
-                className="Button"
-                icon="fas fa-crosshairs"
-                onclick={() =>
-                  app.modal.show(BackgroundPositionModal, {
-                    ...shown,
-                    position: value.position,
-                    preview,
-                    onapply: (position: BackgroundSection['position']) => this.update({ position }),
-                  })
-                }
-              >
-                {t('position_button')}
-              </Button>
-            )
-          }
-        />
-
-        {inherited && value.image !== 'inherit' && (
-          <Button className="Button Button--link" icon="fas fa-level-up-alt" onclick={() => this.update({ image: 'inherit', position: CENTER })}>
-            {t('use_inherited_button', { source: inherited.label })}
-          </Button>
-        )}
       </div>
     );
+  }
+
+  /** The image shown (own or inherited): its focal point, measured on the real hero. */
+  openPosition() {
+    const { value, target, inherited, preview } = this.attrs;
+    const shown =
+      value.image === 'inherit'
+        ? inherited && { image: inherited.image, owner: inherited.owner }
+        : value.image && { image: value.image, owner: target };
+
+    if (!shown) return;
+
+    app.modal.show(BackgroundPositionModal, {
+      ...shown,
+      position: value.position,
+      preview,
+      onapply: (position: BackgroundSection['position']) => this.update({ position }),
+    });
   }
 
   update(changes: Partial<BackgroundSection>) {

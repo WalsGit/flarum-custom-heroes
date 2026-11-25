@@ -3,6 +3,7 @@ import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 import isExtensionEnabled from 'flarum/admin/utils/isExtensionEnabled';
 import Alert from 'flarum/common/components/Alert';
 import Button from 'flarum/common/components/Button';
+import Link from 'flarum/common/components/Link';
 import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
 import type Mithril from 'mithril';
@@ -36,6 +37,12 @@ type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo' 
 /** Locale keys use underscores: `textStyle` → `text_style`. */
 const localeKey = (name: string) => name.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
+/** JSON with sorted object keys: a section switched off and on again comes back last. */
+const sortedJson = (value: unknown) =>
+  JSON.stringify(value, (_, v) =>
+    v && typeof v === 'object' && !Array.isArray(v) ? Object.fromEntries(Object.entries(v).sort(([a], [b]) => (a < b ? -1 : 1))) : v
+  );
+
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.${key}`, params, true);
 
 /**
@@ -49,6 +56,10 @@ export default class HeroesPage extends ExtensionPage {
   /** The stored configs, kept in sync with the server after each save. */
   configs: HeroConfigs = {};
   draft: HeroConfig = {};
+  /** Sections switched off in the draft, given back when switched on again. */
+  stash: HeroConfig = {};
+  /** The target's own buttons, given back after switching to the default ones and back. */
+  ownButtons: ButtonsSection | null = null;
   /** The open section tab. */
   tab: EditedSection | 'text' | 'buttons' = 'background';
   saving = false;
@@ -148,7 +159,9 @@ export default class HeroesPage extends ExtensionPage {
               inherited={this.inheritedBackground()}
               preview={{ configs: { ...this.configs, [this.key]: this.draft }, target: this.key, chain: this.chain(this.key) }}
             />
-          )
+          ),
+          // Flarum has no background image: nothing to fall back to.
+          t('background.add_label')
         ),
       overlay: () =>
         this.section(
@@ -246,13 +259,21 @@ export default class HeroesPage extends ExtensionPage {
     const set = (section: NonNullable<HeroConfig[K]>) => (this.draft = { ...this.draft, [name]: section });
 
     const toggle = (inherit: boolean) => {
-      const { [name]: _, ...rest } = this.draft;
-      // Starts from what the hero shows now, so that unticking changes nothing at first.
-      this.draft = inherit ? rest : { ...rest, [name]: initial(structuredClone(resolveConfig(parents, chain)[name])) };
+      const { [name]: removed, ...rest } = this.draft;
+
+      if (inherit) {
+        // Kept aside: switching back on gives it back (until another target or a save).
+        if (removed !== undefined) this.stash[name] = removed;
+        this.draft = rest;
+      } else {
+        // Otherwise starts from what the hero shows now, so that unticking changes nothing at first.
+        this.draft = { ...rest, [name]: this.stash[name] ?? initial(structuredClone(resolveConfig(parents, chain)[name])) };
+      }
     };
 
     return (
       <fieldset className={`wch-Section wch-Section--${name}`}>
+        {this.intro(name)}
         {!owner && addLabel ? (
           <Switch state={value !== undefined} onchange={(add: boolean) => toggle(!add)}>
             {addLabel}
@@ -266,6 +287,13 @@ export default class HeroesPage extends ExtensionPage {
         {value !== undefined && form(value as NonNullable<HeroConfig[K]>, set)}
       </fieldset>
     );
+  }
+
+  /** What the section does, at the top of its tab. */
+  intro(name: string) {
+    const text = app.translator.trans(`walsgit-custom-heroes.admin.${localeKey(name)}.intro`, { a: <Link href={app.route('basics')} /> });
+
+    return <p className="helpText wch-Section-intro">{text}</p>;
   }
 
   /** The background image of the level above, which this target can use with its own position. */
@@ -293,7 +321,10 @@ export default class HeroesPage extends ExtensionPage {
     const value = this.draft.buttons;
     const isDefault = this.key === 'global';
     const set = (buttons?: ButtonsSection | 'inherit') => {
-      const { buttons: _, ...rest } = this.draft;
+      const { buttons: previous, ...rest } = this.draft;
+      // Kept aside, like the other sections: switching back on gives them back.
+      if (previous !== undefined && buttons === undefined) this.stash.buttons = previous;
+      if (typeof previous === 'object' && buttons !== previous) this.ownButtons = previous;
       this.draft = buttons === undefined ? rest : { ...rest, buttons };
     };
     // Own buttons start from a copy of the default ones.
@@ -305,13 +336,14 @@ export default class HeroesPage extends ExtensionPage {
 
     return (
       <fieldset className="wch-Section wch-Section--buttons">
-        <Switch state={value !== undefined} onchange={(on: boolean) => set(on ? (isDefault ? own() : 'inherit') : undefined)}>
+        {this.intro('buttons')}
+        <Switch state={value !== undefined} onchange={(on: boolean) => set(on ? this.stash.buttons ?? (isDefault ? own() : 'inherit') : undefined)}>
           {t('buttons.add_label')}
         </Switch>
         {!isDefault && value === undefined && <p className="helpText">{t('buttons.opt_in_help')}</p>}
 
         {!isDefault && value !== undefined && (
-          <Switch state={value === 'inherit'} onchange={(inherit: boolean) => set(inherit ? 'inherit' : own())}>
+          <Switch state={value === 'inherit'} onchange={(inherit: boolean) => set(inherit ? 'inherit' : this.ownButtons ?? own())}>
             {t('inherit_from_label', { source: this.scopeLabel('global') })}
           </Switch>
         )}
@@ -331,6 +363,7 @@ export default class HeroesPage extends ExtensionPage {
 
     return (
       <fieldset className="wch-Section wch-Section--text">
+        {this.intro('text')}
         <TextForm value={this.draft.text ?? DEFAULT_TEXT} onchange={set} />
       </fieldset>
     );
@@ -394,6 +427,8 @@ export default class HeroesPage extends ExtensionPage {
   load(key: string) {
     this.key = key;
     this.draft = structuredClone(this.configs[key] ?? {});
+    this.stash = {};
+    this.ownButtons = null;
   }
 
   select(key: string) {
@@ -407,7 +442,7 @@ export default class HeroesPage extends ExtensionPage {
   }
 
   isDirty(): boolean {
-    return JSON.stringify(this.draft) !== JSON.stringify(this.configs[this.key] ?? {});
+    return sortedJson(this.draft) !== sortedJson(this.configs[this.key] ?? {});
   }
 
   reset() {

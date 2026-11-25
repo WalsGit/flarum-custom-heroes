@@ -20,7 +20,8 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
 
 /** Upload, URL import and removal of a hero image. */
 export default class ImageInput extends Component<ImageInputAttrs> {
-  loading = false;
+  /** What is being sent, for the right button to spin. */
+  loading: 'file' | 'url' | null = null;
   url = '';
 
   view() {
@@ -31,11 +32,17 @@ export default class ImageInput extends Component<ImageInputAttrs> {
       <div className="wch-ImageInput">
         <div className="Form-group">
           <div className="ButtonGroup wch-ImageInput-buttons">
-            <Button className="Button" icon="fas fa-upload" loading={this.loading} disabled={this.loading} onclick={() => this.pickFile()}>
+            <Button
+              className="Button"
+              icon="fas fa-upload"
+              loading={this.loading === 'file'}
+              disabled={!!this.loading}
+              onclick={() => this.pickFile()}
+            >
               {t('upload_button')}
             </Button>
             {image && (
-              <Button className="Button" icon="fas fa-times" disabled={this.loading} onclick={() => this.attrs.onchange(null)}>
+              <Button className="Button" icon="fas fa-times" disabled={!!this.loading} onclick={() => this.attrs.onchange(null)}>
                 {t('remove_button')}
               </Button>
             )}
@@ -54,8 +61,20 @@ export default class ImageInput extends Component<ImageInputAttrs> {
               placeholder="https://"
               value={this.url}
               oninput={(e: InputEvent) => (this.url = (e.target as HTMLInputElement).value)}
+              onkeydown={(e: KeyboardEvent) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  this.importUrl();
+                }
+              }}
             />
-            <Button className="Button" icon="fas fa-download" disabled={this.loading || !this.url} onclick={() => this.send({ url: this.url })}>
+            <Button
+              className="Button"
+              icon="fas fa-download"
+              loading={this.loading === 'url'}
+              disabled={!!this.loading || !this.url}
+              onclick={() => this.importUrl()}
+            >
               {t('import_button')}
             </Button>
           </div>
@@ -63,6 +82,10 @@ export default class ImageInput extends Component<ImageInputAttrs> {
         </div>
       </div>
     );
+  }
+
+  importUrl() {
+    if (this.url && !this.loading) this.send({ url: this.url });
   }
 
   pickFile() {
@@ -96,7 +119,7 @@ export default class ImageInput extends Component<ImageInputAttrs> {
       Object.assign(body, fields);
     }
 
-    this.loading = true;
+    this.loading = body instanceof FormData ? 'file' : 'url';
 
     app
       .request<ImageRef>({
@@ -112,7 +135,7 @@ export default class ImageInput extends Component<ImageInputAttrs> {
       // app.request already shows the error to the admin.
       .catch(() => {})
       .finally(() => {
-        this.loading = false;
+        this.loading = null;
         m.redraw();
       });
   }

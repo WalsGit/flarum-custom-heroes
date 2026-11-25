@@ -182,6 +182,7 @@ walsgit-custom-heroes:
       title: Social icons
       intro: "Add clickable icons to the hero banner (social media links)."
       add_label: Add social icons to the hero
+      opt_in_help: "The default social icons are only shown on the home hero: switch this on to show social icons on these heroes too."
       items_label: Icons
       items_help: "Icon: a Font Awesome Free class, for example <code>fab fa-github</code> (<a>search the icons</a>). The label names the link for screen readers. Links: https://…, mailto:… or tel:…; web links open in a new tab."
       column_icon: "Icon"

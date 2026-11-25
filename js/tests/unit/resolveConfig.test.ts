@@ -149,4 +149,13 @@ describe('home-only sections', () => {
     expect(resolveConfig({ ...configs, tag: { buttons: 'inherit' } }, ['global', 'tag', 'tag:12']).buttons).toBe(buttons);
     expect(resolveConfig({ discussion: { buttons: 'inherit' } }, ['global', 'discussion']).buttons).toBeUndefined();
   });
+
+  it('treats the social icons like the buttons', () => {
+    const socials = { size: 's', placement: 'below-text', color: null, mobile: 'same', items: [] } as any;
+    const withSocials = { global: { socials }, tag: {}, discussion: { socials: 'inherit' as const } };
+
+    expect(resolveConfig(withSocials, ['global']).socials).toBe(socials);
+    expect(resolveConfig(withSocials, ['global', 'tag', 'tag:12']).socials).toBeUndefined();
+    expect(resolveConfig(withSocials, ['global', 'discussion']).socials).toBe(socials);
+  });
 });

@@ -180,6 +180,7 @@ walsgit-custom-heroes:
       title: Réseaux sociaux
       intro: "Ajouter des icônes cliquables au hero (liens vers les réseaux sociaux)."
       add_label: Ajouter des icônes de réseaux sociaux au hero
+      opt_in_help: "Les icônes sociales par défaut ne s'affichent que sur le hero d'accueil : activez cette option pour afficher des icônes sociales sur ces heroes aussi."
       items_label: Icônes
       items_help: "Icône : une classe Font Awesome Free, par exemple <code>fab fa-github</code> (<a>chercher les icônes</a>). Le libellé nomme le lien pour les lecteurs d'écran. Liens : https://…, mailto:… ou tel:… ; les liens web s'ouvrent dans un nouvel onglet."
       column_icon: "Icône"

@@ -19,6 +19,7 @@ import {
   type Placement,
   type TextSection,
   type ButtonsSection,
+  type SocialsSection,
 } from '../../common/types';
 import { parentChain, tagOrder, targetOf } from '../utils/scopes';
 import { uploadLimits } from '../utils/uploadLimits';
@@ -33,13 +34,22 @@ import TextForm from './TextForm';
 import TextStyleForm from './TextStyleForm';
 
 /** The sections this page edits. Other sections of a config are kept as they are. */
-type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo' | 'socials';
+type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo';
+/** Sections the other heroes opt in to: off, the default ones (`inherit`) or their own. */
+type OptInSection = 'socials' | 'buttons';
+type OwnSections = { socials: SocialsSection; buttons: ButtonsSection };
+
+/** What own socials or buttons start from when there are no default ones to copy. */
+const EMPTY: OwnSections = {
+  socials: { size: 's', placement: 'below-text', color: null, mobile: 'same', items: [] },
+  buttons: { placement: 'below-text', mobile: 'same', items: [] },
+};
 
 /** Locale keys use underscores: `textStyle` → `text_style`. */
 const localeKey = (name: string) => name.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
 /** One icon per section tab. */
-const TAB_ICONS: Record<EditedSection | 'text' | 'buttons', string> = {
+const TAB_ICONS: Record<EditedSection | 'text' | OptInSection, string> = {
   background: 'fas fa-image',
   overlay: 'fas fa-layer-group',
   height: 'fas fa-arrows-up-down',
@@ -71,10 +81,10 @@ export default class HeroesPage extends ExtensionPage {
   draft: HeroConfig = {};
   /** Sections switched off in the draft, given back when switched on again. */
   stash: HeroConfig = {};
-  /** The target's own buttons, given back after switching to the default ones and back. */
-  ownButtons: ButtonsSection | null = null;
+  /** The target's own socials or buttons, given back after switching to the default ones and back. */
+  own: Partial<OwnSections> = {};
   /** The open section tab. */
-  tab: EditedSection | 'text' | 'buttons' = 'background';
+  tab: EditedSection | 'text' | OptInSection = 'background';
   saving = false;
 
   oninit(vnode: Mithril.Vnode<any, this>) {
@@ -163,7 +173,7 @@ export default class HeroesPage extends ExtensionPage {
   /** The sections of this target, one tab each, only the open one rendered. */
   tabs() {
     const isInstance = !!targetOf(this.key).scopeId;
-    const sections: Partial<Record<EditedSection | 'text' | 'buttons', () => Mithril.Children>> = {
+    const sections: Partial<Record<EditedSection | 'text' | OptInSection, () => Mithril.Children>> = {
       background: () =>
         this.section(
           'background',
@@ -224,14 +234,8 @@ export default class HeroesPage extends ExtensionPage {
           (value, set) => <LogoForm value={value} onchange={set} target={this.key} />,
           t('logo.add_label')
         );
-      sections.socials = () =>
-        this.section(
-          'socials',
-          (parent) => parent ?? { size: 's', placement: 'below-text', color: null, mobile: 'same', items: [] },
-          (value, set) => <SocialsForm value={value} onchange={set} taken={this.takenCorner('buttons')} />,
-          t('socials.add_label')
-        );
-      sections.buttons = () => this.buttonsSection();
+      sections.socials = () => this.optInSection('socials');
+      sections.buttons = () => this.optInSection('buttons');
     }
 
     const names = Object.keys(sections) as (keyof typeof sections)[];
@@ -359,41 +363,47 @@ export default class HeroesPage extends ExtensionPage {
   }
 
   /**
-   * Buttons are opt-in on the other heroes (the default ones are for the
-   * home hero): shown or not, then the default buttons or their own.
+   * Social icons and buttons are opt-in on the other heroes (the default ones
+   * are for the home hero): shown or not, then the default ones or their own.
    */
-  buttonsSection() {
-    const value = this.draft.buttons;
+  optInSection(name: OptInSection) {
+    const value = this.draft[name] as OwnSections[OptInSection] | 'inherit' | undefined;
     const isDefault = this.key === 'global';
-    const set = (buttons?: ButtonsSection | 'inherit') => {
-      const { buttons: previous, ...rest } = this.draft;
+    const set = (section?: OwnSections[OptInSection] | 'inherit') => {
+      const { [name]: previous, ...rest } = this.draft;
       // Kept aside, like the other sections: switching back on gives them back.
-      if (previous !== undefined && buttons === undefined) this.stash.buttons = previous;
-      if (typeof previous === 'object' && buttons !== previous) this.ownButtons = previous;
-      this.draft = buttons === undefined ? rest : { ...rest, buttons };
+      if (previous !== undefined && section === undefined) this.stash = { ...this.stash, [name]: previous };
+      if (typeof previous === 'object' && section !== previous) this.own = { ...this.own, [name]: previous };
+      this.draft = section === undefined ? rest : { ...rest, [name]: section };
     };
-    // Own buttons start from a copy of the default ones.
-    const own = (): ButtonsSection => {
-      const defaults = this.configs.global?.buttons;
+    // Own ones start from a copy of the default ones.
+    const own = (): OwnSections[OptInSection] => {
+      const defaults = this.configs.global?.[name];
 
-      return !isDefault && defaults && defaults !== 'inherit' ? structuredClone(defaults) : { placement: 'below-text', mobile: 'same', items: [] };
+      return structuredClone(!isDefault && defaults && defaults !== 'inherit' ? defaults : EMPTY[name]);
     };
+    const form =
+      name === 'socials' ? (
+        <SocialsForm value={value as SocialsSection} onchange={set} taken={this.takenCorner('buttons')} />
+      ) : (
+        <ButtonsForm value={value as ButtonsSection} onchange={set} taken={this.takenCorner('socials')} />
+      );
 
     return (
-      <fieldset className="wch-Section wch-Section--buttons">
-        {this.intro('buttons')}
-        <Switch state={value !== undefined} onchange={(on: boolean) => set(on ? this.stash.buttons ?? (isDefault ? own() : 'inherit') : undefined)}>
-          {t('buttons.add_label')}
+      <fieldset className={`wch-Section wch-Section--${name}`}>
+        {this.intro(name)}
+        <Switch state={value !== undefined} onchange={(on: boolean) => set(on ? this.stash[name] ?? (isDefault ? own() : 'inherit') : undefined)}>
+          {t(`${name}.add_label`)}
         </Switch>
-        {!isDefault && value === undefined && <p className="helpText">{t('buttons.opt_in_help')}</p>}
+        {!isDefault && value === undefined && <p className="helpText">{t(`${name}.opt_in_help`)}</p>}
 
         {!isDefault && value !== undefined && (
-          <Switch state={value === 'inherit'} onchange={(inherit: boolean) => set(inherit ? 'inherit' : this.ownButtons ?? own())}>
+          <Switch state={value === 'inherit'} onchange={(inherit: boolean) => set(inherit ? 'inherit' : this.own[name] ?? own())}>
             {t('inherit_from_label', { source: this.scopeLabel('global') })}
           </Switch>
         )}
 
-        {value !== undefined && value !== 'inherit' && <ButtonsForm value={value} onchange={set} taken={this.takenCorner('socials')} />}
+        {value !== undefined && value !== 'inherit' && form}
       </fieldset>
     );
   }
@@ -473,7 +483,7 @@ export default class HeroesPage extends ExtensionPage {
     this.key = key;
     this.draft = structuredClone(this.configs[key] ?? {});
     this.stash = {};
-    this.ownButtons = null;
+    this.own = {};
   }
 
   select(key: string) {

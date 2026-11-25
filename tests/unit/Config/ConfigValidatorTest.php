@@ -570,6 +570,13 @@ class ConfigValidatorTest extends TestCase
         $this->assertInvalid(['buttons' => 'inherit'], 'config.buttons', 'invalid_value');
     }
 
+    public function test_tags_and_discussions_can_show_the_default_socials(): void
+    {
+        $this->assertSame('inherit', $this->valid(['socials' => 'inherit'], Scope::Tag)['socials']);
+        $this->assertSame('inherit', $this->valid(['socials' => 'inherit'], Scope::Discussion)['socials']);
+        $this->assertInvalid(['socials' => 'inherit'], 'config.socials', 'invalid_value');
+    }
+
     // Placements ---------------------------------------------------------------
 
     public function test_buttons_and_socials_cannot_share_a_corner(): void

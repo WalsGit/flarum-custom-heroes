@@ -353,10 +353,16 @@ final class ConfigValidator
     }
 
     /**
-     * @return array<string, mixed>|null
+     * Like the buttons: tags and discussions show the default icons with `"inherit"`.
+     *
+     * @return array<string, mixed>|string|null
      */
-    private function socials(mixed $value, string $path): ?array
+    private function socials(mixed $value, string $path): array|string|null
     {
+        if ($value === 'inherit' && $this->scope !== Scope::Global) {
+            return 'inherit';
+        }
+
         $object = $this->object($value, $path, ['items'], ['size', 'placement', 'color', 'mobile']);
 
         if ($object === null) {

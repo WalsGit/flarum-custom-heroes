@@ -38,8 +38,8 @@ export function tagParentId(tag: { data: { relationships?: Record<string, unknow
   return parent?.data?.id ?? null;
 }
 
-/** Sections the default level gives to the home hero only: the other heroes opt in at their own level (buttons: `inherit`). */
-const HOME_ONLY: (keyof HeroConfig)[] = ['buttons'];
+/** Sections the default level gives to the home hero only: the other heroes opt in at their own level (`inherit`). */
+const HOME_ONLY = ['socials', 'buttons'] as const;
 
 /** What a config of the chain gives to the hero: the default level keeps its home-only sections for the home hero. */
 function inheritedPart(configs: HeroConfigs, chain: string[], key: string): HeroConfig | undefined {
@@ -47,7 +47,7 @@ function inheritedPart(configs: HeroConfigs, chain: string[], key: string): Hero
 
   if (!config || key !== 'global' || chain.length === 1) return config;
 
-  return Object.fromEntries(Object.entries(config).filter(([section]) => !HOME_ONLY.includes(section as keyof HeroConfig)));
+  return Object.fromEntries(Object.entries(config).filter(([section]) => !(HOME_ONLY as readonly string[]).includes(section)));
 }
 
 /**
@@ -67,11 +67,12 @@ export function resolveConfig(configs: HeroConfigs, chain: string[]): ResolvedCo
     resolved.background = { ...resolved.background, image: owner ? (configs[owner].background!.image as ImageRef) : null };
   }
 
-  if (resolved.buttons === 'inherit') {
-    const buttons = configs.global?.buttons;
+  for (const section of HOME_ONLY) {
+    if (resolved[section] !== 'inherit') continue;
+    const defaults = configs.global?.[section];
 
-    if (buttons && buttons !== 'inherit') resolved.buttons = buttons;
-    else delete resolved.buttons;
+    if (defaults && defaults !== 'inherit') (resolved as Record<string, unknown>)[section] = defaults;
+    else delete resolved[section];
   }
 
   return resolved as ResolvedConfig;

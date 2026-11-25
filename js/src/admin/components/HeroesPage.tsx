@@ -121,7 +121,12 @@ export default class HeroesPage extends ExtensionPage {
               <p className="helpText">{t('scope_help')}</p>
             </div>
 
-            <HeroPreview configs={{ ...this.configs, [this.key]: this.draft }} target={this.key} chain={this.chain(this.key)} />
+            <HeroPreview
+              configs={{ ...this.configs, [this.key]: this.draft }}
+              target={this.key}
+              chain={this.chain(this.key)}
+              textTab={this.key === 'global' && this.tab === 'text'}
+            />
 
             {this.tabs()}
 

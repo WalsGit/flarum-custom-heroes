@@ -14,6 +14,9 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
 const MAX_TITLE = 100;
 const MAX_MESSAGE = 500;
 
+/** "23 / 100": the length limits are not visible otherwise. */
+const count = (text: string, max: number) => <p className="helpText wch-TextForm-count">{t('count', { count: text.length, max })}</p>;
+
 export default class TextForm extends Component<TextFormAttrs> {
   view() {
     const { value, onchange } = this.attrs;
@@ -38,6 +41,7 @@ export default class TextForm extends Component<TextFormAttrs> {
               value={value.title}
               oninput={(e: InputEvent) => onchange({ ...value, title: (e.target as HTMLInputElement).value })}
             />
+            {count(value.title, MAX_TITLE)}
           </div>,
           <div className="Form-group">
             <label>{t('message_label')}</label>
@@ -48,6 +52,7 @@ export default class TextForm extends Component<TextFormAttrs> {
               value={value.message}
               oninput={(e: InputEvent) => onchange({ ...value, message: (e.target as HTMLTextAreaElement).value })}
             />
+            {count(value.message, MAX_MESSAGE)}
             <p className="helpText">{t('message_help')}</p>
           </div>,
         ]}

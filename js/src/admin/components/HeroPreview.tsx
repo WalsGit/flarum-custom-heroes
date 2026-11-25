@@ -17,6 +17,8 @@ export interface HeroPreviewAttrs extends ComponentAttrs {
   target: string;
   /** The keys of the configs the target uses, itself last. */
   chain: string[];
+  /** The Text tab is open: the preview shows the custom text (still free to switch back). */
+  textTab?: boolean;
 }
 
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.preview.${key}`, params, true);
@@ -87,6 +89,17 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
 
     window.addEventListener('scroll', this.onscroll, { passive: true });
     this.markStuck();
+  }
+
+  oninit(vnode: Mithril.Vnode<HeroPreviewAttrs, this>) {
+    super.oninit(vnode);
+    this.closed = !!this.attrs.textTab;
+  }
+
+  onbeforeupdate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>) {
+    // Compared before the new attrs replace the old ones.
+    if (vnode.attrs.textTab && !this.attrs.textTab) this.closed = true;
+    super.onbeforeupdate(vnode);
   }
 
   onupdate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>) {

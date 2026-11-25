@@ -118,7 +118,7 @@ walsgit-custom-heroes:
       preset_m: "Medium ({desktop} / {tablet} / {mobile} px)"
       preset_l: "Large ({desktop} / {tablet} / {mobile} px)"
       preset_custom: Custom
-      preset_help: "Fixed heights on desktop / tablet / mobile: the hero keeps its height whatever the text (title cut after 2 lines, message after 3)."
+      preset_help: "Fixed heights on desktop / tablet / mobile: the hero keeps its height whatever the text (title cut after 2 lines, description after 3)."
       auto_help: "At least 120 px high on desktop (less on mobile), and the hero expands with its text or logo, like in Flarum."
       custom_help: "From {min} to {max} px ({mobile} px at most on mobile)."
       desktop_label: Desktop
@@ -146,16 +146,17 @@ walsgit-custom-heroes:
       hide_on_mobile_label: Hide on mobile
     text:
       title: Text
-      intro: "Set a title and a message to show on the home hero. Flarum's welcome banner (configurable in <a>Basics</a>) comes first and can be closed with ✕, like in Flarum: this text is shown once it is closed, or when the banner has no title. You can also hide the hero instead."
+      intro: "Set a title and a description to show on the home hero when Flarum's welcome banner (configurable in <a>Basics</a>) is closed or not activated (no text). You can also hide the hero after Flarum's welcome banner is closed."
       after_close_label: Once the welcome banner is closed
       after_close_hero: Keep the hero, with the text below
       after_close_none: "Hide the hero (Flarum's behavior)"
       title_label: Title
-      message_label: Message
+      message_label: Description
+      count: "{count} / {max}"
       message_help: Plain text, line breaks are kept. Leave both empty for a hero without text (background only).
     text_style:
       title: Text style
-      intro: "Adjust the alignment, position, size and color of the title and the subtitle."
+      intro: "Adjust the alignment, position, size and color of the title and the description."
       align_label: Horizontal alignment
       align_left: Left
       align_center: Center
@@ -166,7 +167,7 @@ walsgit-custom-heroes:
       v_align_bottom: Bottom
       v_align_help: Only visible when the hero is taller than its text (see Height).
       title_size_label: Title size
-      subtitle_size_label: Message size
+      subtitle_size_label: Description size
       size_s: Small
       size_m: "Medium (Flarum's size)"
       size_l: Large

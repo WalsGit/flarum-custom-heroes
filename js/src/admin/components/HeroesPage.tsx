@@ -210,7 +210,11 @@ export default class HeroesPage extends ExtensionPage {
           'textStyle',
           // Top, like the core, so that unticking changes nothing at first.
           (parent) => parent ?? { align: 'center', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
-          (value, set) => <TextStyleForm value={value} onchange={set} />
+          (value, set) => <TextStyleForm value={value} onchange={set} />,
+          undefined,
+          // Flarum's look: the form's own defaults.
+          (value) =>
+            value.align === 'center' && value.vAlign === 'top' && value.titleSize === 'm' && value.subtitleSize === 'm' && value.color === null
         );
       sections.logo = () =>
         this.section(

@@ -165,14 +165,14 @@ walsgit-custom-heroes:
       v_align_top: Top
       v_align_middle: Middle
       v_align_bottom: Bottom
-      v_align_help: Only visible when the hero is taller than its text (see Height).
+      v_align_help: "Only visible or applicable on heroes taller than Flarum's default (see Height)."
       title_size_label: Title size
       subtitle_size_label: Description size
       size_s: Small
       size_m: "Medium (Flarum's size)"
       size_l: Large
       size_xl: Extra large
-      auto_color_label: "Automatic color (Flarum's)"
+      auto_color_label: "Use Flarum's default color"
       color_label: Text color
       color_help: A light color on a dark image or overlay keeps the text readable.
     socials:

@@ -448,7 +448,8 @@ button.wch-BackgroundForm-preview {
   }
 }
 
-.wch-PositionModal-devices .Button.active {
+.wch-PositionModal-devices .Button.active,
+.wch-ChoiceButtons .Button.active {
   background: var(--control-color);
   color: var(--control-bg);
 }
@@ -673,4 +674,15 @@ button.wch-BackgroundForm-preview {
 .wch-TextForm-count {
   margin: 4px 0 0;
   text-align: right;
+}
+
+// Alignment and position side by side, then the two sizes.
+.wch-TextStyleForm-grid {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 0 40px;
+
+  @media @phone {
+    grid-template-columns: 1fr;
+  }
 }

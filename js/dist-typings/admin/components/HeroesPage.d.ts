@@ -32,7 +32,7 @@ export default class HeroesPage extends ExtensionPage {
      * With `addLabel`, a section that has nothing to inherit is switched on to
      * be added ("Add a logo") rather than off to stop using Flarum's default.
      */
-    section<K extends EditedSection>(name: K, initial: (parent: HeroConfig[K] | undefined) => NonNullable<HeroConfig[K]>, form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children, addLabel?: string): JSX.Element;
+    section<K extends EditedSection>(name: K, initial: (parent: HeroConfig[K] | undefined) => NonNullable<HeroConfig[K]>, form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children, addLabel?: string, isEmpty?: (value: NonNullable<HeroConfig[K]>) => boolean): JSX.Element;
     /** What the section does, at the top of its tab. */
     intro(name: string): JSX.Element;
     /** The background image of the level above, which this target can use with its own position. */

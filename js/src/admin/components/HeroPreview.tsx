@@ -1,6 +1,7 @@
 import app from 'flarum/admin/app';
 import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
+import Icon from 'flarum/common/components/Icon';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { decorateContent, heroDecoration } from '../../common/heroDecoration';
@@ -35,7 +36,9 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     return (
       <div className="wch-Preview">
         <div className="wch-Preview-toolbar">
-          <strong>{t('title')}</strong>
+          <strong className="wch-Preview-title">
+            <Icon name="fas fa-eye" /> {t('title')}
+          </strong>
           <div className="ButtonGroup">
             {(['desktop', 'tablet', 'mobile'] as const).map((device) => (
               <Button

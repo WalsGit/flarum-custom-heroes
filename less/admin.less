@@ -29,7 +29,7 @@
 
 .wch-Tabs-tab.Button {
   gap: 6px;
-  padding: 11px 8px;
+  padding: 11px 7px;
   margin-bottom: -2px;
   border: 0;
   border-bottom: 2px solid transparent;
@@ -253,7 +253,8 @@ button.wch-BackgroundForm-preview {
   min-width: 0;
 }
 
-.wch-OverlayForm-angle .FormControl,
+// The angle only: the direction list next to it is a FormControl too.
+.wch-OverlayForm-angle input.FormControl,
 .wch-OverlayForm-at {
   width: 80px;
 }
@@ -385,8 +386,8 @@ button.wch-BackgroundForm-preview {
 }
 
 .wch-OverlayForm-cornerLabel {
-  color: var(--muted-color);
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: bold;
 }
 
 @media (max-width: 600px) {
@@ -623,4 +624,29 @@ button.wch-BackgroundForm-preview {
 // What the section does, at the top of its tab.
 .wch-Section-intro {
   margin: 0 0 15px;
+}
+
+// A small caption above a control (overlay colors: color, opacity, position).
+.wch-Legend {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.wch-Legend-text {
+  color: var(--muted-color);
+  font-size: 12px;
+}
+
+.wch-AlphaColor-alpha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px; // lined up with the color input
+}
+
+// With captions, the controls line up on their bottom edge.
+.wch-AlphaColor:has(> .wch-Legend),
+.wch-OverlayForm-stop {
+  align-items: flex-end;
 }

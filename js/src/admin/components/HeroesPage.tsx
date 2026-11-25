@@ -180,7 +180,10 @@ export default class HeroesPage extends ExtensionPage {
         this.section(
           'overlay',
           (parent) => parent ?? { type: 'none' },
-          (value, set) => <OverlayForm value={value} onchange={set} />
+          (value, set) => <OverlayForm value={value} onchange={set} />,
+          undefined,
+          // "None" is the type list's own default: no switch needed when there is nothing to inherit.
+          (value) => value.type === 'none'
         ),
       height: () =>
         this.section(
@@ -262,7 +265,8 @@ export default class HeroesPage extends ExtensionPage {
     name: K,
     initial: (parent: HeroConfig[K] | undefined) => NonNullable<HeroConfig[K]>,
     form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children,
-    addLabel?: string
+    addLabel?: string,
+    isEmpty?: (value: NonNullable<HeroConfig[K]>) => boolean
   ) {
     const value = this.draft[name];
     // The hero's whole chain without the edited config: some sections are not inherited by every hero (buttons).
@@ -283,6 +287,22 @@ export default class HeroesPage extends ExtensionPage {
         this.draft = { ...rest, [name]: this.stash[name] ?? initial(structuredClone(resolveConfig(parents, chain)[name])) };
       }
     };
+
+    // Nothing to inherit and an "empty" value in the form itself: the form alone, its empty value stored as no section.
+    if (!owner && isEmpty) {
+      const shown = value ?? initial(undefined);
+      const setOrRemove = (section: NonNullable<HeroConfig[K]>) => {
+        const { [name]: _, ...rest } = this.draft;
+        this.draft = isEmpty(section) ? rest : { ...rest, [name]: section };
+      };
+
+      return (
+        <fieldset className={`wch-Section wch-Section--${name}`}>
+          {this.intro(name)}
+          {form(shown as NonNullable<HeroConfig[K]>, setOrRemove)}
+        </fieldset>
+      );
+    }
 
     return (
       <fieldset className={`wch-Section wch-Section--${name}`}>

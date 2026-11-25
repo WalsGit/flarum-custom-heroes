@@ -3,7 +3,7 @@ import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import Select from 'flarum/common/components/Select';
 import type { Corner, CornersGradient, GradientStop, LinearGradient, OverlaySection, RadialGradient } from '../../common/types';
-import AlphaColorInput from './AlphaColorInput';
+import AlphaColorInput, { legend } from './AlphaColorInput';
 
 export interface OverlayFormAttrs extends ComponentAttrs {
   value: OverlaySection;
@@ -73,7 +73,7 @@ export default class OverlayForm extends Component<OverlayFormAttrs> {
         {value.type === 'solid' && (
           <div className="Form-group">
             <label>{t('color_label')}</label>
-            <AlphaColorInput value={value.color} label={t('color_label')} onchange={(color: string) => onchange({ ...value, color })} />
+            <AlphaColorInput value={value.color} label={t('color_label')} legends onchange={(color: string) => onchange({ ...value, color })} />
           </div>
         )}
 
@@ -156,7 +156,12 @@ export default class OverlayForm extends Component<OverlayFormAttrs> {
           {keys.map((key) => (
             <div className={`wch-OverlayForm-corner wch-OverlayForm-corner--${key}`}>
               <span className="wch-OverlayForm-cornerLabel">{t(`corner_${key}`)}</span>
-              <AlphaColorInput value={value[key]} label={t(`corner_${key}`)} onchange={(color: string) => onchange({ ...value, [key]: color })} />
+              <AlphaColorInput
+                value={value[key]}
+                label={t(`corner_${key}`)}
+                legends
+                onchange={(color: string) => onchange({ ...value, [key]: color })}
+              />
             </div>
           ))}
         </div>
@@ -177,18 +182,21 @@ export default class OverlayForm extends Component<OverlayFormAttrs> {
             <AlphaColorInput
               value={stop.color}
               label={t('stop_label', { number: index + 1 })}
+              legends
               onchange={(color: string) => setStops(value.stops.map((s, i) => (i === index ? { ...s, color } : s)))}
             />
-            <input
-              className="FormControl wch-OverlayForm-at"
-              type="number"
-              min="0"
-              max="100"
-              value={stop.at}
-              aria-label={t('stop_position_label', { number: index + 1 })}
-              onchange={(e: Event) => setStops(value.stops.map((s, i) => (i === index ? { ...s, at: int(e, 0, 100) } : s)))}
-            />
-            <span>%</span>
+            {legend(
+              t('legend_position'),
+              <input
+                className="FormControl wch-OverlayForm-at"
+                type="number"
+                min="0"
+                max="100"
+                value={stop.at}
+                aria-label={t('stop_position_label', { number: index + 1 })}
+                onchange={(e: Event) => setStops(value.stops.map((s, i) => (i === index ? { ...s, at: int(e, 0, 100) } : s)))}
+              />
+            )}
             <Button
               className="Button Button--icon Button--link"
               icon="fas fa-times"

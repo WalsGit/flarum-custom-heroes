@@ -98,6 +98,9 @@ walsgit-custom-heroes:
       center_bottom_right: Bottom right corner
       color_label: Color
       opacity_label: "{label}: opacity"
+      legend_color: "Color"
+      legend_opacity: "Opacity"
+      legend_position: "Position (%)"
       angle_label: Angle
       angle_help: "0° goes from bottom to top, 90° from left to right, 180° from top to bottom."
       stops_label: Colors

@@ -215,6 +215,31 @@ walsgit-custom-heroes:
       mobile_hide: Masqués
     buttons:
       title: Boutons
+      icon_none: "Sans icône"
+      pick_icon_button: "Bouton {number} : choisir une icône"
+      drag_handle: "Glisser pour réordonner"
+      no_label: "Pas encore de libellé"
+      icons:
+        login: "Connexion"
+        signup: "Inscription"
+        arrow: "Flèche"
+        external: "Lien externe"
+        link: "Lien"
+        email: "E-mail"
+        download: "Téléchargement"
+        help: "Aide"
+        info: "Information"
+        star: "Étoile"
+        heart: "Cœur"
+        cart: "Panier"
+        calendar: "Calendrier"
+        book: "Livre"
+        chat: "Discussion"
+        announce: "Annonce"
+        gift: "Cadeau"
+        rocket: "Fusée"
+        play: "Lecture"
+        discord: "Discord"
       intro: "Ajouter des boutons (inscription, connexion ou liens) au hero."
       add_label: Ajouter des boutons au hero
       opt_in_help: "Les boutons par défaut ne s'affichent que sur le hero d'accueil : activez cette option pour afficher des boutons sur ces heroes aussi."

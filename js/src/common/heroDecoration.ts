@@ -101,7 +101,7 @@ function isVisible(button: ButtonItem, viewer: HeroViewer | null): boolean {
 const BUTTON_STYLES = { primary: 'Button--primary', default: '', outline: 'wch-HeroButton--outline' } as const;
 
 /** The buttons, styled as Flarum buttons; custom colors go through CSS variables. */
-function heroButtons(items: ButtonItem[], viewer: HeroViewer | null, className?: string): Mithril.Vnode {
+export function heroButtons(items: ButtonItem[], viewer: HeroViewer | null, className?: string): Mithril.Vnode {
   return m(
     '.wch-HeroButtons',
     { className },

@@ -47,7 +47,7 @@ const TAB_ICONS: Record<EditedSection | 'text' | 'buttons', string> = {
   textStyle: 'fas fa-font',
   logo: 'fas fa-shapes',
   socials: 'fas fa-share-nodes',
-  buttons: 'fas fa-hand-pointer',
+  buttons: 'far fa-square',
 };
 
 /** JSON with sorted object keys: a section switched off and on again comes back last. */

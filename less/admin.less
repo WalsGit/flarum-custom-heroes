@@ -2,7 +2,7 @@
 @import "common/hero";
 
 .wch-HeroesPage-body {
-  max-width: 860px;
+  max-width: 900px;
 }
 
 .wch-HeroesPage-scope {
@@ -13,37 +13,41 @@
   }
 }
 
-// Outline of the open tab and its section, darker than the tinted bar.
-@wch-tab-border: ~"color-mix(in srgb, var(--control-bg), var(--control-color) 25%)";
+// One tab per section, like fof/upload's settings tabs: icon, bold label,
+// the open one underlined in the accent color.
+.wch-Tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-bottom: 20px;
+  padding: 0 6px;
+  border-bottom: 2px solid var(--control-bg);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  // Tinted, like the preview and the save bar.
+  background: var(--control-bg);
+}
 
-// One tab per section, on a tinted bar like the preview; the open tab joins its section.
-.wch-Tabs {
-  .Tabs-nav {
-    padding: 0 6px;
-    margin-bottom: 0;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    background: var(--control-bg);
-    // Too many tabs for a small window: they scroll rather than wrap.
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: thin;
+.wch-Tabs-tab.Button {
+  gap: 6px;
+  padding: 11px 8px;
+  margin-bottom: -2px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--muted-color);
+  font-weight: bold;
 
-    > .Button {
-      flex-shrink: 0;
-      margin-top: 6px;
-      padding: 10px 9px;
-      font-size: 14px;
-      border: 1px solid transparent;
-      border-top-width: 2px;
-      border-bottom: 0;
-      border-radius: var(--border-radius) var(--border-radius) 0 0;
+  &:hover,
+  &:focus {
+    background: none;
+    color: var(--text-color);
+  }
 
-      &[active] {
-        border-color: @wch-tab-border;
-        border-top-color: var(--primary-color);
-        background: var(--body-bg);
-      }
-    }
+  &.wch-Tabs-tab--active {
+    color: var(--link-color);
+    border-bottom-color: var(--link-color);
   }
 }
 
@@ -55,23 +59,20 @@
   margin-left: 6px;
   vertical-align: middle;
   border-radius: 50%;
-  background: var(--primary-color);
+  background: var(--link-color);
 }
 
-// The open section, under its tab.
+// The open section, under the tabs.
 .wch-Section {
   margin: 0 0 20px;
-  padding: 20px 20px 5px;
-  border: 1px solid @wch-tab-border;
-  border-top: 0;
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  padding: 0;
+  border: 0;
 
   > .Checkbox,
   .Form-group {
     margin-bottom: 15px;
   }
 }
-
 
 // Thumbnail beside the fields, to keep the tab short.
 .wch-BackgroundForm {
@@ -321,7 +322,7 @@ button.wch-BackgroundForm-preview {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  max-width: 860px;
+  max-width: 900px;
   margin: 0;
 }
 

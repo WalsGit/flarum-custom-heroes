@@ -255,7 +255,7 @@ describe('heroDecoration', () => {
 
   it('stacks buttons above icons in a shared slot', () => {
     const decoration = heroDecoration(
-      { global: { socials: socials('top-left') }, tag: { buttons: buttons([button()], 'top-left') } },
+      { tag: { socials: socials('top-left'), buttons: buttons([button()], 'top-left') } },
       ['global', 'tag'],
       'tag',
       assets

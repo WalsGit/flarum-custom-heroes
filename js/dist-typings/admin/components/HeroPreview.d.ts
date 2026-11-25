@@ -9,6 +9,8 @@ export interface HeroPreviewAttrs extends ComponentAttrs {
     target: string;
     /** The keys of the configs the target uses, itself last. */
     chain: string[];
+    /** The Text tab is open: the preview shows the custom text (still free to switch back). */
+    textTab?: boolean;
 }
 /**
  * A live preview of the edited hero, rendered like on the forum (same
@@ -23,6 +25,8 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     view(): JSX.Element;
     hero(): JSX.Element;
     oncreate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;
+    oninit(vnode: Mithril.Vnode<HeroPreviewAttrs, this>): void;
+    onbeforeupdate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;
     onupdate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;
     onremove(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;
     /** Adds a shadow while the preview is stuck at the top, like the admin header, to separate it from the forms. */

@@ -6,6 +6,7 @@ import Button from 'flarum/common/components/Button';
 import Link from 'flarum/common/components/Link';
 import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
+import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { backgroundOwner, normalizeConfigs, resolveConfig, sectionOwner, tagParentId } from '../../common/resolveConfig';
 import {
@@ -36,6 +37,18 @@ type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo' 
 
 /** Locale keys use underscores: `textStyle` → `text_style`. */
 const localeKey = (name: string) => name.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
+
+/** One icon per section tab. */
+const TAB_ICONS: Record<EditedSection | 'text' | 'buttons', string> = {
+  background: 'fas fa-image',
+  overlay: 'fas fa-layer-group',
+  height: 'fas fa-arrows-up-down',
+  text: 'fas fa-heading',
+  textStyle: 'fas fa-font',
+  logo: 'fas fa-shapes',
+  socials: 'fas fa-share-nodes',
+  buttons: 'fas fa-hand-pointer',
+};
 
 /** JSON with sorted object keys: a section switched off and on again comes back last. */
 const sortedJson = (value: unknown) =>
@@ -211,14 +224,14 @@ export default class HeroesPage extends ExtensionPage {
     const open = names.includes(this.tab) ? this.tab : names[0];
 
     return (
-      <div className="Tabs wch-Tabs">
-        <div className="Tabs-nav" role="tablist">
+      <div className="wch-Tabs">
+        <div className="wch-Tabs-nav" role="tablist">
           {names.map((name) => (
             <Button
-              className="Button Button--link"
+              className={classList('Button wch-Tabs-tab', name === open && 'wch-Tabs-tab--active')}
+              icon={TAB_ICONS[name]}
               id={`wch-tab-${name}`}
               role="tab"
-              active={name === open}
               aria-selected={name === open}
               aria-controls="wch-tabpanel"
               onclick={() => (this.tab = name)}

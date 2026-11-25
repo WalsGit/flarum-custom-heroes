@@ -662,3 +662,15 @@ button.wch-BackgroundForm-preview {
 .wch-OverlayForm-stop {
   align-items: flex-end;
 }
+
+// Title and description fields, with their character count under their right edge.
+.wch-TextForm .FormControl:not(select),
+.wch-TextForm-count {
+  width: 100%;
+  max-width: 600px;
+}
+
+.wch-TextForm-count {
+  margin: 4px 0 0;
+  text-align: right;
+}

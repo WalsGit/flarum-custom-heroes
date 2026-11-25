@@ -116,7 +116,7 @@ walsgit-custom-heroes:
       preset_m: "Moyenne ({desktop} / {tablet} / {mobile} px)"
       preset_l: "Grande ({desktop} / {tablet} / {mobile} px)"
       preset_custom: Personnalisée
-      preset_help: "Hauteurs fixes sur ordinateur / tablette / mobile : le hero garde sa hauteur quel que soit le texte (titre coupé après 2 lignes, message après 3)."
+      preset_help: "Hauteurs fixes sur ordinateur / tablette / mobile : le hero garde sa hauteur quel que soit le texte (titre coupé après 2 lignes, description après 3)."
       auto_help: "Au moins 120 px de haut sur ordinateur (moins sur mobile), et le hero s'agrandit avec son texte ou son logo, comme dans Flarum."
       custom_help: "De {min} à {max} px ({mobile} px au plus sur mobile)."
       desktop_label: Ordinateur
@@ -144,16 +144,17 @@ walsgit-custom-heroes:
       hide_on_mobile_label: Masquer sur mobile
     text:
       title: Texte
-      intro: "Définir un titre et un message à afficher sur le hero d'accueil. La bannière de bienvenue de Flarum (configurable dans <a>Essentiels</a>) s'affiche d'abord et se ferme avec ✕, comme dans Flarum : ce texte s'affiche une fois la bannière fermée, ou si elle n'a pas de titre. Vous pouvez aussi masquer le hero à la place."
+      intro: "Définir un titre et une description à afficher sur le hero d'accueil quand la bannière de bienvenue de Flarum (configurable dans <a>Essentiels</a>) est fermée ou désactivée (sans texte). Vous pouvez aussi masquer le hero une fois la bannière de bienvenue de Flarum fermée."
       after_close_label: Une fois la bannière de bienvenue fermée
       after_close_hero: Garder le hero, avec le texte ci-dessous
       after_close_none: Masquer le hero (comportement de Flarum)
       title_label: Titre
-      message_label: Message
+      message_label: Description
+      count: "{count} / {max}"
       message_help: Texte brut, les retours à la ligne sont conservés. Laisser les deux vides pour un hero sans texte (fond seul).
     text_style:
       title: Style du texte
-      intro: "Ajuster l'alignement, la position, la taille et la couleur du titre et du sous-titre."
+      intro: "Ajuster l'alignement, la position, la taille et la couleur du titre et de la description."
       align_label: Alignement horizontal
       align_left: Gauche
       align_center: Centre
@@ -164,7 +165,7 @@ walsgit-custom-heroes:
       v_align_bottom: Bas
       v_align_help: Visible seulement si le hero est plus haut que son texte (voir Hauteur).
       title_size_label: Taille du titre
-      subtitle_size_label: Taille du message
+      subtitle_size_label: Taille de la description
       size_s: Petite
       size_m: Moyenne (taille de Flarum)
       size_l: Grande

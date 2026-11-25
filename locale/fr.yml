@@ -30,7 +30,7 @@ walsgit-custom-heroes:
       tag_title: Nom du tag
       tag_subtitle: La description du tag.
       state_welcome: Bannière de bienvenue
-      state_closed: Une fois fermé
+      state_closed: Texte personnalisé
       hidden: Une fois la bannière de bienvenue fermée, ce hero est masqué (comportement de Flarum).
       discussion_title: Le titre d'une discussion
       messages_title: Messages

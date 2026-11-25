@@ -32,7 +32,7 @@ walsgit-custom-heroes:
       tag_title: Tag name
       tag_subtitle: The description of the tag.
       state_welcome: Welcome banner
-      state_closed: Once closed
+      state_closed: Custom text
       hidden: "Once the welcome banner is closed, this hero is hidden (Flarum's behavior)."
       discussion_title: The title of a discussion
       messages_title: Messages

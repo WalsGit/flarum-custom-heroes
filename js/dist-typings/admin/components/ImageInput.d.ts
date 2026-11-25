@@ -9,6 +9,8 @@ export interface ImageInputAttrs extends ComponentAttrs {
     target: string;
     /** More buttons, at the end of the row. */
     actions?: Mithril.Children;
+    /** More help, after the formats and limits. */
+    help?: string;
 }
 /** Upload, URL import and removal of a hero image. */
 export default class ImageInput extends Component<ImageInputAttrs> {

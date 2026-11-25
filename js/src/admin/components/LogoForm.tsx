@@ -1,7 +1,9 @@
 import app from 'flarum/admin/app';
 import Component, { type ComponentAttrs } from 'flarum/common/Component';
+import Button from 'flarum/common/components/Button';
 import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
+import classList from 'flarum/common/utils/classList';
 import { logoImageUrl } from '../../common/backgroundImage';
 import { LOGO_HEIGHTS } from '../../common/heroStyle';
 import type { ForumPayload, ImageRef, LogoSection } from '../../common/types';
@@ -17,6 +19,12 @@ export interface LogoFormAttrs extends ComponentAttrs {
 /** Length validated by the server. */
 const MAX_ALT = 100;
 
+/** Logos are stored at most this high (`HeroImages::LOGO_MAX_HEIGHT`): a logo this high may have been reduced. */
+const STORED_MAX_HEIGHT = 256;
+
+/** Icons of the position buttons. */
+const SIDE_ICONS = { left: 'fas fa-arrow-left', right: 'fas fa-arrow-right', above: 'fas fa-arrow-up', title: 'fas fa-heading' } as const;
+
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.logo.${key}`, params, true);
 
 export default class LogoForm extends Component<LogoFormAttrs> {
@@ -26,32 +34,61 @@ export default class LogoForm extends Component<LogoFormAttrs> {
 
     return (
       <div className="wch-LogoForm">
-        <div className="wch-BackgroundForm-preview wch-LogoForm-preview">
-          {value.image ? <img alt="" src={logoImageUrl(assetsUrl, target, value.image)} /> : <span>{t('no_logo')}</span>}
+        {/* Laid out like the background: thumbnail beside the image fields. */}
+        <div className="wch-BackgroundForm">
+          <div className="wch-LogoForm-thumb">
+            <div className="wch-BackgroundForm-preview wch-LogoForm-preview">
+              {value.image ? <img alt="" src={logoImageUrl(assetsUrl, target, value.image)} /> : <span>{t('no_logo')}</span>}
+            </div>
+            {value.image && (
+              <p className="helpText">
+                {t(value.image.height >= STORED_MAX_HEIGHT ? 'image_size_max' : 'image_size', {
+                  width: value.image.width,
+                  height: value.image.height,
+                })}
+              </p>
+            )}
+          </div>
+
+          <div className="wch-BackgroundForm-fields">
+            <ImageInput
+              kind="logo"
+              image={value.image}
+              target={target}
+              help={t('image_help')}
+              onchange={(image: ImageRef | null) => this.update({ image })}
+            />
+          </div>
         </div>
 
-        <ImageInput kind="logo" image={value.image} target={target} onchange={(image: ImageRef | null) => this.update({ image })} />
-        <div className="Form-group">
-          <p className="helpText">{t('image_help')}</p>
-        </div>
+        <div className="wch-LogoForm-layout">
+          <div className="Form-group">
+            <label>{t('side_label')}</label>
+            {/* Buttons rather than a list, like the text alignment. */}
+            <div className="ButtonGroup wch-ChoiceButtons">
+              {(['left', 'right', 'above', 'title'] as const).map((side) => (
+                <Button
+                  className={classList('Button', value.side === side && 'active')}
+                  icon={SIDE_ICONS[side]}
+                  aria-pressed={value.side === side}
+                  onclick={() => this.update({ side })}
+                >
+                  {t(`side_${side}`)}
+                </Button>
+              ))}
+            </div>
+            <p className="helpText">{t('side_help')}</p>
+          </div>
 
-        <div className="Form-group">
-          <label>{t('side_label')}</label>
-          <Select
-            value={value.side}
-            options={{ left: t('side_left'), right: t('side_right'), above: t('side_above'), title: t('side_title') }}
-            onchange={(side: LogoSection['side']) => this.update({ side })}
-          />
-          <p className="helpText">{t('side_help')}</p>
-        </div>
-
-        <div className="Form-group">
-          <label>{t('size_label')}</label>
-          <Select
-            value={value.size}
-            options={Object.fromEntries((['s', 'm', 'l'] as const).map((size) => [size, t(`size_${size}`, { height: LOGO_HEIGHTS[size] })]))}
-            onchange={(size: LogoSection['size']) => this.update({ size })}
-          />
+          <div className="Form-group">
+            <label>{t('size_label')}</label>
+            <Select
+              value={value.size}
+              options={Object.fromEntries((['s', 'm', 'l'] as const).map((size) => [size, t(`size_${size}`, { height: LOGO_HEIGHTS[size] })]))}
+              onchange={(size: LogoSection['size']) => this.update({ size })}
+            />
+            <p className="helpText">{t('size_help')}</p>
+          </div>
         </div>
 
         <div className="Form-group">

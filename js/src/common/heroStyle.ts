@@ -107,7 +107,8 @@ export function heroStyle(config: ResolvedConfig): Record<string, string> {
     ...(config.background?.image ? { '--wch-bg-position': `${config.background.position.x}% ${config.background.position.y}%` } : {}),
     ...(overlay ? { '--wch-overlay': overlay } : {}),
     ...(config.textStyle ? textVariables(config.textStyle) : {}),
-    ...(config.logo?.image ? { '--wch-logo-height': `${LOGO_HEIGHTS[config.logo.size]}px` } : {}),
+    // Never larger than the file itself: a small logo is never upscaled.
+    ...(config.logo?.image ? { '--wch-logo-height': `${Math.min(LOGO_HEIGHTS[config.logo.size], config.logo.image.height)}px` } : {}),
     ...(config.socials?.items.length ? socialsVariables(config.socials) : {}),
   };
 }

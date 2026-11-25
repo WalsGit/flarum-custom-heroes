@@ -109,4 +109,11 @@ describe('heroStyle', () => {
     });
     expect(heroStyle({ textStyle: { ...textStyle, color: '#ffffffcc' } })['--wch-text-color']).toBe('#ffffffcc');
   });
+
+  it('shows the logo at the chosen height, but never higher than the file (no upscaling)', () => {
+    const logo = { side: 'left', size: 'm', alt: '', hideOnMobile: false } as const;
+
+    expect(heroStyle({ logo: { ...logo, image: { id: 'a', width: 480, height: 240 } } })['--wch-logo-height']).toBe('96px');
+    expect(heroStyle({ logo: { ...logo, image: { id: 'a', width: 800, height: 55 } } })['--wch-logo-height']).toBe('55px');
+  });
 });

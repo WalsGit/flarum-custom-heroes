@@ -69,7 +69,7 @@ describe('heroDecoration', () => {
   });
 
   it('adds the logo of the config that defines it, and its classes', () => {
-    const logo = { image: { id: '1b4f0e9851971998', width: 240, height: 120 }, side: 'right', size: 'l', alt: 'Forum', hideOnMobile: true } as const;
+    const logo = { image: { id: '1b4f0e9851971998', width: 480, height: 240 }, side: 'right', size: 'l', alt: 'Forum', hideOnMobile: true } as const;
     const decoration = heroDecoration({ global: { logo } }, ['global', 'tag', 'tag:12'], 'tag', assets)!;
 
     expect(decoration.className).toBe('wch-Hero wch-Hero--tag wch-Hero--logo wch-Hero--logo-right wch-Hero--logoHideMobile');
@@ -77,8 +77,8 @@ describe('heroDecoration', () => {
     expect((decoration.logo as any).attrs).toMatchObject({
       src: `${assets}/logo-global-${logo.image.id}.webp`,
       alt: 'Forum',
-      width: 240,
-      height: 120,
+      width: logo.image.width,
+      height: logo.image.height,
     });
   });
 

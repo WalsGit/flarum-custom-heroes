@@ -217,6 +217,31 @@ walsgit-custom-heroes:
       mobile_hide: Hidden
     buttons:
       title: Buttons
+      icon_none: "No icon"
+      pick_icon_button: "Button {number}: pick an icon"
+      drag_handle: "Drag to reorder"
+      no_label: "No label yet"
+      icons:
+        login: "Log in"
+        signup: "Sign up"
+        arrow: "Arrow"
+        external: "External link"
+        link: "Link"
+        email: "Email"
+        download: "Download"
+        help: "Help"
+        info: "Information"
+        star: "Star"
+        heart: "Heart"
+        cart: "Cart"
+        calendar: "Calendar"
+        book: "Book"
+        chat: "Chat"
+        announce: "Announcement"
+        gift: "Gift"
+        rocket: "Rocket"
+        play: "Play"
+        discord: "Discord"
       intro: "Add buttons (sign up, log in or links) to the hero banner."
       add_label: Add buttons to the hero
       opt_in_help: "The default buttons are only shown on the home hero: switch this on to show buttons on these heroes too."

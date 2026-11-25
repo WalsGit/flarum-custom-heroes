@@ -1,15 +1,15 @@
 import app from 'flarum/admin/app';
 import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
-import Dropdown from 'flarum/common/components/Dropdown';
 import Icon from 'flarum/common/components/Icon';
 import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
-import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { SOCIAL_SIZES } from '../../common/heroStyle';
 import type { Placement, SocialItem, SocialsSection } from '../../common/types';
+import { makeSortable, moved } from '../utils/sortable';
 import AlphaColorInput from './AlphaColorInput';
+import IconPicker from './IconPicker';
 import PlacementFields, { type PlacementChanges } from './PlacementFields';
 
 export interface SocialsFormAttrs extends ComponentAttrs {
@@ -153,28 +153,13 @@ export default class SocialsForm extends Component<SocialsFormAttrs> {
         <span className="wch-SocialsForm-handle" title={t('drag_handle')} aria-hidden="true">
           <Icon name="fas fa-grip-vertical" />
         </span>
-        {/* Pick a common icon; any other Font Awesome class can still be typed next to it. */}
-        <Dropdown
-          className="wch-IconPicker wch-SocialsForm-icon"
-          buttonClassName="Button Button--icon"
-          menuClassName="wch-IconPicker-menu"
-          icon={item.icon || 'fas fa-icons'}
-          noStyleOverride={true}
-          caretIcon=""
-          label=""
-          accessibleToggleLabel={t('pick_icon_button', { number })}
-        >
-          {Object.entries(SUGGESTIONS).map(([icon, { label }]) => (
-            <Button
-              className={classList('Button Button--icon', item.icon === icon && 'active')}
-              icon={icon}
-              noStyleOverride={true}
-              title={label}
-              aria-label={label}
-              onclick={() => set(withIcon(item, icon))}
-            />
-          ))}
-        </Dropdown>
+        <IconPicker
+          className="wch-SocialsForm-icon"
+          value={item.icon || null}
+          icons={Object.fromEntries(Object.entries(SUGGESTIONS).map(([icon, { label }]) => [icon, label]))}
+          label={t('pick_icon_button', { number })}
+          onchange={(icon: string | null) => set(withIcon(item, icon ?? ''))}
+        />
         <input
           className="FormControl wch-SocialsForm-iconInput"
           maxlength={60}
@@ -243,28 +228,10 @@ export default class SocialsForm extends Component<SocialsFormAttrs> {
   oncreate(vnode: Mithril.VnodeDOM<SocialsFormAttrs, this>) {
     super.oncreate(vnode);
 
-    // Drag and drop with core's sortablejs chunk (lazy-loaded), by the handle; ↑ / ↓ stay for the keyboard.
-    import('flarum/admin/utils/loadSortable').then(({ default: Sortable }) => {
-      const list = this.element?.querySelector<HTMLElement>('.wch-SocialsForm-list');
-
-      if (!list) return;
-
-      Sortable.create(list, {
-        handle: '.wch-SocialsForm-handle',
-        animation: 150,
-        ghostClass: 'wch-SocialsForm-item--ghost',
-        onEnd: ({ item, from, oldIndex, newIndex }: { item: HTMLElement; from: HTMLElement; oldIndex?: number; newIndex?: number }) => {
-          if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return;
-
-          // Put the row back where Mithril left it, then reorder the data: Mithril redraws the list.
-          from.insertBefore(item, from.children[oldIndex + (oldIndex > newIndex ? 1 : 0)] ?? null);
-          const moved = [...this.attrs.value.items];
-          moved.splice(newIndex, 0, ...moved.splice(oldIndex, 1));
-          this.setItems(moved);
-          m.redraw();
-        },
-      });
-    });
+    // ↑ / ↓ stay for the keyboard.
+    makeSortable(this.element.querySelector('.wch-SocialsForm-list')!, '.wch-SocialsForm-handle', (from, to) =>
+      this.setItems(moved(this.attrs.value.items, from, to))
+    );
   }
 
   update(changes: Partial<SocialsSection>) {

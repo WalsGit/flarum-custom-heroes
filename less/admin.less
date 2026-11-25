@@ -627,8 +627,9 @@ button.wch-BackgroundForm-preview {
   }
 }
 
-// Space between the color switch and the color below it.
-.wch-SocialsForm > .Checkbox--switch + .Form-group {
+// Space between a color switch and the color below it.
+.wch-HeroesPage-body .Checkbox--switch + .Form-group,
+.wch-HeroesPage-body .Checkbox--switch + .wch-AlphaColor {
   margin-top: 12px;
 }
 
@@ -646,7 +647,7 @@ button.wch-BackgroundForm-preview {
 }
 
 // Where the dragged row will land.
-.wch-SocialsForm-item--ghost {
+.wch-Sortable-ghost {
   opacity: 0.4;
 }
 
@@ -727,20 +728,30 @@ button.wch-BackgroundForm-preview {
   border: 1px solid var(--control-bg);
   border-radius: var(--border-radius);
 
+  // The switches and colors at the bottom of a card: room to tell them apart.
   .Checkbox,
   .wch-AlphaColor {
-    margin-bottom: 8px;
+    margin-bottom: 16px;
   }
+}
+
+.wch-ButtonsForm-list {
+  align-self: stretch;
+}
+
+// A folded card: its header only.
+.wch-ButtonsForm-item:not(.wch-ButtonsForm-item--open) {
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 .wch-ButtonsForm-itemHeader {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 8px;
 
-  strong {
-    margin-right: auto;
+  .wch-ButtonsForm-item--open & {
+    margin-bottom: 8px;
   }
 }
 
@@ -824,4 +835,43 @@ button.wch-BackgroundForm-preview {
   width: fit-content;
   max-width: 100%;
   font-weight: bold;
+}
+
+.wch-ButtonsForm-handle {
+  width: 16px;
+  color: var(--muted-color);
+  text-align: center;
+  cursor: grab;
+  touch-action: none;
+}
+
+// The card's title: opens or folds it.
+.wch-ButtonsForm-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+
+  .icon {
+    width: 12px;
+    color: var(--muted-color);
+  }
+}
+
+// What the button looks like (not clickable).
+.wch-ButtonsForm-sample {
+  margin: 0 auto 0 8px;
+  pointer-events: none;
+
+  .wch-HeroButtons {
+    justify-content: flex-start;
+  }
+
+  .helpText {
+    margin: 0;
+  }
 }

@@ -14,6 +14,8 @@ export interface ImageInputAttrs extends ComponentAttrs {
   target: string;
   /** More buttons, at the end of the row. */
   actions?: Mithril.Children;
+  /** More help, after the formats and limits. */
+  help?: string;
 }
 
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.image.${key}`, params, true);
@@ -48,7 +50,9 @@ export default class ImageInput extends Component<ImageInputAttrs> {
             )}
             {this.attrs.actions}
           </div>
-          <p className="helpText">{t('upload_help', { size: maxSizeMb() })}</p>
+          <p className="helpText">
+            {t('upload_help', { size: maxSizeMb() })} {this.attrs.help}
+          </p>
         </div>
 
         <div className="Form-group">

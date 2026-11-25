@@ -80,7 +80,8 @@
   align-items: flex-start;
   gap: 20px;
 
-  > .wch-BackgroundForm-preview {
+  > .wch-BackgroundForm-preview,
+  > .wch-LogoForm-thumb {
     flex: 0 0 280px;
   }
 
@@ -88,7 +89,8 @@
     flex-direction: column;
     gap: 0;
 
-    > .wch-BackgroundForm-preview {
+    > .wch-BackgroundForm-preview,
+    > .wch-LogoForm-thumb {
       flex: none;
       width: 100%;
     }
@@ -228,8 +230,52 @@ button.wch-BackgroundForm-preview {
   margin-top: 20px;
 }
 
-.wch-LogoForm-preview img {
-  padding: 10px;
+// The logo's size, under its thumbnail.
+.wch-LogoForm-thumb .helpText {
+  margin: 6px 0 15px;
+  text-align: center;
+}
+
+.wch-LogoForm-preview {
+  margin-bottom: 0;
+  // A mid-gray checkerboard, to see the logo's transparency: white and dark logos both show.
+  background-color: #b3b3b3;
+  background-image: conic-gradient(#999 25%, transparent 0 50%, #999 0 75%, transparent 0);
+  background-size: 16px 16px;
+
+  img {
+    padding: 10px;
+  }
+}
+
+// Position and size side by side, wrapping on small screens.
+.wch-LogoForm-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px 40px;
+
+  > .Form-group {
+    margin-bottom: 0;
+  }
+
+  // Each help wraps under its own controls, so that the two stay side by side.
+  > .Form-group:first-child {
+    max-width: 600px;
+  }
+
+  > .Form-group:last-child {
+    max-width: 240px;
+  }
+}
+
+.wch-LogoForm-layout + .Form-group {
+  margin-top: 15px;
+}
+
+
+// Many choices: they wrap rather than overflow a small screen.
+.wch-ChoiceButtons {
+  flex-wrap: wrap;
 }
 
 .wch-ImageInput-buttons {

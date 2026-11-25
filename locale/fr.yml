@@ -127,17 +127,20 @@ walsgit-custom-heroes:
       intro: "Ajouter un logo ou une image à côté du titre, au-dessus ou à sa place."
       add_label: Ajouter un logo au hero
       no_logo: Pas de logo
-      image_help: "JPEG, PNG ou WebP. La transparence est conservée. Stocké en 256 px de haut au maximum (le double de la plus grande taille, pour les écrans nets)."
+      image_help: "La transparence est conservée. Stocké en 256 px de haut au maximum (le double de la plus grande taille, pour les écrans nets)."
+      image_size: "{width} × {height} px"
+      image_size_max: "{width} × {height} px (256 px de haut au maximum)"
       side_label: Position
       side_left: À gauche du texte
       side_right: À droite du texte
       side_above: Au-dessus du titre
       side_title: À la place du titre
-      side_help: "Le logo et le texte sont placés ensemble, selon l'alignement du texte. À la place du titre : le titre reste lu par les lecteurs d'écran, et les discussions affichent le logo au-dessus de leur titre."
+      side_help: "Le logo et le texte sont placés ensemble, selon l'alignement du texte. Si vous choisissez « À la place du titre », notez que le titre reste lu par les lecteurs d'écran, et que les pages de discussion affichent le logo au-dessus de leur titre."
       size_label: Taille
       size_s: "Petit ({height} px de haut)"
       size_m: "Moyen ({height} px de haut)"
       size_l: "Grand ({height} px de haut)"
+      size_help: "Un logo plus petit garde sa propre hauteur : il n'est jamais agrandi."
       alt_label: Texte alternatif
       alt_help: "Lu par les lecteurs d'écran, par exemple le nom de votre forum. Laisser vide si le logo est purement décoratif."
       alt_title_help: "Lu par les lecteurs d'écran après le titre, qui reste dans la page : laisser vide si le logo ne fait que reprendre le titre."

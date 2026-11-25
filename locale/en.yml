@@ -184,6 +184,11 @@ walsgit-custom-heroes:
       add_label: Add social icons to the hero
       items_label: Icons
       items_help: "Icon: a Font Awesome Free class, for example <code>fab fa-github</code> (<a>search the icons</a>). The label names the link for screen readers. Links: https://…, mailto:… or tel:…; web links open in a new tab."
+      column_icon: "Icon"
+      column_label: "Label"
+      column_url: "Link"
+      drag_handle: "Drag to reorder"
+      pick_icon_button: "Icon {number}: pick an icon"
       icon_label: "Icon {number}: icon"
       label_label: "Icon {number}: label"
       url_label: "Icon {number}: link"

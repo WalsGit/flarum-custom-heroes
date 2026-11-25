@@ -182,6 +182,11 @@ walsgit-custom-heroes:
       add_label: Ajouter des icônes de réseaux sociaux au hero
       items_label: Icônes
       items_help: "Icône : une classe Font Awesome Free, par exemple <code>fab fa-github</code> (<a>chercher les icônes</a>). Le libellé nomme le lien pour les lecteurs d'écran. Liens : https://…, mailto:… ou tel:… ; les liens web s'ouvrent dans un nouvel onglet."
+      column_icon: "Icône"
+      column_label: "Libellé"
+      column_url: "Lien"
+      drag_handle: "Glisser pour réordonner"
+      pick_icon_button: "Icône {number} : choisir une icône"
       icon_label: "Icône {number} : icône"
       label_label: "Icône {number} : libellé"
       url_label: "Icône {number} : lien"

@@ -1,5 +1,5 @@
 import type Mithril from 'mithril';
-import type { Corner, HeroConfigs, HeroScope } from './types';
+import type { ButtonItem, Corner, HeroConfigs, HeroScope } from './types';
 /**
  * Who sees the hero, for the buttons. Without it (admin preview), every
  * button is shown.
@@ -38,6 +38,8 @@ export declare function decorateContent(children: Mithril.ChildArray, decoration
     content: Mithril.Children[];
     corners: Mithril.Vnode[];
 };
+/** The buttons, styled as Flarum buttons; custom colors go through CSS variables. */
+export declare function heroButtons(items: ButtonItem[], viewer: HeroViewer | null, className?: string): Mithril.Vnode;
 /**
  * Resolves the config of a hero from its chain (`['global', 'tag', 'tag:12']`),
  * or null when nothing is configured for it.

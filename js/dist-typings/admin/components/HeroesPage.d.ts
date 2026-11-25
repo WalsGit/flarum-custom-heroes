@@ -1,6 +1,6 @@
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 import type Mithril from 'mithril';
-import { type ImageRef, type HeroConfig, type HeroConfigs, type Placement } from '../../common/types';
+import { type ImageRef, type HeroConfig, type HeroConfigs, type Placement, type ButtonsSection } from '../../common/types';
 /** The sections this page edits. Other sections of a config are kept as they are. */
 type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo' | 'socials';
 /**
@@ -14,6 +14,10 @@ export default class HeroesPage extends ExtensionPage {
     /** The stored configs, kept in sync with the server after each save. */
     configs: HeroConfigs;
     draft: HeroConfig;
+    /** Sections switched off in the draft, given back when switched on again. */
+    stash: HeroConfig;
+    /** The target's own buttons, given back after switching to the default ones and back. */
+    ownButtons: ButtonsSection | null;
     /** The open section tab. */
     tab: EditedSection | 'text' | 'buttons';
     saving: boolean;
@@ -29,6 +33,8 @@ export default class HeroesPage extends ExtensionPage {
      * be added ("Add a logo") rather than off to stop using Flarum's default.
      */
     section<K extends EditedSection>(name: K, initial: (parent: HeroConfig[K] | undefined) => NonNullable<HeroConfig[K]>, form: (value: NonNullable<HeroConfig[K]>, set: (value: NonNullable<HeroConfig[K]>) => void) => Mithril.Children, addLabel?: string): JSX.Element;
+    /** What the section does, at the top of its tab. */
+    intro(name: string): JSX.Element;
     /** The background image of the level above, which this target can use with its own position. */
     inheritedBackground(): {
         image: ImageRef;

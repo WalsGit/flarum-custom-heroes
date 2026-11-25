@@ -17,5 +17,7 @@ export interface BackgroundFormAttrs extends ComponentAttrs {
 }
 export default class BackgroundForm extends Component<BackgroundFormAttrs> {
     view(): JSX.Element;
+    /** The image shown (own or inherited): its focal point, measured on the real hero. */
+    openPosition(): void;
     update(changes: Partial<BackgroundSection>): void;
 }

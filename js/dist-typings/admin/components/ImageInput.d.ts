@@ -12,9 +12,11 @@ export interface ImageInputAttrs extends ComponentAttrs {
 }
 /** Upload, URL import and removal of a hero image. */
 export default class ImageInput extends Component<ImageInputAttrs> {
-    loading: boolean;
+    /** What is being sent, for the right button to spin. */
+    loading: 'file' | 'url' | null;
     url: string;
     view(): JSX.Element;
+    importUrl(): void;
     pickFile(): void;
     send(body: FormData | Record<string, string>): void;
 }

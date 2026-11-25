@@ -285,8 +285,15 @@ button.wch-BackgroundForm-preview {
 
 .wch-HeightForm-custom {
   display: flex;
+  flex-direction: row; // the core's Form-group is a column
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 15px 25px;
+
+  // The bounds, under the three fields.
+  .wch-HeightForm-bounds {
+    flex-basis: 100%;
+    margin: 0;
+  }
 
   label {
     display: flex;
@@ -296,6 +303,11 @@ button.wch-BackgroundForm-preview {
 
   .FormControl {
     width: 100px;
+  }
+
+  // The unit, not part of the bold label.
+  .wch-HeightForm-input > span {
+    font-weight: normal;
   }
 }
 

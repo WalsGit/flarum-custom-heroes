@@ -82,6 +82,11 @@ enum Scope: string
             return [...self::COMMON_SECTIONS, 'text'];
         }
 
+        // The tag icon and description are shown or hidden for every tag at once.
+        if ($this === self::Tag) {
+            return [...self::COMMON_SECTIONS, 'tagIcon', 'tagDescription'];
+        }
+
         return self::COMMON_SECTIONS;
     }
 }

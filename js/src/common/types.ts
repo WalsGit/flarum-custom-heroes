@@ -148,6 +148,10 @@ export interface HeroConfig {
   /** The heroes other than the home one do not inherit the default icons and buttons: `inherit` shows them there. */
   socials?: SocialsSection | 'inherit';
   buttons?: ButtonsSection | 'inherit';
+  /** Tag heroes only: `false` hides the tag's icon before its name. */
+  tagIcon?: false;
+  /** Tag heroes only: `false` hides the tag's description. */
+  tagDescription?: false;
 }
 
 /** The config a hero uses, once inherited: `inherit` is replaced by the default icons and buttons and the image of the level above. */

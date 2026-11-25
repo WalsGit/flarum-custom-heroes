@@ -143,15 +143,16 @@ export interface HeroConfig {
     textStyle?: TextStyleSection;
     text?: TextSection;
     logo?: LogoSection;
-    socials?: SocialsSection;
-    /** The heroes other than the home one do not inherit the default buttons: `inherit` shows them there. */
+    /** The heroes other than the home one do not inherit the default icons and buttons: `inherit` shows them there. */
+    socials?: SocialsSection | 'inherit';
     buttons?: ButtonsSection | 'inherit';
 }
-/** The config a hero uses, once inherited: `inherit` is replaced by the default buttons and the image of the level above. */
-export type ResolvedConfig = Omit<HeroConfig, 'background' | 'buttons'> & {
+/** The config a hero uses, once inherited: `inherit` is replaced by the default icons and buttons and the image of the level above. */
+export type ResolvedConfig = Omit<HeroConfig, 'background' | 'socials' | 'buttons'> & {
     background?: Omit<BackgroundSection, 'image'> & {
         image: ImageRef | null;
     };
+    socials?: SocialsSection;
     buttons?: ButtonsSection;
 };
 /** Configs keyed by `scope` or `scope:scopeId`. */

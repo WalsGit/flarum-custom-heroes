@@ -1,8 +1,14 @@
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 import type Mithril from 'mithril';
-import { type ImageRef, type HeroConfig, type HeroConfigs, type Placement, type ButtonsSection } from '../../common/types';
+import { type ImageRef, type HeroConfig, type HeroConfigs, type Placement, type ButtonsSection, type SocialsSection } from '../../common/types';
 /** The sections this page edits. Other sections of a config are kept as they are. */
-type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo' | 'socials';
+type EditedSection = 'background' | 'overlay' | 'height' | 'textStyle' | 'logo';
+/** Sections the other heroes opt in to: off, the default ones (`inherit`) or their own. */
+type OptInSection = 'socials' | 'buttons';
+type OwnSections = {
+    socials: SocialsSection;
+    buttons: ButtonsSection;
+};
 /**
  * Edits the hero config of one target at a time (global, a hero type or a
  * tag). Each section is either inherited from the level above or defined
@@ -16,10 +22,10 @@ export default class HeroesPage extends ExtensionPage {
     draft: HeroConfig;
     /** Sections switched off in the draft, given back when switched on again. */
     stash: HeroConfig;
-    /** The target's own buttons, given back after switching to the default ones and back. */
-    ownButtons: ButtonsSection | null;
+    /** The target's own socials or buttons, given back after switching to the default ones and back. */
+    own: Partial<OwnSections>;
     /** The open section tab. */
-    tab: EditedSection | 'text' | 'buttons';
+    tab: EditedSection | 'text' | OptInSection;
     saving: boolean;
     oninit(vnode: Mithril.Vnode<any, this>): void;
     className(): string;
@@ -47,10 +53,10 @@ export default class HeroesPage extends ExtensionPage {
      */
     takenCorner(name: 'socials' | 'buttons'): Placement | null;
     /**
-     * Buttons are opt-in on the other heroes (the default ones are for the
-     * home hero): shown or not, then the default buttons or their own.
+     * Social icons and buttons are opt-in on the other heroes (the default ones
+     * are for the home hero): shown or not, then the default ones or their own.
      */
-    buttonsSection(): JSX.Element;
+    optInSection(name: OptInSection): JSX.Element;
     /** Default level only (home hero), with no level to inherit from: the default is stored as a missing section. */
     textSection(): JSX.Element;
     tagsEnabled(): boolean;

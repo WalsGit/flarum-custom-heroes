@@ -589,9 +589,94 @@ button.wch-BackgroundForm-preview {
 }
 
 .wch-SocialsForm-icon {
-  width: 24px;
+  width: 36px;
   text-align: center;
   font-size: 18px;
+}
+
+// Icon picker: a grid of icons, no text (names on hover).
+.wch-IconPicker {
+  .Dropdown-toggle {
+    width: 36px;
+    font-size: 18px;
+  }
+
+  .wch-IconPicker-menu {
+    grid-template-columns: repeat(6, 40px);
+    gap: 4px;
+    min-width: 0;
+    padding: 8px;
+
+    > li > .Button {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .Button.active {
+      background: var(--control-color);
+      color: var(--control-bg);
+    }
+  }
+
+  // Only when open: Flarum hides closed menus with display: none.
+  &.open .wch-IconPicker-menu {
+    display: grid;
+  }
+}
+
+// Space between the color switch and the color below it.
+.wch-SocialsForm > .Checkbox--switch + .Form-group {
+  margin-top: 12px;
+}
+
+.wch-SocialsForm-list {
+  width: 100%;
+}
+
+// Drag handle of a row.
+.wch-SocialsForm-handle {
+  width: 16px;
+  color: var(--muted-color);
+  text-align: center;
+  cursor: grab;
+  touch-action: none;
+}
+
+// Where the dragged row will land.
+.wch-SocialsForm-item--ghost {
+  opacity: 0.4;
+}
+
+// Column captions, desktop only (the rows are a grid on phones).
+.wch-SocialsForm-head {
+  width: 100%;
+  margin-bottom: 4px;
+  color: var(--muted-color);
+  font-size: 12px;
+
+  .wch-SocialsForm-url {
+    min-width: 0;
+  }
+
+  @media @phone {
+    display: none !important;
+  }
+}
+
+// Fields side by side, each help wrapped under its own field.
+.wch-FieldsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px 40px;
+  margin-bottom: 15px;
+
+  > .Form-group {
+    max-width: 300px;
+    margin-bottom: 0;
+  }
 }
 
 .wch-SocialsForm-iconInput,
@@ -608,7 +693,7 @@ button.wch-BackgroundForm-preview {
 @media @phone {
   .wch-SocialsForm-item {
     display: grid;
-    grid-template-columns: 24px minmax(0, 1fr) minmax(0, 1fr) repeat(3, 36px);
+    grid-template-columns: 16px 36px minmax(0, 1fr) minmax(0, 1fr) repeat(3, 36px);
   }
 
   .wch-SocialsForm-iconInput,
@@ -620,11 +705,11 @@ button.wch-BackgroundForm-preview {
 
   .wch-SocialsForm-iconInput,
   .wch-SocialsForm-url {
-    grid-column: ~"2 / 4";
+    grid-column: ~"3 / 5";
   }
 
   .wch-SocialsForm-label {
-    grid-column: ~"4 / -1";
+    grid-column: ~"5 / -1";
   }
 }
 

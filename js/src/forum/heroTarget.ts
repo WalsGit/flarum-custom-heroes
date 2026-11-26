@@ -13,6 +13,18 @@ export interface HeroTarget {
   tagId?: string | null;
 }
 
+/** The heroes of optional extensions that have their own target, by class name. */
+const CLASS_SCOPES = {
+  MessagesPageHero: 'messages',
+  DeckPageHero: 'deck',
+  PageHero: 'pages',
+  UserDirectoryHero: 'users',
+  // fof/polls: its pages, and the pages where polls and poll groups are composed.
+  PollPageHero: 'polls',
+  ComposePollHero: 'polls',
+  ComposePollGroupHero: 'polls',
+} as const satisfies Record<string, HeroScope>;
+
 type TagModel = { id(): string | undefined; attribute(name: string): unknown; data: { relationships?: Record<string, unknown> } };
 
 /**
@@ -41,12 +53,14 @@ export function heroTarget(hero: Hero): HeroTarget {
     return { scope: 'discussion', scopeId: null, tagId: tag?.id() ?? null, parentId: tagParentId(tag) };
   }
 
-  // flarum/tags, flarum/messages and flarum/deck are optional: their heroes
-  // are recognized by their class name, so that the extension does not import them.
+  // flarum/tags, flarum/messages, flarum/deck and the fof extensions are optional: their
+  // heroes are recognized by their class name, so that the extension does not import them.
   const classes = hero.className().split(' ');
+  const scope = (Object.keys(CLASS_SCOPES) as (keyof typeof CLASS_SCOPES)[]).find((name) => classes.includes(name));
 
-  if (classes.includes('MessagesPageHero')) return { scope: 'messages', scopeId: null };
-  if (classes.includes('DeckPageHero')) return { scope: 'deck', scopeId: null };
+  // A page of fof/pages can have its own config.
+  if (scope === 'PageHero') return { scope: 'pages', scopeId: (hero.attrs as { page?: { id(): string | undefined } }).page?.id() ?? null };
+  if (scope) return { scope: CLASS_SCOPES[scope], scopeId: null };
 
   if (classes.includes('TagHero')) {
     const model = (hero.attrs as { model?: { id(): string | undefined; data: { relationships?: Record<string, unknown> } } }).model;

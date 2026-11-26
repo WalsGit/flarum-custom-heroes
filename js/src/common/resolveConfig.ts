@@ -90,6 +90,7 @@ export function resolveConfig(configs: HeroConfigs, chain: string[]): ResolvedCo
   }
 
   for (const section of HOME_ONLY) {
+    if (resolved[section] === false) delete resolved[section];
     if (resolved[section] !== 'inherit') continue;
     const defaults = configs.global?.[section];
 

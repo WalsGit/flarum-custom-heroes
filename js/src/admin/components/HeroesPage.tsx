@@ -73,6 +73,21 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
  * tag). Each section is either inherited from the level above or defined
  * here.
  */
+/** Heroes without a description: no description size. */
+const NO_SUBTITLE = ['discussion', 'pages', 'users', 'polls'];
+
+/** The title of a fof/pages page. */
+const pageTitle = (page: { attribute(name: string): unknown }) => (page.attribute('title') as string) ?? '';
+
+/** Loads every record of a paginated type (the admin preloads none of the pages). */
+async function loadAll(type: string) {
+  for (let offset = 0; ; ) {
+    const records = await app.store.find<any[]>(type, { page: { offset, limit: 50 } });
+    if (!records.payload?.links?.next || !records.length) return;
+    offset += records.length;
+  }
+}
+
 export default class HeroesPage extends ExtensionPage {
   /** The config being edited: `global`, `discussion`, `tag:12`… */
   key = 'global';
@@ -97,6 +112,9 @@ export default class HeroesPage extends ExtensionPage {
     if (this.tagsEnabled()) {
       app.store.find('tags').then(() => m.redraw());
     }
+
+    // Every page of fof/pages, which can each have their own hero.
+    if (isExtensionEnabled('fof-pages')) loadAll('pages').then(() => m.redraw());
   }
 
   className() {
@@ -174,7 +192,8 @@ export default class HeroesPage extends ExtensionPage {
 
   /** The sections of this target, one tab each, only the open one rendered. */
   tabs() {
-    const isInstance = !!targetOf(this.key).scopeId;
+    // A tag only has its own background (D4), a page has everything.
+    const isTagInstance = !!targetOf(this.key).scopeId && targetOf(this.key).scope === 'tag';
     const sections: Partial<Record<EditedSection | 'text' | OptInSection, () => Mithril.Children>> = {
       background: () =>
         [
@@ -218,13 +237,13 @@ export default class HeroesPage extends ExtensionPage {
     if (this.key === 'global') sections.text = () => this.textSection();
 
     // Not per tag (D4).
-    if (!isInstance) {
+    if (!isTagInstance) {
       sections.textStyle = () => [
         this.section(
           'textStyle',
           // Top, like the core, so that unticking changes nothing at first.
           (parent) => parent ?? { align: 'center', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
-          (value, set) => <TextStyleForm value={value} onchange={set} noSubtitle={this.key === 'discussion'} />,
+          (value, set) => <TextStyleForm value={value} onchange={set} noSubtitle={NO_SUBTITLE.includes(targetOf(this.key).scope)} />,
           undefined,
           // Flarum's look: the form's own defaults.
           (value) =>
@@ -349,7 +368,11 @@ export default class HeroesPage extends ExtensionPage {
   intro(name: string) {
     // Discussions have no description, and their title (or another extension's) is never replaced by the logo.
     const suffix =
-      (this.key === 'discussion' && ['logo', 'textStyle'].includes(name)) || (this.key === 'other' && name === 'logo') ? '_discussion' : '';
+      (this.key === 'discussion' && name === 'logo') ||
+      (this.key === 'other' && name === 'logo') ||
+      (NO_SUBTITLE.includes(targetOf(this.key).scope) && name === 'textStyle')
+        ? '_discussion'
+        : '';
     const text = app.translator.trans(`walsgit-custom-heroes.admin.${localeKey(name)}.intro${suffix}`, { a: <Link href={app.route('basics')} /> });
 
     return <p className="helpText wch-Section-intro">{text}</p>;
@@ -377,9 +400,13 @@ export default class HeroesPage extends ExtensionPage {
    * are for the home hero): shown or not, then the default ones or their own.
    */
   optInSection(name: OptInSection) {
-    const value = this.draft[name] as OwnSections[OptInSection] | 'inherit' | undefined;
+    const value = this.draft[name] as OwnSections[OptInSection] | 'inherit' | false | undefined;
     const isDefault = this.key === 'global';
-    const set = (section?: OwnSections[OptInSection] | 'inherit') => {
+    // A page inherits from the level of all pages, and can hide what it shows (`false`).
+    const isInstance = !!targetOf(this.key).scopeId;
+    const shown = value !== undefined && value !== false;
+    const back = this.stash[name];
+    const set = (section?: OwnSections[OptInSection] | 'inherit' | false) => {
       const { [name]: previous, ...rest } = this.draft;
       // Kept aside, like the other sections: switching back on gives them back.
       if (previous !== undefined && section === undefined) this.stash = { ...this.stash, [name]: previous };
@@ -389,33 +416,55 @@ export default class HeroesPage extends ExtensionPage {
     // Own ones start from a copy of the default ones.
     const own = (): OwnSections[OptInSection] => {
       const defaults = this.configs.global?.[name];
+      const copy = structuredClone(!isDefault && defaults && defaults !== 'inherit' ? defaults : EMPTY[name]);
 
-      return structuredClone(!isDefault && defaults && defaults !== 'inherit' ? defaults : EMPTY[name]);
+      // Nothing below the text of fof/polls heroes.
+      return this.noBelowText() && copy.placement === 'below-text'
+        ? { ...copy, placement: this.takenCorner(name === 'socials' ? 'buttons' : 'socials') === 'top-right' ? 'top-left' : 'top-right' }
+        : copy;
     };
     const form =
       name === 'socials' ? (
-        <SocialsForm value={value as SocialsSection} onchange={set} taken={this.takenCorner('buttons')} />
+        <SocialsForm value={value as SocialsSection} onchange={set} taken={this.takenCorner('buttons')} noBelowText={this.noBelowText()} />
       ) : (
-        <ButtonsForm value={value as ButtonsSection} onchange={set} taken={this.takenCorner('socials')} />
+        <ButtonsForm value={value as ButtonsSection} onchange={set} taken={this.takenCorner('socials')} noBelowText={this.noBelowText()} />
       );
 
     return (
       <fieldset className={`wch-Section wch-Section--${name}`}>
         {this.intro(name)}
-        <Switch state={value !== undefined} onchange={(on: boolean) => set(on ? this.stash[name] ?? (isDefault ? own() : 'inherit') : undefined)}>
-          {t(`${name}.add_label`)}
-        </Switch>
-        {!isDefault && value === undefined && <p className="helpText">{t(`${name}.opt_in_help`)}</p>}
+        {isInstance && (
+          <Switch state={value === undefined} onchange={(inherit: boolean) => set(inherit ? undefined : back ?? false)}>
+            {t('inherit_from_label', { source: this.scopeLabel(parentChain(this.key).slice(-1)[0]) })}
+          </Switch>
+        )}
+        {(!isInstance || value !== undefined) && (
+          <Switch
+            state={shown}
+            onchange={(on: boolean) =>
+              set(on ? (back !== undefined && back !== false ? back : isDefault ? own() : 'inherit') : isInstance ? false : undefined)
+            }
+          >
+            {t(`${name}.add_label`)}
+          </Switch>
+        )}
+        {!isDefault && !isInstance && value === undefined && <p className="helpText">{t(`${name}.opt_in_help`)}</p>}
+        {this.noBelowText() && shown && <p className="helpText">{t('placement.polls_note', { items: t(`placement.polls_items_${name}`) })}</p>}
 
-        {!isDefault && value !== undefined && (
+        {!isDefault && shown && (
           <Switch state={value === 'inherit'} onchange={(inherit: boolean) => set(inherit ? 'inherit' : this.own[name] ?? own())}>
             {t('inherit_from_label', { source: this.scopeLabel('global') })}
           </Switch>
         )}
 
-        {value !== undefined && value !== 'inherit' && form}
+        {shown && value !== 'inherit' && form}
       </fieldset>
     );
+  }
+
+  /** fof/polls puts its own buttons below the text of its heroes. */
+  noBelowText(): boolean {
+    return targetOf(this.key).scope === 'polls';
   }
 
   /** Every tag at once, apart from the text style (which it can inherit): stored only to hide the part. */
@@ -531,6 +580,12 @@ export default class HeroesPage extends ExtensionPage {
   scopeLabel(key: string): string {
     const { scope, scopeId } = targetOf(key);
 
+    if (scopeId && scope === 'pages') {
+      const page = app.store.getById('pages', scopeId);
+
+      return t('scopes.page_instance', { name: page ? pageTitle(page) : `#${scopeId}` });
+    }
+
     if (scopeId) {
       const tag = app.store.getById('tags', scopeId);
 
@@ -546,6 +601,12 @@ export default class HeroesPage extends ExtensionPage {
     // Heroes of optional extensions, only when they are enabled.
     if (isExtensionEnabled('flarum-messages')) keys.push('messages');
     if (isExtensionEnabled('flarum-deck')) keys.push('deck');
+    if (isExtensionEnabled('fof-pages')) {
+      const pages = app.store.all('pages').sort((a, b) => pageTitle(a).localeCompare(pageTitle(b)));
+      keys.push('pages', ...pages.map((page) => `pages:${page.id()}`));
+    }
+    if (isExtensionEnabled('fof-user-directory')) keys.push('users');
+    if (isExtensionEnabled('fof-polls')) keys.push('polls');
     // The heroes no other target is for. Tags always come last.
     keys.push('other');
 

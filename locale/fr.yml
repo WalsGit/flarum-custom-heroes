@@ -6,9 +6,13 @@ walsgit-custom-heroes:
       global: Par défaut (accueil et tous les heroes)
       tag: Tags (par défaut)
       tag_instance: "Tag : {name}"
+      page_instance: "Page : {name}"
       discussion: Discussions
       messages: Messages privés
       deck: Deck
+      pages: Pages (FoF Pages)
+      users: Annuaire des membres (FoF User Directory)
+      polls: Sondages (FoF Polls)
       other: Autres pages d'extensions tierces
       customized: "{label} — personnalisé"
     inherit_from_label: "Hériter de « {source} »"
@@ -41,6 +45,9 @@ walsgit-custom-heroes:
       messages_subtitle: Vos conversations privées.
       deck_title: Deck
       deck_subtitle: Vos discussions, côte à côte.
+      pages_title: Un titre de page
+      users_title: Annuaire des membres
+      polls_title: Sondages
       other_title: Un titre de page
       other_subtitle: "Les heroes des autres extensions affichent leurs propres textes."
     other:
@@ -235,7 +242,11 @@ walsgit-custom-heroes:
       bottom_left: Coin bas gauche
       bottom_right: Coin bas droit
       help: "Dans un coin, ils sont posés sur le hero sans prendre de place : choisissez un coin libre de texte et de logo. Boutons et icônes de réseaux sociaux ne peuvent pas partager un coin (sous le texte, les boutons passent en premier)."
+      help_corners: "Ils sont posés sur le hero sans prendre de place : choisissez un coin libre de texte et de logo. Boutons et icônes de réseaux sociaux ne peuvent pas partager un coin."
       mobile_label: Sur mobile
+      polls_items_socials: icônes
+      polls_items_buttons: boutons
+      polls_note: "Notez que si les réglages hérités affichent les {items} « sous le texte », ils ne seront ni appliqués ni affichés sur ce hero, car FoF Polls y place ses propres boutons (créer, modifier…). Il faut choisir un des coins pour les afficher sur les heroes des pages de sondages."
       mobile_same: Comme sur les grands écrans
       mobile_below_text: Sous le texte
       mobile_hide: Masqués

@@ -363,10 +363,15 @@ final class ConfigValidator
      *
      * @return array<string, mixed>|string|null
      */
-    private function socials(mixed $value, string $path): array|string|null
+    private function socials(mixed $value, string $path): array|string|false|null
     {
         if ($value === 'inherit' && $this->scope !== Scope::Global) {
             return 'inherit';
+        }
+
+        // A page can hide what the level of all pages shows.
+        if ($value === false && $this->scopeId !== '') {
+            return false;
         }
 
         $object = $this->object($value, $path, ['items'], ['size', 'placement', 'color', 'mobile']);
@@ -392,9 +397,9 @@ final class ConfigValidator
 
         return [
             'size' => $this->enum($object['size'] ?? 's', ['xs', 's', 'm'], "$path.size"),
-            'placement' => $this->enum($object['placement'] ?? 'below-text', self::PLACEMENTS, "$path.placement"),
+            'placement' => $this->enum($object['placement'] ?? 'below-text', $this->placements(), "$path.placement"),
             'color' => $this->nullableColor($object['color'] ?? null, "$path.color"),
-            'mobile' => $this->enum($object['mobile'] ?? 'same', self::MOBILE_BEHAVIORS, "$path.mobile"),
+            'mobile' => $this->enum($object['mobile'] ?? 'same', $this->mobileBehaviors(), "$path.mobile"),
             'items' => $items,
         ];
     }
@@ -405,10 +410,15 @@ final class ConfigValidator
      *
      * @return array<string, mixed>|string|null
      */
-    private function buttons(mixed $value, string $path): array|string|null
+    private function buttons(mixed $value, string $path): array|string|false|null
     {
         if ($value === 'inherit' && $this->scope !== Scope::Global) {
             return 'inherit';
+        }
+
+        // A page can hide what the level of all pages shows.
+        if ($value === false && $this->scopeId !== '') {
+            return false;
         }
 
         $object = $this->object($value, $path, ['items'], ['placement', 'mobile']);
@@ -428,8 +438,8 @@ final class ConfigValidator
         }
 
         return [
-            'placement' => $this->enum($object['placement'] ?? 'below-text', self::PLACEMENTS, "$path.placement"),
-            'mobile' => $this->enum($object['mobile'] ?? 'same', self::MOBILE_BEHAVIORS, "$path.mobile"),
+            'placement' => $this->enum($object['placement'] ?? 'below-text', $this->placements(), "$path.placement"),
+            'mobile' => $this->enum($object['mobile'] ?? 'same', $this->mobileBehaviors(), "$path.mobile"),
             'items' => $items,
         ];
     }
@@ -485,6 +495,24 @@ final class ConfigValidator
      *
      * @param array<string, mixed> $config
      */
+    /**
+     * fof/polls puts its own buttons below the text of its heroes: nothing else goes there.
+     *
+     * @return list<string>
+     */
+    private function placements(): array
+    {
+        return $this->scope === Scope::Polls ? self::CORNERS : self::PLACEMENTS;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function mobileBehaviors(): array
+    {
+        return $this->scope === Scope::Polls ? ['same', 'hide'] : self::MOBILE_BEHAVIORS;
+    }
+
     private function checkPlacementConflict(array $config): void
     {
         $buttons = $config['buttons'] ?? null;

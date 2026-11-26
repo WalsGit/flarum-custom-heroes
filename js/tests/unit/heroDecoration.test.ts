@@ -199,6 +199,17 @@ describe('heroDecoration', () => {
     expect((corners[0] as any).children[1]).toBe(close);
   });
 
+  it('puts nothing below the text of fof/polls heroes', () => {
+    const polls = (placement: string, mobile: string) =>
+      heroDecoration({ global: { socials: socials(placement, mobile) }, polls: { socials: 'inherit' } }, ['global', 'polls'], 'polls', assets)!;
+
+    expect(polls('below-text', 'same').belowText).toBeNull();
+    expect(polls('below-text', 'same').corners).toEqual({});
+    // Moved below the text on mobile: hidden there instead.
+    expect(polls('top-left', 'below-text').belowText).toBeNull();
+    expect((polls('top-left', 'below-text').corners['top-left']![0] as any).attrs.className).toBe('wch-Socials wch-Hero-hideMobile');
+  });
+
   it('hides a part on mobile or moves it below the text', () => {
     const classes = (placement: string, mobile: string) => {
       const decoration = heroDecoration({ global: { socials: socials(placement, mobile) } }, ['global'], 'global', assets)!;

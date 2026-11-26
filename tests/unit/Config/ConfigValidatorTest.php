@@ -127,6 +127,7 @@ class ConfigValidatorTest extends TestCase
             'discussion with id' => [Scope::Discussion, '1'],
             'messages with id' => [Scope::Messages, '1'],
             'deck with id' => [Scope::Deck, '1'],
+            'page with a slug' => [Scope::Pages, 'about'],
             'tag with text id' => [Scope::Tag, 'abc'],
             'tag with zero id' => [Scope::Tag, '0'],
             'tag with leading zero' => [Scope::Tag, '012'],
@@ -196,6 +197,22 @@ class ConfigValidatorTest extends TestCase
         $this->assertSame(['tagHero' => true], $this->valid(['tagHero' => true], Scope::Discussion));
         $this->assertInvalid(['tagHero' => false], 'config.tagHero', 'invalid_value', Scope::Discussion);
         $this->assertInvalid(['tagHero' => true], 'config.tagHero', 'section_not_allowed', Scope::Tag);
+    }
+
+    public function test_pages_have_instances_with_every_section(): void
+    {
+        $this->assertSame(['textStyle', 'logo', 'socials'], array_values(array_intersect(Scope::Pages->allowedSections('1'), ['textStyle', 'logo', 'socials'])));
+        $this->assertSame(['socials' => false, 'buttons' => false], $this->valid(['socials' => false, 'buttons' => false], Scope::Pages, '1'));
+        $this->assertInvalid(['socials' => false], 'config.socials', 'invalid_value', Scope::Pages);
+        $this->assertInvalid(['logo' => null], 'config.logo', 'section_not_allowed', Scope::Tag, '12');
+    }
+
+    public function test_polls_have_nothing_below_the_text(): void
+    {
+        $buttons = ['placement' => 'top-right', 'mobile' => 'hide', 'items' => []];
+        $this->assertSame(['buttons' => $buttons], $this->valid(['buttons' => $buttons], Scope::Polls));
+        $this->assertInvalid(['buttons' => ['placement' => 'below-text', 'items' => []]], 'config.buttons.placement', 'invalid_value', Scope::Polls);
+        $this->assertInvalid(['socials' => ['placement' => 'top-left', 'mobile' => 'below-text', 'items' => []]], 'config.socials.mobile', 'invalid_value', Scope::Polls);
     }
 
     public function test_other_heroes_are_only_enabled_on(): void

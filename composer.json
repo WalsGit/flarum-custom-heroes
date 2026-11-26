@@ -98,6 +98,7 @@
     "require-dev": {
         "flarum/testing": "^2.0",
         "flarum/phpstan": "^2.0",
-        "flarum/tags": "^2.0"
+        "flarum/tags": "^2.0",
+        "fof/pages": "^2.0"
     }
 }

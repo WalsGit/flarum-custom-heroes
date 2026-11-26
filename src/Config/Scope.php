@@ -29,6 +29,10 @@ enum Scope: string
     // Heroes of flarum/messages and flarum/deck (optional extensions).
     case Messages = 'messages';
     case Deck = 'deck';
+    // Heroes of fof/pages, fof/user-directory and fof/polls (optional extensions).
+    case Pages = 'pages';
+    case Users = 'users';
+    case Polls = 'polls';
     // Heroes of the other extensions, customized only once the admin enables it.
     case Other = 'other';
 
@@ -66,8 +70,8 @@ enum Scope: string
             return true;
         }
 
-        // Only tags have instances for now, identified by their numeric id.
-        return $this === self::Tag && preg_match('/^[1-9][0-9]{0,9}$/', $scopeId) === 1;
+        // Tags and fof/pages pages have instances, identified by their numeric id.
+        return ($this === self::Tag || $this === self::Pages) && preg_match('/^[1-9][0-9]{0,9}$/', $scopeId) === 1;
     }
 
     /**
@@ -75,8 +79,9 @@ enum Scope: string
      */
     public function allowedSections(string $scopeId): array
     {
+        // A page can change everything, a tag only its background (D4).
         if ($scopeId !== '') {
-            return self::INSTANCE_SECTIONS;
+            return $this === self::Pages ? self::COMMON_SECTIONS : self::INSTANCE_SECTIONS;
         }
 
         // The default level is also the home (Welcome) hero: its text is set there.

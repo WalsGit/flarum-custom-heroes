@@ -348,6 +348,16 @@ function heroContent(
 
   // Like Flarum's heroes of these extensions (their texts are not loaded in the admin).
   if (scope === 'other') return { title: t('other_title'), subtitle: t('other_subtitle') };
+  // Like the heroes of fof/pages, fof/user-directory and fof/polls: a title only.
+  if (scope === 'pages' && scopeId) {
+    const page = app.store.getById('pages', scopeId);
+
+    return { title: page ? (page.attribute('title') as string) : t('pages_title'), subtitle: null };
+  }
+
+  if (scope === 'pages' || scope === 'users' || scope === 'polls') {
+    return { title: t(`${scope}_title`), subtitle: null, icon: { pages: undefined, users: 'far fa-address-book', polls: 'fas fa-poll' }[scope] };
+  }
 
   if (scope === 'messages' || scope === 'deck') {
     return {

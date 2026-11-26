@@ -8,9 +8,13 @@ walsgit-custom-heroes:
       global: Default (home and all heroes)
       tag: Tags (default)
       tag_instance: "Tag: {name}"
+      page_instance: "Page: {name}"
       discussion: Discussions
       messages: Private messages
       deck: Deck
+      pages: Pages (FoF Pages)
+      users: User directory (FoF User Directory)
+      polls: Polls (FoF Polls)
       other: Other pages from 3rd party extensions
       customized: "{label} — customized"
     inherit_from_label: "Inherit from \"{source}\""
@@ -43,6 +47,9 @@ walsgit-custom-heroes:
       messages_subtitle: Your private conversations.
       deck_title: Deck
       deck_subtitle: Your discussions, side by side.
+      pages_title: A page title
+      users_title: User Directory
+      polls_title: Polls
       other_title: A page title
       other_subtitle: "The heroes of other extensions show their own texts."
     other:
@@ -237,7 +244,11 @@ walsgit-custom-heroes:
       bottom_left: Bottom left corner
       bottom_right: Bottom right corner
       help: "In a corner, they sit over the hero and take no space: pick a corner free of text and logo. Buttons and social icons cannot share a corner (below the text, the buttons come first)."
+      help_corners: "They sit over the hero and take no space: pick a corner free of text and logo. Buttons and social icons cannot share a corner."
       mobile_label: On mobile
+      polls_items_socials: icons
+      polls_items_buttons: buttons
+      polls_note: "Note that if the inherited settings are set to show {items} \"below the text\", they will not be applied or shown on this hero, because FoF Polls puts its own buttons there (create, edit…). You would need to select one of the corners to show them on the polls pages' heroes."
       mobile_same: Same as on larger screens
       mobile_below_text: Below the text
       mobile_hide: Hidden

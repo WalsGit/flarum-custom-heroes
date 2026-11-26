@@ -90,6 +90,13 @@ describe('heroDecoration', () => {
     });
   });
 
+  it('puts the logo above a discussion title instead of replacing it', () => {
+    const logo = { image: { id: '1b4f0e9851971998', width: 480, height: 240 }, side: 'title', size: 'm', alt: '', hideOnMobile: false } as const;
+
+    expect(heroDecoration({ global: { logo } }, ['global', 'discussion'], 'discussion', assets)!.className).toContain('wch-Hero--logo-above');
+    expect(heroDecoration({ global: { logo } }, ['global', 'tag'], 'tag', assets)!.className).toContain('wch-Hero--logo-title');
+  });
+
   it('shows no logo when a more specific config removes it', () => {
     const image = { id: '1b4f0e9851971998', width: 240, height: 120 };
     const logo = { side: 'left', size: 'm', alt: '', hideOnMobile: false } as const;

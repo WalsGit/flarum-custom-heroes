@@ -220,7 +220,7 @@ export default class HeroesPage extends ExtensionPage {
           'textStyle',
           // Top, like the core, so that unticking changes nothing at first.
           (parent) => parent ?? { align: 'center', vAlign: 'top', titleSize: 'm', subtitleSize: 'm', color: null },
-          (value, set) => <TextStyleForm value={value} onchange={set} />,
+          (value, set) => <TextStyleForm value={value} onchange={set} noSubtitle={this.key === 'discussion'} />,
           undefined,
           // Flarum's look: the form's own defaults.
           (value) =>
@@ -342,7 +342,9 @@ export default class HeroesPage extends ExtensionPage {
 
   /** What the section does, at the top of its tab. */
   intro(name: string) {
-    const text = app.translator.trans(`walsgit-custom-heroes.admin.${localeKey(name)}.intro`, { a: <Link href={app.route('basics')} /> });
+    // Discussions have no description, and their title is never replaced by the logo.
+    const suffix = this.key === 'discussion' && ['logo', 'textStyle'].includes(name) ? '_discussion' : '';
+    const text = app.translator.trans(`walsgit-custom-heroes.admin.${localeKey(name)}.intro${suffix}`, { a: <Link href={app.route('basics')} /> });
 
     return <p className="helpText wch-Section-intro">{text}</p>;
   }

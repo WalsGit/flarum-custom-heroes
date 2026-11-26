@@ -31,6 +31,17 @@ export function configChain(scope: HeroScope, scopeId?: string | null, parentId?
   return chain;
 }
 
+/**
+ * The keys of the configs of a discussion hero. With the `tagHero` option,
+ * the configs of a tagged discussion's tag hero come last: the tags level,
+ * the parent tag, then the tag. A discussion without tags keeps its own.
+ */
+export function discussionChain(configs: HeroConfigs, tagId?: string | null, parentId?: string | null): string[] {
+  const chain = configChain('discussion');
+
+  return configs.discussion?.tagHero && tagId ? [...chain, ...configChain('tag', tagId, parentId).slice(1)] : chain;
+}
+
 /** The id of a tag's parent, read from the relationship data: the parent model may not be in the store. */
 export function tagParentId(tag: { data: { relationships?: Record<string, unknown> } } | null | undefined): string | null {
   const parent = tag?.data.relationships?.parent as { data?: { id?: string } | null } | undefined;
@@ -41,9 +52,20 @@ export function tagParentId(tag: { data: { relationships?: Record<string, unknow
 /** Sections the default level gives to the home hero only: the other heroes opt in at their own level (`inherit`). */
 const HOME_ONLY = ['socials', 'buttons'] as const;
 
-/** What a config of the chain gives to the hero: the default level keeps its home-only sections for the home hero. */
+/** What a discussion takes from the hero of its tag (`tagHero`). */
+const TAG_HERO_SECTIONS = ['background', 'overlay', 'height'];
+
+/**
+ * What a config of the chain gives to the hero: the default level keeps its
+ * home-only sections for the home hero, and the tag levels of a discussion
+ * only give their background, overlay and height.
+ */
 function inheritedPart(configs: HeroConfigs, chain: string[], key: string): HeroConfig | undefined {
   const config = Object.prototype.hasOwnProperty.call(configs, key) ? configs[key] : undefined;
+
+  if (config && chain[1] === 'discussion' && (key === 'tag' || key.startsWith('tag:'))) {
+    return Object.fromEntries(Object.entries(config).filter(([section]) => TAG_HERO_SECTIONS.includes(section)));
+  }
 
   if (!config || key !== 'global' || chain.length === 1) return config;
 
@@ -93,11 +115,17 @@ export function sectionOwner(configs: HeroConfigs, chain: string[], section: key
  * null when there is none. Files are named after it.
  */
 export function backgroundOwner(configs: HeroConfigs, chain: string[]): string | null {
+  let fromTag = false;
+
   for (const key of [...chain].reverse()) {
+    // A tag's `inherit` means the image above it on its own hero, even in a discussion (`tagHero`).
+    if (fromTag && key === 'discussion') continue;
+
     const image = inheritedPart(configs, chain, key)?.background?.image;
 
     if (image === null) return null;
     if (image && image !== 'inherit') return key;
+    if (image === 'inherit' && (key === 'tag' || key.startsWith('tag:'))) fromTag = true;
   }
 
   return null;

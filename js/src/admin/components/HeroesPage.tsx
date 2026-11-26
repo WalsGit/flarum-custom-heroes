@@ -192,7 +192,7 @@ export default class HeroesPage extends ExtensionPage {
             // Flarum has no background image: nothing to fall back to.
             t('background.add_label')
           ),
-        ].concat(this.key === 'discussion' && this.tagsEnabled() ? [this.tagSwitch('tagColor', 'background')] : []),
+        ].concat(this.key === 'discussion' && this.tagsEnabled() ? [this.tagHeroSwitch(), this.tagSwitch('tagColor', 'background')] : []),
       overlay: () =>
         this.section(
           'overlay',
@@ -428,6 +428,23 @@ export default class HeroesPage extends ExtensionPage {
           {t(`${group}.${localeKey(name)}_label`)}
         </Switch>
         <p className="helpText">{t(`${group}.${localeKey(name)}_help`)}</p>
+      </fieldset>
+    );
+  }
+
+  /** Discussions use the background, overlay and height of their tag's hero: off by default, stored only on. */
+  tagHeroSwitch() {
+    const set = (on: boolean) => {
+      const { tagHero: _, ...rest } = this.draft;
+      this.draft = on ? { ...rest, tagHero: true } : rest;
+    };
+
+    return (
+      <fieldset className="wch-Section wch-Section--tagHero">
+        <Switch state={this.draft.tagHero === true} onchange={set}>
+          {t('background.tag_hero_label')}
+        </Switch>
+        <p className="helpText">{t('background.tag_hero_help')}</p>
       </fieldset>
     );
   }

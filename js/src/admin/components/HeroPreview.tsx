@@ -8,9 +8,9 @@ import textContrastClass from 'flarum/common/helpers/textContrastClass';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { decorateContent, heroDecoration } from '../../common/heroDecoration';
-import { resolveConfig, tagParentId } from '../../common/resolveConfig';
+import { discussionChain, resolveConfig, tagParentId } from '../../common/resolveConfig';
 import { DEFAULT_TEXT, type ForumPayload, type HeroConfig, type HeroConfigs } from '../../common/types';
-import { tagOrder, targetOf } from '../utils/scopes';
+import { tagOrder, targetOf, type TagInfo } from '../utils/scopes';
 import { DEVICE_WIDTHS as WIDTHS, type Device } from '../utils/visibleArea';
 
 export interface HeroPreviewAttrs extends ComponentAttrs {
@@ -179,6 +179,10 @@ export function previewHero(
 ) {
   const { scope, scopeId } = targetOf(target);
   const payload = app.forum.attribute<ForumPayload>('walsgitCustomHeroes');
+  const tag = scope === 'discussion' && isExtensionEnabled('flarum-tags') ? pickSampleTag(sampleTag) : undefined;
+  // Like on the forum: the sample discussion can use the hero of its tag.
+  if (scope === 'discussion') chain = discussionChain(configs, tag?.id, tag?.parentId);
+
   const decoration = heroDecoration(configs, chain, scope, payload.assetsUrl);
   const config = resolveConfig(configs, chain);
   // Like on the forum: without Flarum's welcome title, the hero is in its closed state.
@@ -192,7 +196,7 @@ export function previewHero(
   // Flarum's deck hero can be closed too (for good, like in Flarum).
   const closable = (scope === 'global' && !closed) || scope === 'deck';
 
-  if (scope === 'discussion') return discussionHero(config, decoration, sampleTag);
+  if (scope === 'discussion') return discussionHero(config, decoration, tag);
 
   const children = [
     closable && <i className="Hero-close fas fa-times" aria-hidden="true" />,
@@ -236,18 +240,22 @@ function orderedTags() {
   return tagOrder(info).map((id) => info.find((tag) => tag.id === id)!);
 }
 
+/** The tag of the sample discussion: the chosen one, by default the first one. */
+function pickSampleTag(id: string | null): TagInfo | undefined {
+  const tags = orderedTags();
+
+  return tags.find((each) => each.id === id) ?? tags[0];
+}
+
 /**
  * The tags of the sample discussion, like flarum/tags shows them: the chosen
  * tag (by default the first one), after its parent. The first one's color is
  * the hero's.
  */
-function sampleTags(id: string | null): { name: string; color: string }[] {
-  const tags = orderedTags();
-  const tag = tags.find((each) => each.id === id) ?? tags[0];
-
+function sampleTags(tag: TagInfo | undefined): { name: string; color: string }[] {
   if (!tag) return [{ name: t('tag_title'), color: '' }];
 
-  const parent = tags.find((each) => each.id === tag.parentId);
+  const parent = orderedTags().find((each) => each.id === tag.parentId);
 
   return [parent, tag]
     .filter((each) => !!each)
@@ -255,9 +263,9 @@ function sampleTags(id: string | null): { name: string; color: string }[] {
 }
 
 /** A discussion hero, with Flarum's markup (sample tags, then the title), so that the forum styles apply. */
-function discussionHero(config: HeroConfig, decoration: ReturnType<typeof heroDecoration>, sampleTag: string | null) {
+function discussionHero(config: HeroConfig, decoration: ReturnType<typeof heroDecoration>, tag: TagInfo | undefined) {
   const tagged = isExtensionEnabled('flarum-tags');
-  const sample = tagged ? sampleTags(sampleTag) : [];
+  const sample = tagged ? sampleTags(tag) : [];
   const tags = config.discussionTags === 'hidden' ? [] : sample;
   // flarum/tags colors the hero with its first tag.
   const color = config.tagColor === false ? '' : sample[0]?.color ?? '';

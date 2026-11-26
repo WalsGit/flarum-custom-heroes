@@ -17,11 +17,13 @@ use Flarum\Api\Schema;
 use Flarum\Extend;
 use Flarum\Extension\Event\Uninstalled;
 use Flarum\Tags\Event\Deleting;
+use FoF\Pages\Events\PageDeleted;
 use Walsgit\CustomHeroes\Api\Controller\SaveConfigController;
 use Walsgit\CustomHeroes\Api\Controller\UploadImageController;
 use Walsgit\CustomHeroes\Api\ForumPayload;
 use Walsgit\CustomHeroes\Extend\PruneOrphanTagConfigs;
 use Walsgit\CustomHeroes\Image\UploadLimits;
+use Walsgit\CustomHeroes\Listener\DeletePageHeroConfig;
 use Walsgit\CustomHeroes\Listener\DeleteTagHeroConfig;
 use Walsgit\CustomHeroes\Listener\PruneTagConfigsOnTagsUninstall;
 use Walsgit\CustomHeroes\Providers\CustomHeroesServiceProvider;
@@ -62,5 +64,12 @@ return [
         ->whenExtensionEnabled('flarum-tags', fn () => [
             (new Extend\Event())
                 ->listen(Deleting::class, DeleteTagHeroConfig::class),
+        ]),
+
+    // fof/pages is optional too: the config of a page goes with it.
+    (new Extend\Conditional())
+        ->whenExtensionEnabled('fof-pages', fn () => [
+            (new Extend\Event())
+                ->listen(PageDeleted::class, DeletePageHeroConfig::class),
         ]),
 ];

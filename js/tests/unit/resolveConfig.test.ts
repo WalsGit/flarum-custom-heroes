@@ -204,3 +204,14 @@ describe('discussionChain', () => {
     expect(sectionOwner(configs, chain, 'textStyle')).toBeNull();
   });
 });
+
+describe('pages of fof/pages', () => {
+  it('inherit from the level of all pages, and can hide its icons and buttons', () => {
+    const socials = { size: 's', placement: 'top-left', color: null, mobile: 'same', items: [] } as const;
+    const configs = { global: { socials }, pages: { socials: 'inherit', buttons: 'inherit' }, 'pages:1': { socials: false } } as any;
+
+    expect(configChain('pages', '1')).toEqual(['global', 'pages', 'pages:1']);
+    expect(resolveConfig(configs, ['global', 'pages'])).toEqual({ socials });
+    expect(resolveConfig(configs, ['global', 'pages', 'pages:1'])).toEqual({});
+  });
+});

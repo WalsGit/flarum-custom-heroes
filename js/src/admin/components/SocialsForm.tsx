@@ -17,6 +17,8 @@ export interface SocialsFormAttrs extends ComponentAttrs {
   onchange: (value: SocialsSection) => void;
   /** A corner used by the buttons. */
   taken: Placement | null;
+  /** No placement below the text (fof/polls). */
+  noBelowText?: boolean;
 }
 
 /** Limits validated by the server. */
@@ -113,6 +115,7 @@ export default class SocialsForm extends Component<SocialsFormAttrs> {
             placement={value.placement}
             mobile={value.mobile}
             taken={this.attrs.taken}
+            noBelowText={this.attrs.noBelowText}
             onchange={(changes: PlacementChanges) => this.update(changes)}
           />
 

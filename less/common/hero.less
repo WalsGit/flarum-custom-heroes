@@ -69,8 +69,10 @@
 
 // Text style. Doubled class to win over the core `.Hero` rules wherever
 // this file is loaded. Sizes are set for mobile, then for wider heroes.
+// (fof/polls titles are `h2.Hero-title`.)
 .wch-Hero.wch-Hero--text {
-  h1 {
+  h1,
+  .Hero-title {
     font-size: var(--wch-title-size-mobile);
   }
 
@@ -105,7 +107,8 @@
 
 @container (min-width: @screen-tablet) {
   .wch-Hero.wch-Hero--text {
-    h1 {
+    h1,
+    .Hero-title {
       font-size: var(--wch-title-size);
     }
 
@@ -227,7 +230,7 @@
 
 // Instead of the title: still read by screen readers. Shown again on mobile
 // when the logo is hidden there. (Discussion titles are not `.Hero-title`:
-// the logo goes above them.)
+// the logo goes above them. fof/pages titles are `.PageHero-title`.)
 .wch-visually-hidden() {
   position: absolute;
   width: 1px;
@@ -238,7 +241,7 @@
   white-space: nowrap;
 }
 
-.wch-Hero.wch-Hero--logo-title:not(.wch-Hero--logoHideMobile) .Hero-title {
+.wch-Hero.wch-Hero--logo-title:not(.wch-Hero--logoHideMobile) :is(.Hero-title, .PageHero-title) {
   .wch-visually-hidden();
 }
 
@@ -262,7 +265,7 @@
     display: block;
   }
 
-  .wch-Hero.wch-Hero--logo-title .Hero-title {
+  .wch-Hero.wch-Hero--logo-title :is(.Hero-title, .PageHero-title) {
     .wch-visually-hidden();
   }
 
@@ -299,13 +302,15 @@
   }
 
   .Hero-title,
+  .PageHero-title,
   .Hero-subtitle {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
-  .Hero-title {
+  .Hero-title,
+  .PageHero-title {
     -webkit-line-clamp: 2;
     line-clamp: 2;
   }

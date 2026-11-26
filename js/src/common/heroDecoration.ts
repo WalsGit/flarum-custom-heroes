@@ -199,7 +199,7 @@ export function heroDecoration(
   const logoOwner = sectionOwner(configs, chain, 'logo');
   const socials = config.socials?.items.length ? config.socials : null;
   const buttons = config.buttons?.items.filter((button) => isVisible(button, viewer)) ?? [];
-  const slots = placeParts([
+  const parts: SlotPart[] = [
     ...(config.buttons && buttons.length
       ? [
           {
@@ -210,7 +210,15 @@ export function heroDecoration(
         ]
       : []),
     ...(socials ? [{ placement: socials.placement, mobile: socials.mobile, render: (className?: string) => socialLinks(socials, className) }] : []),
-  ]);
+  ];
+  // fof/polls puts its own buttons below the text: what the default level places there is not shown, or hidden on mobile.
+  const slots = placeParts(
+    scope === 'polls'
+      ? parts
+          .filter((part) => part.placement !== 'below-text')
+          .map((part) => (part.mobile === 'below-text' ? { ...part, mobile: 'hide' as const } : part))
+      : parts
+  );
 
   return {
     className: classList(

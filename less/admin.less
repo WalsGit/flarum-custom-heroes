@@ -550,6 +550,45 @@ button.wch-BackgroundForm-preview {
   }
 }
 
+// Flarum's discussion hero (core and flarum/tags styles, not loaded in the admin).
+// Kept less specific than the tag options of the common hero styles.
+.wch-PreviewHero .DiscussionHero-items {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  > li {
+    display: inline-block;
+  }
+}
+
+.wch-PreviewHero .DiscussionHero-title {
+  display: inline;
+  vertical-align: middle;
+}
+
+// flarum/tags puts the title on its own line.
+.wch-PreviewHero--tagged .DiscussionHero-items > .item-title {
+  display: block;
+  margin-top: 15px;
+}
+
+.wch-Preview-sampleTag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: normal;
+
+  .Select {
+    width: auto;
+  }
+}
+
+.wch-Preview-note {
+  margin: 8px 0 0;
+}
+
 @container (min-width: @screen-tablet) {
   .wch-PreviewHero {
     > .container {

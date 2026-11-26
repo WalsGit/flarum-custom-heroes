@@ -36,6 +36,7 @@ walsgit-custom-heroes:
       hidden: "Once the welcome banner is closed, this hero is hidden (Flarum's behavior)."
       discussion_title: The title of a discussion
       sample_tag: "Sample tag:"
+      no_tags: No tags
       discussion_note: "Sample tags: on the forum, each discussion shows its own tags and, if enabled, the color of its first tag."
       messages_title: Messages
       messages_subtitle: Your private conversations.

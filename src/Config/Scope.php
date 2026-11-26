@@ -87,6 +87,11 @@ enum Scope: string
             return [...self::COMMON_SECTIONS, 'tagIcon', 'tagDescription'];
         }
 
+        // The tags of a discussion (flarum/tags): their place and their color.
+        if ($this === self::Discussion) {
+            return [...self::COMMON_SECTIONS, 'discussionTags', 'tagColor'];
+        }
+
         return self::COMMON_SECTIONS;
     }
 }

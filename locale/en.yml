@@ -43,6 +43,8 @@ walsgit-custom-heroes:
       title: Background image
       intro: "Add an image behind the hero. It is cropped to fit each screen: choose the point to keep in view."
       add_label: Use a background image
+      tag_color_label: Use the tag color as background
+      tag_color_help: "Like Flarum: without an image, a discussion takes the color of its first tag, under the overlay. Off: Flarum's hero color."
       no_image: No image
       small_image_warning: "This image is only {width} px wide: it may look blurry on large screens ({recommended} px or more recommended). It is still used."
       inherited_image: "Image of “{source}”, with this hero's own position."
@@ -167,6 +169,11 @@ walsgit-custom-heroes:
       tag_icon_help: "Before the tag name, for the tags that have an icon (set in the Tags settings)."
       tag_description_label: Show the tag description
       tag_description_help: "Below the tag name (set in the Tags settings)."
+      discussion_tags_label: Discussion tags
+      discussion_tags_above: Above the title
+      discussion_tags_below: Below the title
+      discussion_tags_hidden: Hidden
+      discussion_tags_help: "Always right next to the title, before the logo, buttons or icons placed above or below the text. Badges (sticky, locked…) go with them."
       align_label: Horizontal alignment
       align_left: Left
       align_center: Center

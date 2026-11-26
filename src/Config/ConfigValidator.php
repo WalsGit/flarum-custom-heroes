@@ -103,7 +103,9 @@ final class ConfigValidator
                     'socials' => $this->socials($value, $path),
                     'buttons' => $this->buttons($value, $path),
                     // Only stored to hide it: the icon is shown by default.
-                    'tagIcon', 'tagDescription' => $this->hiddenOnly($value, $path),
+                    'tagIcon', 'tagDescription', 'tagColor' => $this->hiddenOnly($value, $path),
+                    // Above the title by default: not stored.
+                    'discussionTags' => $this->enum($value, ['below', 'hidden'], $path),
                     // Every allowed section must have its own validation.
                     default => throw new LogicException("No validation for the section $section."),
                 };

@@ -175,22 +175,24 @@ export default class HeroesPage extends ExtensionPage {
     const isInstance = !!targetOf(this.key).scopeId;
     const sections: Partial<Record<EditedSection | 'text' | OptInSection, () => Mithril.Children>> = {
       background: () =>
-        this.section(
-          'background',
-          // The image of the level above belongs to it: never copied, used through `inherit`.
-          (parent) => ({ image: parent?.image ? 'inherit' : null, position: parent?.position ?? CENTER }),
-          (value, set) => (
-            <BackgroundForm
-              value={value}
-              onchange={set}
-              target={this.key}
-              inherited={this.inheritedBackground()}
-              preview={{ configs: { ...this.configs, [this.key]: this.draft }, target: this.key, chain: this.chain(this.key) }}
-            />
+        [
+          this.section(
+            'background',
+            // The image of the level above belongs to it: never copied, used through `inherit`.
+            (parent) => ({ image: parent?.image ? 'inherit' : null, position: parent?.position ?? CENTER }),
+            (value, set) => (
+              <BackgroundForm
+                value={value}
+                onchange={set}
+                target={this.key}
+                inherited={this.inheritedBackground()}
+                preview={{ configs: { ...this.configs, [this.key]: this.draft }, target: this.key, chain: this.chain(this.key) }}
+              />
+            ),
+            // Flarum has no background image: nothing to fall back to.
+            t('background.add_label')
           ),
-          // Flarum has no background image: nothing to fall back to.
-          t('background.add_label')
-        ),
+        ].concat(this.key === 'discussion' && this.tagsEnabled() ? [this.tagSwitch('tagColor', 'background')] : []),
       overlay: () =>
         this.section(
           'overlay',
@@ -227,6 +229,7 @@ export default class HeroesPage extends ExtensionPage {
             value.align === 'center' && value.vAlign === 'top' && value.titleSize === 'm' && value.subtitleSize === 'm' && value.color === null
         ),
         this.key === 'tag' && [this.tagSwitch('tagIcon'), this.tagSwitch('tagDescription')],
+        this.key === 'discussion' && this.tagsEnabled() && this.discussionTagsField(),
       ];
       sections.logo = () =>
         this.section(
@@ -413,7 +416,7 @@ export default class HeroesPage extends ExtensionPage {
   }
 
   /** Every tag at once, apart from the text style (which it can inherit): stored only to hide the part. */
-  tagSwitch(name: 'tagIcon' | 'tagDescription') {
+  tagSwitch(name: 'tagIcon' | 'tagDescription' | 'tagColor', group = 'text_style') {
     const set = (show: boolean) => {
       const { [name]: _, ...rest } = this.draft;
       this.draft = show ? rest : { ...rest, [name]: false };
@@ -422,9 +425,40 @@ export default class HeroesPage extends ExtensionPage {
     return (
       <fieldset className={`wch-Section wch-Section--${name}`}>
         <Switch state={this.draft[name] !== false} onchange={set}>
-          {t(`text_style.${localeKey(name)}_label`)}
+          {t(`${group}.${localeKey(name)}_label`)}
         </Switch>
-        <p className="helpText">{t(`text_style.${localeKey(name)}_help`)}</p>
+        <p className="helpText">{t(`${group}.${localeKey(name)}_help`)}</p>
+      </fieldset>
+    );
+  }
+
+  /** Where a discussion shows its tags, apart from the text style (which it can inherit). Above the title: not stored. */
+  discussionTagsField() {
+    const value = this.draft.discussionTags ?? 'above';
+    const set = (choice: 'above' | 'below' | 'hidden') => {
+      const { discussionTags: _, ...rest } = this.draft;
+      this.draft = choice === 'above' ? rest : { ...rest, discussionTags: choice };
+    };
+    const icons = { above: 'fas fa-arrow-up', below: 'fas fa-arrow-down', hidden: 'fas fa-eye-slash' };
+
+    return (
+      <fieldset className="wch-Section wch-Section--discussionTags">
+        <div className="Form-group">
+          <label>{t('text_style.discussion_tags_label')}</label>
+          <div className="ButtonGroup wch-ChoiceButtons">
+            {(['above', 'below', 'hidden'] as const).map((choice) => (
+              <Button
+                className={classList('Button', value === choice && 'active')}
+                icon={icons[choice]}
+                aria-pressed={value === choice}
+                onclick={() => set(choice)}
+              >
+                {t(`text_style.discussion_tags_${choice}`)}
+              </Button>
+            ))}
+          </div>
+          <p className="helpText">{t('text_style.discussion_tags_help')}</p>
+        </div>
       </fieldset>
     );
   }

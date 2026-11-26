@@ -504,3 +504,39 @@
     }
   }
 }
+
+// Tags of a discussion (flarum/tags puts its title on its own line, below
+// them). Hidden: the title is back inline, like in Flarum without tags.
+.DiscussionHero.wch-Hero--tags-hidden .DiscussionHero-items {
+  > .item-tags {
+    display: none;
+  }
+
+  > .item-title {
+    display: inline-block;
+    margin-top: 0;
+  }
+}
+
+// Below the title: still right next to it (before what is below the text),
+// with the badges, following the text alignment.
+.DiscussionHero.wch-Hero--tags-below .DiscussionHero-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 10px;
+
+  > .item-title {
+    order: -1;
+    flex-basis: 100%;
+    margin-top: 0;
+  }
+}
+
+.DiscussionHero.wch-Hero--tags-below.wch-Hero--align-left .DiscussionHero-items {
+  justify-content: flex-start;
+}
+
+.DiscussionHero.wch-Hero--tags-below.wch-Hero--align-right .DiscussionHero-items {
+  justify-content: flex-end;
+}

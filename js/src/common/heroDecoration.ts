@@ -223,8 +223,10 @@ export function heroDecoration(
         'wch-Hero--textColor': '--wch-text-color' in style,
         'wch-Hero--noTagIcon': config.tagIcon === false,
         'wch-Hero--noTagDescription': config.tagDescription === false,
+        'wch-Hero--noTagColor': config.tagColor === false,
       },
       config.textStyle && ['wch-Hero--text', `wch-Hero--align-${config.textStyle.align}`, `wch-Hero--vAlign-${config.textStyle.vAlign}`],
+      config.discussionTags && `wch-Hero--tags-${config.discussionTags}`,
       logo && ['wch-Hero--logo', `wch-Hero--logo-${logo.side}`, logo.hideOnMobile && 'wch-Hero--logoHideMobile'],
       Object.keys(slots.corners).length > 0 && 'wch-Hero--corners'
     ),

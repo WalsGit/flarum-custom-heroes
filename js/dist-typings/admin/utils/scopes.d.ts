@@ -24,3 +24,16 @@ export interface TagInfo {
  * children, then secondary tags (no position) by name.
  */
 export declare function tagOrder(tags: TagInfo[]): string[];
+/** Targets with one config per page: the extension and the store type of their pages. */
+export declare const PAGE_TARGETS: {
+    readonly pages: {
+        readonly extension: "fof-pages";
+        readonly type: "pages";
+    };
+    readonly advancedPages: {
+        readonly extension: "tryhackx-advanced-pages";
+        readonly type: "advanced-pages";
+    };
+};
+/** The page of a page target (`pages:3`), if loaded. */
+export declare function targetPage(scope: HeroScope, scopeId: string): import("flarum/common/Model").default | undefined;

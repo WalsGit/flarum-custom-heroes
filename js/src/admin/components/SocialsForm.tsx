@@ -120,8 +120,9 @@ export default class SocialsForm extends Component<SocialsFormAttrs> {
           />
 
           <div className="Form-group">
-            <label>{t('size_label')}</label>
+            <label for="wch-socials-size">{t('size_label')}</label>
             <Select
+              id="wch-socials-size"
               value={value.size}
               options={Object.fromEntries((['xs', 's', 'm'] as const).map((size) => [size, t(`size_${size}`, { size: SOCIAL_SIZES[size] })]))}
               onchange={(size: SocialsSection['size']) => this.update({ size })}

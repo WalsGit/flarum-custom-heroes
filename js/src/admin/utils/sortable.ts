@@ -8,7 +8,7 @@ export function makeSortable(list: HTMLElement, handle: string, onmove: (from: n
 
     Sortable.create(list, {
       handle,
-      animation: 150,
+      animation: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 150,
       ghostClass: 'wch-Sortable-ghost',
       onEnd: ({ item, from, oldIndex, newIndex }: { item: HTMLElement; from: HTMLElement; oldIndex?: number; newIndex?: number }) => {
         if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return;

@@ -24,8 +24,9 @@ export default class PlacementFields extends Component<PlacementFieldsAttrs> {
 
     return [
       <div className="Form-group">
-        <label>{t('label')}</label>
+        <label for="wch-placement">{t('label')}</label>
         <Select
+          id="wch-placement"
           value={placement}
           options={Object.fromEntries(
             (['below-text', 'top-left', 'top-right', 'bottom-left', 'bottom-right'] as const)
@@ -41,8 +42,9 @@ export default class PlacementFields extends Component<PlacementFieldsAttrs> {
         <p className="helpText">{t(noBelowText ? 'help_corners' : 'help')}</p>
       </div>,
       <div className="Form-group">
-        <label>{t('mobile_label')}</label>
+        <label for="wch-placement-mobile">{t('mobile_label')}</label>
         <Select
+          id="wch-placement-mobile"
           value={placement === 'below-text' && mobile === 'below-text' ? 'same' : mobile}
           options={{
             same: t('mobile_same'),

@@ -56,8 +56,9 @@ export default class OverlayForm extends Component<OverlayFormAttrs> {
     return (
       <div className="wch-OverlayForm">
         <div className="Form-group">
-          <label>{t('type_label')}</label>
+          <label for="wch-overlay-type">{t('type_label')}</label>
           <Select
+            id="wch-overlay-type"
             value={value.type}
             options={{
               none: t('type_none'),
@@ -91,9 +92,10 @@ export default class OverlayForm extends Component<OverlayFormAttrs> {
 
     return (
       <div className="Form-group">
-        <label>{t('direction_label')}</label>
+        <label for="wch-overlay-direction">{t('direction_label')}</label>
         <div className="wch-OverlayForm-angle">
           <Select
+            id="wch-overlay-direction"
             value={corner ?? 'angle'}
             options={{ angle: t('direction_angle'), ...Object.fromEntries(CORNERS.map((c) => [c, t(`from_${c.replace('-', '_')}`)])) }}
             onchange={(choice: 'angle' | Corner) =>

@@ -34,8 +34,9 @@ export default class TextStyleForm extends Component<TextStyleFormAttrs> {
     const { value, onchange } = this.attrs;
     const select = <K extends 'titleSize' | 'subtitleSize'>(key: K, label: string, values: readonly string[]) => (
       <div className="Form-group">
-        <label>{t(label)}</label>
+        <label for={`wch-textStyle-${key}`}>{t(label)}</label>
         <Select
+          id={`wch-textStyle-${key}`}
           value={value[key]}
           options={options(values, 'size')}
           onchange={(choice: TextStyleSection[K]) => onchange({ ...value, [key]: choice })}
@@ -46,7 +47,7 @@ export default class TextStyleForm extends Component<TextStyleFormAttrs> {
     const choices = <K extends 'align' | 'vAlign'>(key: K, label: string, values: readonly TextStyleSection[K][], prefix: string, help?: string) => (
       <div className="Form-group">
         <label>{t(label)}</label>
-        <div className="ButtonGroup wch-ChoiceButtons">
+        <div className="ButtonGroup wch-ChoiceButtons" role="group" aria-label={t(label)}>
           {values.map((choice) => (
             <Button
               className={classList('Button', value[key] === choice && 'active')}

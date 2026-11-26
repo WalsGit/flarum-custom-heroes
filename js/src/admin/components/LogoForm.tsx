@@ -68,7 +68,7 @@ export default class LogoForm extends Component<LogoFormAttrs> {
           <div className="Form-group">
             <label>{t('side_label')}</label>
             {/* Buttons rather than a list, like the text alignment. */}
-            <div className="ButtonGroup wch-ChoiceButtons">
+            <div className="ButtonGroup wch-ChoiceButtons" role="group" aria-label={t('side_label')}>
               {(discussion ? (['left', 'right', 'above'] as const) : (['left', 'right', 'above', 'title'] as const)).map((choice) => (
                 <Button
                   className={classList('Button', side === choice && 'active')}
@@ -84,8 +84,9 @@ export default class LogoForm extends Component<LogoFormAttrs> {
           </div>
 
           <div className="Form-group">
-            <label>{t('size_label')}</label>
+            <label for="wch-logo-size">{t('size_label')}</label>
             <Select
+              id="wch-logo-size"
               value={value.size}
               options={Object.fromEntries((['s', 'm', 'l'] as const).map((size) => [size, t(`size_${size}`, { height: LOGO_HEIGHTS[size] })]))}
               onchange={(size: LogoSection['size']) => this.update({ size })}

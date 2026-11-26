@@ -24,8 +24,9 @@ export default class TextForm extends Component<TextFormAttrs> {
     return (
       <div className="wch-TextForm">
         <div className="Form-group">
-          <label>{t('after_close_label')}</label>
+          <label for="wch-text-afterClose">{t('after_close_label')}</label>
           <Select
+            id="wch-text-afterClose"
             value={value.afterClose}
             options={{ hero: t('after_close_hero'), none: t('after_close_none') }}
             onchange={(afterClose: TextSection['afterClose']) => onchange({ ...value, afterClose })}
@@ -34,8 +35,9 @@ export default class TextForm extends Component<TextFormAttrs> {
 
         {value.afterClose === 'hero' && [
           <div className="Form-group">
-            <label>{t('title_label')}</label>
+            <label for="wch-text-title">{t('title_label')}</label>
             <input
+              id="wch-text-title"
               className="FormControl"
               maxlength={MAX_TITLE}
               value={value.title}
@@ -44,8 +46,9 @@ export default class TextForm extends Component<TextFormAttrs> {
             {count(value.title, MAX_TITLE)}
           </div>,
           <div className="Form-group">
-            <label>{t('message_label')}</label>
+            <label for="wch-text-message">{t('message_label')}</label>
             <textarea
+              id="wch-text-message"
               className="FormControl"
               rows={3}
               maxlength={MAX_MESSAGE}

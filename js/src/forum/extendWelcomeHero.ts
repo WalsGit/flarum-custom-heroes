@@ -80,10 +80,12 @@ export default function extendWelcomeHero() {
     } else if ((config.text ?? DEFAULT_TEXT).afterClose === 'hero') {
       // Swaps the texts instead of collapsing the whole hero (which the core does, as for `none`).
       (items.get('dismiss-button') as Mithril.Vnode<{ onclick: () => void }>).attrs.onclick = () => {
-        this.$('.containerNarrow').slideUp(() => {
+        const duration = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 400;
+
+        this.$('.containerNarrow').slideUp(duration, () => {
           this.hide();
           m.redraw.sync();
-          this.$('.containerNarrow').hide().slideDown();
+          this.$('.containerNarrow').hide().slideDown(duration);
         });
       };
     }

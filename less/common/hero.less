@@ -380,6 +380,16 @@
   margin: 0;
 }
 
+// The ✕ (welcome banner, deck) sits over the top right corner: a wide logo
+// must not run under it. Both sides when centered, to stay centered.
+.wch-Hero:has(.Hero-close) .wch-Hero-group {
+  padding-right: 30px;
+}
+
+.wch-Hero:has(.Hero-close):not(.wch-Hero--align-left, .wch-Hero--align-right) .wch-Hero-group {
+  padding-left: 30px;
+}
+
 // On mobile, a part can be hidden, or shown below the text instead of its corner.
 @wch-mobile-max: (@screen-tablet - 1px);
 

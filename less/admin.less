@@ -9,7 +9,12 @@
   margin-bottom: 25px;
 
   .Select {
-    max-width: 420px;
+    max-width: ~"min(420px, 100%)";
+  }
+
+  // Long target names: the list shrinks to the screen instead of overflowing it.
+  .Select-input {
+    max-width: 100%;
   }
 }
 

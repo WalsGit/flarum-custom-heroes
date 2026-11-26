@@ -61,6 +61,8 @@ export default class HeroesPage extends ExtensionPage {
     tagSwitch(name: 'tagIcon' | 'tagDescription' | 'tagColor', group?: string): JSX.Element;
     /** Discussions use the background, overlay and height of their tag's hero: off by default, stored only on. */
     tagHeroSwitch(): JSX.Element;
+    /** The heroes of the other extensions are only customized once enabled: off by default, stored only on. */
+    enabledSwitch(): JSX.Element;
     /** Where a discussion shows its tags, apart from the text style (which it can inherit). Above the title: not stored. */
     discussionTagsField(): JSX.Element;
     /** Default level only (home hero), with no level to inherit from: the default is stored as a missing section. */

@@ -9,7 +9,7 @@ export interface HeroTarget {
     tagId?: string | null;
 }
 /**
- * Tells which config scope a hero belongs to, or null for the heroes the
- * extension does not customize (messages, user, …).
+ * Tells which config scope a hero belongs to. The heroes of the other
+ * extensions all belong to `other`.
  */
-export declare function heroTarget(hero: Hero): HeroTarget | null;
+export declare function heroTarget(hero: Hero): HeroTarget;

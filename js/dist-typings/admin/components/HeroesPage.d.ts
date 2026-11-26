@@ -58,7 +58,9 @@ export default class HeroesPage extends ExtensionPage {
      */
     optInSection(name: OptInSection): JSX.Element;
     /** Every tag at once, apart from the text style (which it can inherit): stored only to hide the part. */
-    tagSwitch(name: 'tagIcon' | 'tagDescription'): JSX.Element;
+    tagSwitch(name: 'tagIcon' | 'tagDescription' | 'tagColor', group?: string): JSX.Element;
+    /** Where a discussion shows its tags, apart from the text style (which it can inherit). Above the title: not stored. */
+    discussionTagsField(): JSX.Element;
     /** Default level only (home hero), with no level to inherit from: the default is stored as a missing section. */
     textSection(): JSX.Element;
     tagsEnabled(): boolean;

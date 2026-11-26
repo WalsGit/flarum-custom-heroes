@@ -150,6 +150,10 @@ export interface HeroConfig {
     tagIcon?: false;
     /** Tag heroes only: `false` hides the tag's description. */
     tagDescription?: false;
+    /** Discussion heroes only: the tags go below the title, or are hidden (above the title by default). */
+    discussionTags?: 'below' | 'hidden';
+    /** Discussion heroes only: `false` keeps the hero's own color instead of the color of the discussion's tag. */
+    tagColor?: false;
 }
 /** The config a hero uses, once inherited: `inherit` is replaced by the default icons and buttons and the image of the level above. */
 export type ResolvedConfig = Omit<HeroConfig, 'background' | 'socials' | 'buttons'> & {

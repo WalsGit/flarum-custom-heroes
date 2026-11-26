@@ -9,6 +9,20 @@ export interface HeroTarget {
   scopeId: string | null;
   /** A child tag's parent, which it inherits from. */
   parentId?: string | null;
+  /** Discussions: the tag whose hero they can use (`tagHero`). */
+  tagId?: string | null;
+}
+
+type TagModel = { id(): string | undefined; attribute(name: string): unknown; data: { relationships?: Record<string, unknown> } };
+
+/**
+ * The most specific tag of a discussion: its child tag, or else its primary
+ * tag, or else its first (secondary) tag. Null without flarum/tags.
+ */
+function discussionTag(discussion: { tags?: () => (TagModel | undefined)[] | false }): TagModel | null {
+  const tags = (discussion.tags?.() || []).filter((tag): tag is TagModel => !!tag);
+
+  return tags.find((tag) => tagParentId(tag)) ?? tags.find((tag) => tag.attribute('position') !== null) ?? tags[0] ?? null;
 }
 
 /**
@@ -22,7 +36,9 @@ export function heroTarget(hero: Hero): HeroTarget | null {
   }
 
   if (hero instanceof DiscussionHero) {
-    return { scope: 'discussion', scopeId: null };
+    const tag = discussionTag(hero.attrs.discussion as Parameters<typeof discussionTag>[0]);
+
+    return { scope: 'discussion', scopeId: null, tagId: tag?.id() ?? null, parentId: tagParentId(tag) };
   }
 
   // flarum/tags, flarum/messages and flarum/deck are optional: their heroes

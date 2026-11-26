@@ -6,7 +6,7 @@ import WelcomeHero from 'flarum/forum/components/WelcomeHero';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { decorateContent, heroDecoration, type HeroViewer } from '../common/heroDecoration';
-import { configChain, normalizeConfigs } from '../common/resolveConfig';
+import { configChain, discussionChain, normalizeConfigs } from '../common/resolveConfig';
 import type { ForumPayload } from '../common/types';
 import { heroTarget } from './heroTarget';
 
@@ -27,11 +27,14 @@ function customizeHero(this: Hero, vdom: Mithril.Children) {
 
   const target = heroTarget(this);
   const payload = app.forum.attribute<ForumPayload | undefined>('walsgitCustomHeroes');
+  const configs = normalizeConfigs(payload?.configs);
   const decoration =
     target && payload
       ? heroDecoration(
-          normalizeConfigs(payload.configs),
-          configChain(target.scope, target.scopeId, target.parentId),
+          configs,
+          target.scope === 'discussion'
+            ? discussionChain(configs, target.tagId, target.parentId)
+            : configChain(target.scope, target.scopeId, target.parentId),
           target.scope,
           payload.assetsUrl,
           viewer()

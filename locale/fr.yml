@@ -43,6 +43,8 @@ walsgit-custom-heroes:
       title: Image de fond
       intro: "Ajouter une image en fond du hero. Elle est recadrée selon l'écran : choisissez le point à garder visible."
       add_label: Utiliser une image de fond
+      tag_hero_label: Utiliser le hero du tag de la discussion
+      tag_hero_help: "L'image de fond, le filtre et la hauteur du hero du tag de la discussion (son sous-tag, sinon son parent, sinon « Tags (par défaut) ») remplacent ceux de ce niveau. Les discussions sans tag, ou dont les tags n'ont aucun de ces réglages, gardent ceux-ci. Choisissez un tag d'exemple dans l'aperçu pour vérifier."
       tag_color_label: Utiliser la couleur du tag comme fond
       tag_color_help: "Comme Flarum : sans image, une discussion prend la couleur de son premier tag, sous le filtre. Désactivé : la couleur du hero de Flarum."
       no_image: Aucune image

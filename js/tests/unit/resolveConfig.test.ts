@@ -1,4 +1,4 @@
-import { configChain, normalizeConfigs, resolveConfig, sectionOwner, tagParentId } from '../../src/common/resolveConfig';
+import { backgroundOwner, configChain, discussionChain, normalizeConfigs, resolveConfig, sectionOwner, tagParentId } from '../../src/common/resolveConfig';
 import type { HeroConfigs } from '../../src/common/types';
 
 const configs: HeroConfigs = {
@@ -157,5 +157,50 @@ describe('home-only sections', () => {
     expect(resolveConfig(withSocials, ['global']).socials).toBe(socials);
     expect(resolveConfig(withSocials, ['global', 'tag', 'tag:12']).socials).toBeUndefined();
     expect(resolveConfig(withSocials, ['global', 'discussion']).socials).toBe(socials);
+  });
+});
+
+describe('discussionChain', () => {
+  it('adds the tag of the discussion, after its parent, only with the tagHero option', () => {
+    expect(discussionChain({}, '12', '3')).toEqual(['global', 'discussion']);
+    expect(discussionChain({ discussion: { tagHero: true } }, '12', '3')).toEqual(['global', 'discussion', 'tag', 'tag:3', 'tag:12']);
+    expect(discussionChain({ discussion: { tagHero: true } }, '3')).toEqual(['global', 'discussion', 'tag', 'tag:3']);
+    expect(discussionChain({ discussion: { tagHero: true } }, null)).toEqual(['global', 'discussion']);
+  });
+
+  it('takes the background, overlay and height of the tag over the discussion ones', () => {
+    const configs: HeroConfigs = {
+      discussion: { tagHero: true, height: { preset: 's' }, overlay: { type: 'none' } },
+      'tag:12': { height: { preset: 'l' } },
+    };
+
+    expect(resolveConfig(configs, discussionChain(configs, '12'))).toMatchObject({ height: { preset: 'l' }, overlay: { type: 'none' } });
+  });
+
+  it("gives a tag's inherited image as on its own hero, skipping the discussion level", () => {
+    const image = { id: '3f2a9c1d7b4e6a05', width: 1440, height: 540, widths: [640, 1024, 1440] };
+    const configs: HeroConfigs = {
+      global: { background: { image, position: { x: 50, y: 50 } } },
+      discussion: { tagHero: true, background: { image: null, position: { x: 50, y: 50 } } },
+      'tag:1': { background: { image: 'inherit', position: { x: 50, y: 0 } } },
+    };
+    const chain = discussionChain(configs, '1');
+
+    expect(backgroundOwner(configs, chain)).toBe('global');
+    expect(resolveConfig(configs, chain).background).toEqual({ image, position: { x: 50, y: 0 } });
+    // Without a tag config, the discussion's own choice (no image) stays.
+    expect(backgroundOwner(configs, discussionChain(configs, '2'))).toBeNull();
+  });
+
+  it('only takes the background, overlay and height of the tags level', () => {
+    const textStyle = { align: 'left', vAlign: 'top', titleSize: 'xl', subtitleSize: 'm', color: null } as const;
+    const configs: HeroConfigs = {
+      discussion: { tagHero: true },
+      tag: { overlay: { type: 'solid', color: '#00000080' }, textStyle, buttons: 'inherit', tagIcon: false },
+    };
+    const chain = discussionChain(configs, '12');
+
+    expect(resolveConfig(configs, chain)).toEqual({ tagHero: true, overlay: { type: 'solid', color: '#00000080' } });
+    expect(sectionOwner(configs, chain, 'textStyle')).toBeNull();
   });
 });

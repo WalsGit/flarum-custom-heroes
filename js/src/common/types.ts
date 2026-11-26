@@ -156,6 +156,8 @@ export interface HeroConfig {
   discussionTags?: 'below' | 'hidden';
   /** Discussion heroes only: `false` keeps the hero's own color instead of the color of the discussion's tag. */
   tagColor?: false;
+  /** Discussion heroes only: `true` uses the background, overlay and height of the discussion's tag hero. */
+  tagHero?: true;
 }
 
 /** The config a hero uses, once inherited: `inherit` is replaced by the default icons and buttons and the image of the level above. */

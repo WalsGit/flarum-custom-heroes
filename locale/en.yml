@@ -45,6 +45,8 @@ walsgit-custom-heroes:
       title: Background image
       intro: "Add an image behind the hero. It is cropped to fit each screen: choose the point to keep in view."
       add_label: Use a background image
+      tag_hero_label: Use the hero of the discussion's tag
+      tag_hero_help: "The background image, overlay and height of the discussion's tag hero (its child tag, else its parent, else \"Tags (default)\") replace those of this level. Discussions without tags, or whose tags have none of these settings, keep these ones. Choose a sample tag in the preview to check."
       tag_color_label: Use the tag color as background
       tag_color_help: "Like Flarum: without an image, a discussion takes the color of its first tag, under the overlay. Off: Flarum's hero color."
       no_image: No image

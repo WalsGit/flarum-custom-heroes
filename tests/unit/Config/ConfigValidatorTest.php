@@ -191,6 +191,13 @@ class ConfigValidatorTest extends TestCase
         $this->assertInvalid(['tagColor' => true], 'config.tagColor', 'invalid_value', Scope::Discussion);
     }
 
+    public function test_tag_hero_is_only_stored_on(): void
+    {
+        $this->assertSame(['tagHero' => true], $this->valid(['tagHero' => true], Scope::Discussion));
+        $this->assertInvalid(['tagHero' => false], 'config.tagHero', 'invalid_value', Scope::Discussion);
+        $this->assertInvalid(['tagHero' => true], 'config.tagHero', 'section_not_allowed', Scope::Tag);
+    }
+
     // Background ---------------------------------------------------------------
 
     public function test_background_defaults_and_image(): void

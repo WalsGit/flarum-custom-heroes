@@ -106,6 +106,8 @@ final class ConfigValidator
                     'tagIcon', 'tagDescription', 'tagColor' => $this->hiddenOnly($value, $path),
                     // Above the title by default: not stored.
                     'discussionTags' => $this->enum($value, ['below', 'hidden'], $path),
+                    // Off by default: only stored on.
+                    'tagHero' => $this->enabledOnly($value, $path),
                     // Every allowed section must have its own validation.
                     default => throw new LogicException("No validation for the section $section."),
                 };
@@ -710,6 +712,17 @@ final class ConfigValidator
     /**
      * A switch on by default, stored only when switched off.
      */
+    private function enabledOnly(mixed $value, string $path): ?bool
+    {
+        if ($value === true) {
+            return true;
+        }
+
+        $this->fail($path, 'invalid_value');
+
+        return null;
+    }
+
     private function hiddenOnly(mixed $value, string $path): ?bool
     {
         if ($value === false) {

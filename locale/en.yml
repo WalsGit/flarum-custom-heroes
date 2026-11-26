@@ -11,6 +11,7 @@ walsgit-custom-heroes:
       discussion: Discussions
       messages: Private messages
       deck: Deck
+      other: Other pages from 3rd party extensions
       customized: "{label} — customized"
     inherit_from_label: "Inherit from \"{source}\""
     inherit_core_label: "Use Flarum's default"
@@ -42,6 +43,11 @@ walsgit-custom-heroes:
       messages_subtitle: Your private conversations.
       deck_title: Deck
       deck_subtitle: Your discussions, side by side.
+      other_title: A page title
+      other_subtitle: "The heroes of other extensions show their own texts."
+    other:
+      enabled_label: Customize the heroes of other extensions
+      enabled_help: "Off: the heroes of the other extensions (pages, polls…) stay as they are. On: they use the settings of this level, which inherit from Default like the other heroes. Only heroes built on Flarum's hero component are concerned."
     background:
       title: Background image
       intro: "Add an image behind the hero. It is cropped to fit each screen: choose the point to keep in view."
@@ -145,7 +151,7 @@ walsgit-custom-heroes:
       side_right: Right of the text
       side_above: Above the title
       side_title: Instead of the title
-      side_help: "The logo and the text are placed together, following the text alignment. If you choose \"Instead of the title\", note that the title is still read by screen readers, and discussion pages show the logo above their title."
+      side_help: "The logo and the text are placed together, following the text alignment. If you choose \"Instead of the title\", note that the title is still read by screen readers, and that discussion pages and the heroes of other extensions show the logo above their title."
       side_help_discussion: "The logo and the text are placed together, following the text alignment."
       size_label: Size
       size_s: "Small ({height} px high)"

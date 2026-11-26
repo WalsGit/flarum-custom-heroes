@@ -347,6 +347,8 @@ function heroContent(
   }
 
   // Like Flarum's heroes of these extensions (their texts are not loaded in the admin).
+  if (scope === 'other') return { title: t('other_title'), subtitle: t('other_subtitle') };
+
   if (scope === 'messages' || scope === 'deck') {
     return {
       title: t(`${scope}_title`),

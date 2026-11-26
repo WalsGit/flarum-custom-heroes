@@ -9,6 +9,7 @@ walsgit-custom-heroes:
       discussion: Discussions
       messages: Messages privés
       deck: Deck
+      other: Autres pages d'extensions tierces
       customized: "{label} — personnalisé"
     inherit_from_label: "Hériter de « {source} »"
     inherit_core_label: Utiliser le rendu par défaut de Flarum
@@ -40,6 +41,11 @@ walsgit-custom-heroes:
       messages_subtitle: Vos conversations privées.
       deck_title: Deck
       deck_subtitle: Vos discussions, côte à côte.
+      other_title: Un titre de page
+      other_subtitle: "Les heroes des autres extensions affichent leurs propres textes."
+    other:
+      enabled_label: Personnaliser les heroes des autres extensions
+      enabled_help: "Désactivé : les heroes des autres extensions (pages, sondages…) restent tels quels. Activé : ils utilisent les réglages de ce niveau, qui héritent de Par défaut comme les autres heroes. Seuls les heroes construits sur le composant hero de Flarum sont concernés."
     background:
       title: Image de fond
       intro: "Ajouter une image en fond du hero. Elle est recadrée selon l'écran : choisissez le point à garder visible."
@@ -143,7 +149,7 @@ walsgit-custom-heroes:
       side_right: À droite du texte
       side_above: Au-dessus du titre
       side_title: À la place du titre
-      side_help: "Le logo et le texte sont placés ensemble, selon l'alignement du texte. Si vous choisissez « À la place du titre », notez que le titre reste lu par les lecteurs d'écran, et que les pages de discussion affichent le logo au-dessus de leur titre."
+      side_help: "Le logo et le texte sont placés ensemble, selon l'alignement du texte. Si vous choisissez « À la place du titre », notez que le titre reste lu par les lecteurs d'écran, et que les pages de discussion et les heroes des autres extensions affichent le logo au-dessus de leur titre."
       side_help_discussion: "Le logo et le texte sont placés ensemble, selon l'alignement du texte."
       size_label: Taille
       size_s: "Petit ({height} px de haut)"

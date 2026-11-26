@@ -20,10 +20,14 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     device: Device;
     /** Home (default level): preview the hero once Flarum's welcome text is closed. */
     closed: boolean;
+    /** Discussions: the tag the sample discussion is in (preview only, not stored). */
+    sampleTag: string | null;
     observer: ResizeObserver | null;
     onscroll: () => void;
     view(): JSX.Element;
     hero(): JSX.Element;
+    /** Every tag in Flarum's order, children indented: to see the hero with each tag's color. */
+    sampleTagSelect(): JSX.Element | null;
     oncreate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;
     oninit(vnode: Mithril.Vnode<HeroPreviewAttrs, this>): void;
     onbeforeupdate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>): void;
@@ -37,4 +41,4 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
  * The hero of a target, rendered like on the forum. Home (default level):
  * `closed` shows it once Flarum's welcome text is closed.
  */
-export declare function previewHero({ configs, target, chain }: Pick<HeroPreviewAttrs, 'configs' | 'target' | 'chain'>, closed: boolean): JSX.Element;
+export declare function previewHero({ configs, target, chain }: Pick<HeroPreviewAttrs, 'configs' | 'target' | 'chain'>, closed: boolean, sampleTag?: string | null): JSX.Element;

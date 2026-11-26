@@ -41,6 +41,8 @@ walsgit-custom-heroes:
       title: Image de fond
       intro: "Ajouter une image en fond du hero. Elle est recadrée selon l'écran : choisissez le point à garder visible."
       add_label: Utiliser une image de fond
+      tag_color_label: Utiliser la couleur du tag comme fond
+      tag_color_help: "Comme Flarum : sans image, une discussion prend la couleur de son premier tag, sous le filtre. Désactivé : la couleur du hero de Flarum."
       no_image: Aucune image
       small_image_warning: "Cette image ne fait que {width} px de large : elle risque d'être floue sur les grands écrans ({recommended} px ou plus recommandés). Elle est tout de même utilisée."
       inherited_image: "Image de « {source} », avec la position propre à ce hero."
@@ -165,6 +167,11 @@ walsgit-custom-heroes:
       tag_icon_help: "Avant le nom du tag, pour les tags qui ont une icône (définie dans les réglages des Tags)."
       tag_description_label: Afficher la description du tag
       tag_description_help: "Sous le nom du tag (définie dans les réglages des Tags)."
+      discussion_tags_label: Tags de la discussion
+      discussion_tags_above: Au-dessus du titre
+      discussion_tags_below: Sous le titre
+      discussion_tags_hidden: Masqués
+      discussion_tags_help: "Toujours collés au titre, avant le logo, les boutons ou les icônes placés au-dessus ou sous le texte. Les badges (épinglée, verrouillée…) les suivent."
       align_label: Alignement horizontal
       align_left: Gauche
       align_center: Centre

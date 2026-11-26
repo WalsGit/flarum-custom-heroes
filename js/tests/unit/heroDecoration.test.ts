@@ -90,6 +90,13 @@ describe('heroDecoration', () => {
     });
   });
 
+  it('adds the classes of the discussion tag options', () => {
+    const className = heroDecoration({ discussion: { discussionTags: 'below', tagColor: false } }, ['global', 'discussion'], 'discussion', assets)!.className;
+
+    expect(className).toContain('wch-Hero--tags-below');
+    expect(className).toContain('wch-Hero--noTagColor');
+  });
+
   it('puts the logo above a discussion title instead of replacing it', () => {
     const logo = { image: { id: '1b4f0e9851971998', width: 480, height: 240 }, side: 'title', size: 'm', alt: '', hideOnMobile: false } as const;
 

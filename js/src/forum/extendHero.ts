@@ -40,9 +40,22 @@ function customizeHero(this: Hero, vdom: Mithril.Children) {
 
   if (!decoration) return;
 
-  header.attrs.className = classList(header.attrs.className, decoration.className);
+  let className = header.attrs.className ?? '';
+  let style = header.attrs.style;
+
+  // The color flarum/tags gives a discussion hero (its first tag), and its text contrast.
+  if (decoration.className.split(' ').includes('wch-Hero--noTagColor')) {
+    className = className
+      .split(' ')
+      .filter((name) => name !== 'DiscussionHero--colored' && !name.startsWith('text-contrast--'))
+      .join(' ');
+    const { ['--hero-bg']: _, ...rest } = style ?? {};
+    style = rest;
+  }
+
+  header.attrs.className = classList(className, decoration.className);
   // Added to the hero's own style (for example the color of a tag), not replacing it.
-  header.attrs.style = { ...header.attrs.style, ...decoration.style };
+  header.attrs.style = { ...style, ...decoration.style };
 
   const children = () => (header.children as Mithril.ChildArray | undefined) ?? [];
   const container = children().find((child) => (child as Mithril.Vnode<{ className?: string }>)?.attrs?.className === 'container') as

@@ -157,6 +157,9 @@ class ConfigValidatorTest extends TestCase
             'tag icon on tag instance' => [Scope::Tag, '12', 'tagIcon'],
             'tag description on discussion' => [Scope::Discussion, '', 'tagDescription'],
             'tag description on tag instance' => [Scope::Tag, '12', 'tagDescription'],
+            'discussion tags on tag' => [Scope::Tag, '', 'discussionTags'],
+            'tag color on global' => [Scope::Global, '', 'tagColor'],
+            'tag color on messages' => [Scope::Messages, '', 'tagColor'],
         ];
     }
 
@@ -177,6 +180,15 @@ class ConfigValidatorTest extends TestCase
         $this->assertInvalid(['tagDescription' => true], 'config.tagDescription', 'invalid_value', Scope::Tag);
         $this->assertInvalid(['tagIcon' => true], 'config.tagIcon', 'invalid_value', Scope::Tag);
         $this->assertInvalid(['tagIcon' => 'no'], 'config.tagIcon', 'invalid_value', Scope::Tag);
+    }
+
+    public function test_discussion_tags_and_tag_color(): void
+    {
+        $config = ['discussionTags' => 'below', 'tagColor' => false];
+        $this->assertSame($config, $this->valid($config, Scope::Discussion));
+        $this->assertSame(['discussionTags' => 'hidden'], $this->valid(['discussionTags' => 'hidden'], Scope::Discussion));
+        $this->assertInvalid(['discussionTags' => 'above'], 'config.discussionTags', 'invalid_value', Scope::Discussion);
+        $this->assertInvalid(['tagColor' => true], 'config.tagColor', 'invalid_value', Scope::Discussion);
     }
 
     // Background ---------------------------------------------------------------

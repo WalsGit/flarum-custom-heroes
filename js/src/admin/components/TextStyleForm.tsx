@@ -10,6 +10,8 @@ import AlphaColorInput from './AlphaColorInput';
 export interface TextStyleFormAttrs extends ComponentAttrs {
   value: TextStyleSection;
   onchange: (value: TextStyleSection) => void;
+  /** Heroes without a description (discussions): no description size. */
+  noSubtitle?: boolean;
 }
 
 const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.text_style.${key}`, params, true);
@@ -66,7 +68,7 @@ export default class TextStyleForm extends Component<TextStyleFormAttrs> {
           {choices('align', 'align_label', ['left', 'center', 'right'], 'align')}
           {choices('vAlign', 'v_align_label', ['top', 'middle', 'bottom'], 'v_align', t('v_align_help'))}
           {select('titleSize', 'title_size_label', ['s', 'm', 'l', 'xl'])}
-          {select('subtitleSize', 'subtitle_size_label', ['s', 'm', 'l'])}
+          {!this.attrs.noSubtitle && select('subtitleSize', 'subtitle_size_label', ['s', 'm', 'l'])}
         </div>
 
         <Switch state={value.color === null} onchange={(auto: boolean) => onchange({ ...value, color: auto ? null : '#ffffffff' })}>

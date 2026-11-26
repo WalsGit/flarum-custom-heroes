@@ -127,6 +127,7 @@ walsgit-custom-heroes:
     logo:
       title: Logo
       intro: "Add a logo or an image beside the title, above it or in its place."
+      intro_discussion: "Add a logo or an image beside the title or above it."
       add_label: Add a logo to the hero
       no_logo: No logo
       image_help: "Transparency is kept. Stored at most 256 px high (twice the largest size, for sharp screens)."
@@ -138,6 +139,7 @@ walsgit-custom-heroes:
       side_above: Above the title
       side_title: Instead of the title
       side_help: "The logo and the text are placed together, following the text alignment. If you choose \"Instead of the title\", note that the title is still read by screen readers, and discussion pages show the logo above their title."
+      side_help_discussion: "The logo and the text are placed together, following the text alignment."
       size_label: Size
       size_s: "Small ({height} px high)"
       size_m: "Medium ({height} px high)"
@@ -160,6 +162,7 @@ walsgit-custom-heroes:
     text_style:
       title: Text style
       intro: "Adjust the alignment, position, size and color of the title and the description."
+      intro_discussion: "Adjust the alignment, position, size and color of the title."
       tag_icon_label: Show the tag icon
       tag_icon_help: "Before the tag name, for the tags that have an icon (set in the Tags settings)."
       tag_description_label: Show the tag description

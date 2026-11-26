@@ -30,6 +30,9 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
 export default class LogoForm extends Component<LogoFormAttrs> {
   view() {
     const { value, target } = this.attrs;
+    // A discussion title is never replaced: "instead of the title" is shown there as "above".
+    const discussion = target === 'discussion';
+    const side = discussion && value.side === 'title' ? 'above' : value.side;
     const assetsUrl = app.forum.attribute<ForumPayload>('walsgitCustomHeroes').assetsUrl;
 
     return (
@@ -66,18 +69,18 @@ export default class LogoForm extends Component<LogoFormAttrs> {
             <label>{t('side_label')}</label>
             {/* Buttons rather than a list, like the text alignment. */}
             <div className="ButtonGroup wch-ChoiceButtons">
-              {(['left', 'right', 'above', 'title'] as const).map((side) => (
+              {(discussion ? (['left', 'right', 'above'] as const) : (['left', 'right', 'above', 'title'] as const)).map((choice) => (
                 <Button
-                  className={classList('Button', value.side === side && 'active')}
-                  icon={SIDE_ICONS[side]}
-                  aria-pressed={value.side === side}
-                  onclick={() => this.update({ side })}
+                  className={classList('Button', side === choice && 'active')}
+                  icon={SIDE_ICONS[choice]}
+                  aria-pressed={side === choice}
+                  onclick={() => this.update({ side: choice })}
                 >
-                  {t(`side_${side}`)}
+                  {t(`side_${choice}`)}
                 </Button>
               ))}
             </div>
-            <p className="helpText">{t('side_help')}</p>
+            <p className="helpText">{t(discussion ? 'side_help_discussion' : 'side_help')}</p>
           </div>
 
           <div className="Form-group">
@@ -100,7 +103,7 @@ export default class LogoForm extends Component<LogoFormAttrs> {
             value={value.alt}
             oninput={(e: InputEvent) => this.update({ alt: (e.target as HTMLInputElement).value })}
           />
-          <p className="helpText">{t(value.side === 'title' ? 'alt_title_help' : 'alt_help')}</p>
+          <p className="helpText">{t(side === 'title' ? 'alt_title_help' : 'alt_help')}</p>
         </div>
 
         <Switch state={value.hideOnMobile} onchange={(hideOnMobile: boolean) => this.update({ hideOnMobile })}>

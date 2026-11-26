@@ -192,7 +192,10 @@ export function heroDecoration(
   const owner = backgroundOwner(configs, chain);
   const image = config.background?.image && owner ? backgroundImageAttrs(assetsUrl, owner, config.background.image) : null;
   const style = heroStyle(config);
-  const logo = config.logo?.image ? config.logo : null;
+  // A discussion title is not `.Hero-title`: never replaced, the logo goes above it.
+  const logo = config.logo?.image
+    ? { ...config.logo, side: scope === 'discussion' && config.logo.side === 'title' ? 'above' : config.logo.side }
+    : null;
   const logoOwner = sectionOwner(configs, chain, 'logo');
   const socials = config.socials?.items.length ? config.socials : null;
   const buttons = config.buttons?.items.filter((button) => isVisible(button, viewer)) ?? [];

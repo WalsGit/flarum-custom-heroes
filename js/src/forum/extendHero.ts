@@ -8,7 +8,7 @@ import type Mithril from 'mithril';
 import { decorateContent, heroDecoration, type HeroViewer } from '../common/heroDecoration';
 import { configChain, discussionChain, normalizeConfigs } from '../common/resolveConfig';
 import type { ForumPayload } from '../common/types';
-import { heroTarget } from './heroTarget';
+import { heroTarget, type HeroTarget } from './heroTarget';
 
 /** The current visitor, for the hero buttons. */
 const viewer = (): HeroViewer => ({
@@ -19,13 +19,17 @@ const viewer = (): HeroViewer => ({
 });
 
 function customizeHero(this: Hero, vdom: Mithril.Children) {
+  customizeHeader(vdom, heroTarget(this));
+}
+
+/** Customizes a hero header (`<header class="Hero …"><div class="container">…`) for its target. */
+function customizeHeader(vdom: Mithril.Children, target: HeroTarget) {
   // The header rendered by `Hero.view()`.
   const header = vdom as Mithril.Vnode<{ className?: string; style?: Record<string, string> }> | null;
 
   // Already customized: the hook runs once per hooked class in the chain.
   if (!header?.attrs || header.attrs.className?.split(' ').includes('wch-Hero')) return;
 
-  const target = heroTarget(this);
   const payload = app.forum.attribute<ForumPayload | undefined>('walsgitCustomHeroes');
   const configs = normalizeConfigs(payload?.configs);
   const decoration =
@@ -88,4 +92,13 @@ function customizeHero(this: Hero, vdom: Mithril.Children) {
  */
 export default function extendHero() {
   [Hero, WelcomeHero, DiscussionHero].forEach((HeroClass) => extend(HeroClass.prototype, 'view', customizeHero));
+
+  // tryhackx/flarum-advanced-pages renders its own hero header, not a `Hero`.
+  type PageView = { page?: { id(): string | undefined } | null; hero(): Mithril.Children };
+
+  flarum.reg.onLoad('tryhackx-advanced-pages', 'forum/components/PageView', (PageView: { prototype: PageView }) =>
+    extend(PageView.prototype, 'hero', function (this: PageView, vdom) {
+      customizeHeader(vdom, { scope: 'advancedPages', scopeId: this.page?.id() ?? null });
+    })
+  );
 }

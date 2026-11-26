@@ -12,13 +12,15 @@
 namespace Walsgit\CustomHeroes\Listener;
 
 use FoF\Pages\Events\PageDeleted;
+use TryHackX\AdvancedPages\Event\PageDeleted as AdvancedPageDeleted;
 use Walsgit\CustomHeroes\Config\ConfigRepository;
 use Walsgit\CustomHeroes\Config\Scope;
 use Walsgit\CustomHeroes\Image\HeroImages;
 
 /**
- * Removes the hero config and images of a fof/pages page when it is deleted
- * (only registered when fof/pages is enabled).
+ * Removes the hero config and images of a page of fof/pages or of
+ * tryhackx/flarum-advanced-pages when it is deleted (only registered when
+ * that extension is enabled).
  */
 final class DeletePageHeroConfig
 {
@@ -28,11 +30,12 @@ final class DeletePageHeroConfig
     ) {
     }
 
-    public function handle(PageDeleted $event): void
+    public function handle(PageDeleted|AdvancedPageDeleted $event): void
     {
+        $scope = $event instanceof PageDeleted ? Scope::Pages : Scope::AdvancedPages;
         $pageId = (string) $event->page->id;
 
-        $this->configs->delete(Scope::Pages, $pageId);
-        $this->images->cleanup(Scope::Pages, $pageId, []);
+        $this->configs->delete($scope, $pageId);
+        $this->images->cleanup($scope, $pageId, []);
     }
 }

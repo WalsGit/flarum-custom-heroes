@@ -15,15 +15,14 @@ use Flarum\Extend\LifecycleInterface;
 use Flarum\Extension\Extension;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Filesystem\Factory;
-use Walsgit\CustomHeroes\Config\OrphanTagConfigs;
+use Walsgit\CustomHeroes\Config\OrphanConfigs;
 use Walsgit\CustomHeroes\Image\HeroImages;
-use Walsgit\CustomHeroes\Listener\DeleteTagHeroConfig;
 
 /**
- * When the extension is enabled, removes the configs of the tags deleted
- * while it was disabled (its tag listeners could not run).
+ * When the extension is enabled, removes the configs of the tags and pages
+ * deleted while it was disabled (its delete listeners could not run).
  */
-final class PruneOrphanTagConfigs implements ExtenderInterface, LifecycleInterface
+final class PruneOrphanConfigs implements ExtenderInterface, LifecycleInterface
 {
     public function extend(Container $container, ?Extension $extension = null): void
     {
@@ -31,19 +30,19 @@ final class PruneOrphanTagConfigs implements ExtenderInterface, LifecycleInterfa
 
     public function onEnable(Container $container, Extension $extension): void
     {
-        $ids = $container->make(OrphanTagConfigs::class)->ids();
+        $orphans = $container->make(OrphanConfigs::class);
+        $ids = array_map(fn ($scope) => $orphans->ids($scope), OrphanConfigs::SCOPES);
 
         // The assets disk is only resolved when needed: doing it while extensions are enabled at boot (tests) breaks it.
-        if ($ids === []) {
+        if (array_merge(...array_values($ids)) === []) {
             return;
         }
 
         // The extension's service provider has not run yet in this request: the assets disk is given here.
         $images = $container->make(HeroImages::class, ['assets' => $container->make(Factory::class)->disk('flarum-assets')]);
-        $deleter = $container->make(DeleteTagHeroConfig::class, ['images' => $images]);
 
-        foreach ($ids as $id) {
-            $deleter->delete($id);
+        foreach (OrphanConfigs::SCOPES as $extensionId => $scope) {
+            $orphans->prune($scope, $ids[$extensionId], $images);
         }
     }
 

@@ -22,11 +22,11 @@ use TryHackX\AdvancedPages\Event\PageDeleted as AdvancedPageDeleted;
 use Walsgit\CustomHeroes\Api\Controller\SaveConfigController;
 use Walsgit\CustomHeroes\Api\Controller\UploadImageController;
 use Walsgit\CustomHeroes\Api\ForumPayload;
-use Walsgit\CustomHeroes\Extend\PruneOrphanTagConfigs;
+use Walsgit\CustomHeroes\Extend\PruneOrphanConfigs;
 use Walsgit\CustomHeroes\Image\UploadLimits;
 use Walsgit\CustomHeroes\Listener\DeletePageHeroConfig;
 use Walsgit\CustomHeroes\Listener\DeleteTagHeroConfig;
-use Walsgit\CustomHeroes\Listener\PruneTagConfigsOnTagsUninstall;
+use Walsgit\CustomHeroes\Listener\PruneConfigsOnUninstall;
 use Walsgit\CustomHeroes\Providers\CustomHeroesServiceProvider;
 
 return [
@@ -55,10 +55,10 @@ return [
                 ->get(fn () => resolve(UploadLimits::class)()),
         ]),
 
-    // Tag configs left behind while the extension was disabled, or by uninstalling flarum/tags.
-    new PruneOrphanTagConfigs(),
+    // Tag and page configs left behind while the extension was disabled, or by uninstalling their extension.
+    new PruneOrphanConfigs(),
     (new Extend\Event())
-        ->listen(Uninstalled::class, PruneTagConfigsOnTagsUninstall::class),
+        ->listen(Uninstalled::class, PruneConfigsOnUninstall::class),
 
     // flarum/tags is optional: tag related extenders only apply when enabled.
     (new Extend\Conditional())

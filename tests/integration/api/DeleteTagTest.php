@@ -17,9 +17,9 @@ use Flarum\Testing\integration\TestCase;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Filesystem\Factory;
 use PHPUnit\Framework\Attributes\Test;
-use Walsgit\CustomHeroes\Config\OrphanTagConfigs;
+use Walsgit\CustomHeroes\Config\OrphanConfigs;
 use Walsgit\CustomHeroes\Config\Scope;
-use Walsgit\CustomHeroes\Extend\PruneOrphanTagConfigs;
+use Walsgit\CustomHeroes\Extend\PruneOrphanConfigs;
 use Walsgit\CustomHeroes\Image\ImagePaths;
 
 class DeleteTagTest extends TestCase
@@ -136,7 +136,7 @@ class DeleteTagTest extends TestCase
     {
         $files = $this->orphanSetup();
 
-        $this->assertSame(['99'], $this->app()->getContainer()->make(OrphanTagConfigs::class)->ids());
+        $this->assertSame(['99'], $this->app()->getContainer()->make(OrphanConfigs::class)->ids(Scope::Tag));
         $this->app()->getContainer()->make(Factory::class)->disk('flarum-assets')->delete($files);
     }
 
@@ -146,7 +146,7 @@ class DeleteTagTest extends TestCase
         $files = $this->orphanSetup();
         $container = $this->app()->getContainer();
 
-        (new PruneOrphanTagConfigs())->onEnable($container, $container->make(ExtensionManager::class)->getExtension('walsgit-custom-heroes'));
+        (new PruneOrphanConfigs())->onEnable($container, $container->make(ExtensionManager::class)->getExtension('walsgit-custom-heroes'));
 
         $this->assertOnlyOrphanRemoved($files);
     }

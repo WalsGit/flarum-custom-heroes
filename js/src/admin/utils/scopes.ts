@@ -1,3 +1,4 @@
+import app from 'flarum/admin/app';
 import { configChain } from '../../common/resolveConfig';
 import type { HeroScope } from '../../common/types';
 
@@ -50,4 +51,17 @@ export function tagOrder(tags: TagInfo[]): string[] {
       .sort(byPosition)
       .map((child) => child.id),
   ]);
+}
+
+/** Targets with one config per page: the extension and the store type of their pages. */
+export const PAGE_TARGETS = {
+  pages: { extension: 'fof-pages', type: 'pages' },
+  advancedPages: { extension: 'tryhackx-advanced-pages', type: 'advanced-pages' },
+} as const satisfies Partial<Record<HeroScope, { extension: string; type: string }>>;
+
+/** The page of a page target (`pages:3`), if loaded. */
+export function targetPage(scope: HeroScope, scopeId: string) {
+  const target = PAGE_TARGETS[scope as keyof typeof PAGE_TARGETS];
+
+  return target && scopeId ? app.store.getById(target.type, scopeId) : undefined;
 }

@@ -15,6 +15,7 @@ walsgit-custom-heroes:
       pages: Pages (FoF Pages)
       users: User directory (FoF User Directory)
       polls: Polls (FoF Polls)
+      advanced_pages: Advanced Pages (TryHackX)
       other: Other pages from 3rd party extensions
       customized: "{label} — customized"
     inherit_from_label: "Inherit from \"{source}\""

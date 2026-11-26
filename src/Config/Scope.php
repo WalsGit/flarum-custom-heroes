@@ -33,6 +33,8 @@ enum Scope: string
     case Pages = 'pages';
     case Users = 'users';
     case Polls = 'polls';
+    // Heroes of tryhackx/flarum-advanced-pages (optional extension).
+    case AdvancedPages = 'advancedPages';
     // Heroes of the other extensions, customized only once the admin enables it.
     case Other = 'other';
 
@@ -70,8 +72,8 @@ enum Scope: string
             return true;
         }
 
-        // Tags and fof/pages pages have instances, identified by their numeric id.
-        return ($this === self::Tag || $this === self::Pages) && preg_match('/^[1-9][0-9]{0,9}$/', $scopeId) === 1;
+        // Tags and pages (fof/pages, advanced-pages) have instances, identified by their numeric id.
+        return in_array($this, [self::Tag, self::Pages, self::AdvancedPages], true) && preg_match('/^[1-9][0-9]{0,9}$/', $scopeId) === 1;
     }
 
     /**
@@ -81,7 +83,7 @@ enum Scope: string
     {
         // A page can change everything, a tag only its background (D4).
         if ($scopeId !== '') {
-            return $this === self::Pages ? self::COMMON_SECTIONS : self::INSTANCE_SECTIONS;
+            return $this === self::Tag ? self::INSTANCE_SECTIONS : self::COMMON_SECTIONS;
         }
 
         // The default level is also the home (Welcome) hero: its text is set there.

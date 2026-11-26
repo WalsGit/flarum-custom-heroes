@@ -18,6 +18,7 @@ use Flarum\Extend;
 use Flarum\Extension\Event\Uninstalled;
 use Flarum\Tags\Event\Deleting;
 use FoF\Pages\Events\PageDeleted;
+use TryHackX\AdvancedPages\Event\PageDeleted as AdvancedPageDeleted;
 use Walsgit\CustomHeroes\Api\Controller\SaveConfigController;
 use Walsgit\CustomHeroes\Api\Controller\UploadImageController;
 use Walsgit\CustomHeroes\Api\ForumPayload;
@@ -71,5 +72,10 @@ return [
         ->whenExtensionEnabled('fof-pages', fn () => [
             (new Extend\Event())
                 ->listen(PageDeleted::class, DeletePageHeroConfig::class),
+        ]),
+    (new Extend\Conditional())
+        ->whenExtensionEnabled('tryhackx-advanced-pages', fn () => [
+            (new Extend\Event())
+                ->listen(AdvancedPageDeleted::class, DeletePageHeroConfig::class),
         ]),
 ];

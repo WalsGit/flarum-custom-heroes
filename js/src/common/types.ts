@@ -5,7 +5,7 @@
  */
 
 /** `global` is also the config of the home (Welcome) hero. */
-export type HeroScope = 'global' | 'tag' | 'discussion' | 'messages' | 'deck' | 'pages' | 'users' | 'polls' | 'other';
+export type HeroScope = 'global' | 'tag' | 'discussion' | 'messages' | 'deck' | 'pages' | 'users' | 'polls' | 'advancedPages' | 'other';
 
 /** `#rgb`, `#rrggbb` or `#rrggbbaa`, lowercase. */
 export type Color = string;

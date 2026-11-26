@@ -203,6 +203,7 @@ class ConfigValidatorTest extends TestCase
     {
         $this->assertSame(['textStyle', 'logo', 'socials'], array_values(array_intersect(Scope::Pages->allowedSections('1'), ['textStyle', 'logo', 'socials'])));
         $this->assertSame(['socials' => false, 'buttons' => false], $this->valid(['socials' => false, 'buttons' => false], Scope::Pages, '1'));
+        $this->assertSame(['socials' => false], $this->valid(['socials' => false], Scope::AdvancedPages, '3'));
         $this->assertInvalid(['socials' => false], 'config.socials', 'invalid_value', Scope::Pages);
         $this->assertInvalid(['logo' => null], 'config.logo', 'section_not_allowed', Scope::Tag, '12');
     }

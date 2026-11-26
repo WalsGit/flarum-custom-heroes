@@ -21,7 +21,7 @@ import {
   type ButtonsSection,
   type SocialsSection,
 } from '../../common/types';
-import { parentChain, tagOrder, targetOf } from '../utils/scopes';
+import { PAGE_TARGETS, parentChain, tagOrder, targetOf, targetPage } from '../utils/scopes';
 import { uploadLimits } from '../utils/uploadLimits';
 import BackgroundForm from './BackgroundForm';
 import ButtonsForm from './ButtonsForm';
@@ -74,9 +74,9 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
  * here.
  */
 /** Heroes without a description: no description size. */
-const NO_SUBTITLE = ['discussion', 'pages', 'users', 'polls'];
+const NO_SUBTITLE = ['discussion', 'pages', 'users', 'polls', 'advancedPages'];
 
-/** The title of a fof/pages page. */
+/** The title of a page (fof/pages, advanced-pages). */
 const pageTitle = (page: { attribute(name: string): unknown }) => (page.attribute('title') as string) ?? '';
 
 /** Loads every record of a paginated type (the admin preloads none of the pages). */
@@ -113,8 +113,10 @@ export default class HeroesPage extends ExtensionPage {
       app.store.find('tags').then(() => m.redraw());
     }
 
-    // Every page of fof/pages, which can each have their own hero.
-    if (isExtensionEnabled('fof-pages')) loadAll('pages').then(() => m.redraw());
+    // Every page of fof/pages and advanced-pages, which can each have their own hero.
+    Object.values(PAGE_TARGETS).forEach(({ extension, type }) => {
+      if (isExtensionEnabled(extension)) loadAll(type).then(() => m.redraw());
+    });
   }
 
   className() {
@@ -580,8 +582,8 @@ export default class HeroesPage extends ExtensionPage {
   scopeLabel(key: string): string {
     const { scope, scopeId } = targetOf(key);
 
-    if (scopeId && scope === 'pages') {
-      const page = app.store.getById('pages', scopeId);
+    if (scopeId && scope in PAGE_TARGETS) {
+      const page = targetPage(scope, scopeId);
 
       return t('scopes.page_instance', { name: page ? pageTitle(page) : `#${scopeId}` });
     }
@@ -592,7 +594,7 @@ export default class HeroesPage extends ExtensionPage {
       return t('scopes.tag_instance', { name: tag ? (tag.attribute('name') as string) : `#${scopeId}` });
     }
 
-    return t(`scopes.${scope}`);
+    return t(`scopes.${localeKey(scope)}`);
   }
 
   scopeOptions(): Record<string, string> {
@@ -601,12 +603,17 @@ export default class HeroesPage extends ExtensionPage {
     // Heroes of optional extensions, only when they are enabled.
     if (isExtensionEnabled('flarum-messages')) keys.push('messages');
     if (isExtensionEnabled('flarum-deck')) keys.push('deck');
-    if (isExtensionEnabled('fof-pages')) {
-      const pages = app.store.all('pages').sort((a, b) => pageTitle(a).localeCompare(pageTitle(b)));
-      keys.push('pages', ...pages.map((page) => `pages:${page.id()}`));
-    }
+    const pageTarget = (scope: keyof typeof PAGE_TARGETS) => {
+      const { extension, type } = PAGE_TARGETS[scope];
+      if (!isExtensionEnabled(extension)) return;
+      const pages = app.store.all(type).sort((a, b) => pageTitle(a).localeCompare(pageTitle(b)));
+      keys.push(scope, ...pages.map((page) => `${scope}:${page.id()}`));
+    };
+
+    pageTarget('pages');
     if (isExtensionEnabled('fof-user-directory')) keys.push('users');
     if (isExtensionEnabled('fof-polls')) keys.push('polls');
+    pageTarget('advancedPages');
     // The heroes no other target is for. Tags always come last.
     keys.push('other');
 

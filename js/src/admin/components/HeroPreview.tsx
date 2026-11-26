@@ -9,8 +9,8 @@ import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { decorateContent, heroDecoration } from '../../common/heroDecoration';
 import { discussionChain, resolveConfig, tagParentId } from '../../common/resolveConfig';
-import { DEFAULT_TEXT, type ForumPayload, type HeroConfig, type HeroConfigs } from '../../common/types';
-import { tagOrder, targetOf, type TagInfo } from '../utils/scopes';
+import { DEFAULT_TEXT, type ForumPayload, type HeroConfig, type HeroConfigs, type HeroScope } from '../../common/types';
+import { tagOrder, targetOf, targetPage, type TagInfo } from '../utils/scopes';
 import { DEVICE_WIDTHS as WIDTHS, type Device } from '../utils/visibleArea';
 
 export interface HeroPreviewAttrs extends ComponentAttrs {
@@ -323,7 +323,7 @@ function discussionHero(config: HeroConfig, decoration: ReturnType<typeof heroDe
 
 /** What the hero shows: the Welcome texts (default level), a tag, or a sample of the other heroes. */
 function heroContent(
-  scope: string,
+  scope: HeroScope,
   scopeId: string,
   config: HeroConfig,
   closed: boolean
@@ -348,15 +348,17 @@ function heroContent(
 
   // Like Flarum's heroes of these extensions (their texts are not loaded in the admin).
   if (scope === 'other') return { title: t('other_title'), subtitle: t('other_subtitle') };
-  // Like the heroes of fof/pages, fof/user-directory and fof/polls: a title only.
-  if (scope === 'pages' && scopeId) {
-    const page = app.store.getById('pages', scopeId);
+  // Like the heroes of fof/pages, fof/user-directory, fof/polls and advanced-pages: a title only.
+  const page = targetPage(scope, scopeId);
 
-    return { title: page ? (page.attribute('title') as string) : t('pages_title'), subtitle: null };
-  }
+  if (page) return { title: page.attribute('title') as string, subtitle: null };
 
-  if (scope === 'pages' || scope === 'users' || scope === 'polls') {
-    return { title: t(`${scope}_title`), subtitle: null, icon: { pages: undefined, users: 'far fa-address-book', polls: 'fas fa-poll' }[scope] };
+  if (scope === 'pages' || scope === 'users' || scope === 'polls' || scope === 'advancedPages') {
+    return {
+      title: t(`${scope === 'advancedPages' ? 'pages' : scope}_title`),
+      subtitle: null,
+      icon: scope === 'users' ? 'far fa-address-book' : scope === 'polls' ? 'fas fa-poll' : undefined,
+    };
   }
 
   if (scope === 'messages' || scope === 'deck') {

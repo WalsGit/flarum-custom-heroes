@@ -10,6 +10,12 @@ export declare function normalizeConfigs(configs: unknown): HeroConfigs;
  * `['global', 'tag', 'tag:3', 'tag:12']` for a child of tag 3.
  */
 export declare function configChain(scope: HeroScope, scopeId?: string | null, parentId?: string | null): string[];
+/**
+ * The keys of the configs of a discussion hero. With the `tagHero` option,
+ * the configs of a tagged discussion's tag hero come last: the tags level,
+ * the parent tag, then the tag. A discussion without tags keeps its own.
+ */
+export declare function discussionChain(configs: HeroConfigs, tagId?: string | null, parentId?: string | null): string[];
 /** The id of a tag's parent, read from the relationship data: the parent model may not be in the store. */
 export declare function tagParentId(tag: {
     data: {

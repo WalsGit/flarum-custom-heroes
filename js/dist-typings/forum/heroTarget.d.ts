@@ -5,6 +5,8 @@ export interface HeroTarget {
     scopeId: string | null;
     /** A child tag's parent, which it inherits from. */
     parentId?: string | null;
+    /** Discussions: the tag whose hero they can use (`tagHero`). */
+    tagId?: string | null;
 }
 /**
  * Tells which config scope a hero belongs to, or null for the heroes the

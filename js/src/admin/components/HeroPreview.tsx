@@ -34,7 +34,7 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
   device: Device = 'desktop';
   /** Home (default level): preview the hero once Flarum's welcome text is closed. */
   closed = false;
-  /** Discussions: the tag the sample discussion is in (preview only, not stored). */
+  /** Discussions: the tag the sample discussion is in, or `none` (preview only, not stored). */
   sampleTag: string | null = null;
   observer: ResizeObserver | null = null;
   onscroll = () => this.markStuck();
@@ -105,11 +105,17 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
         return [`tag:${id}`, (tagParentId(tag) ? '\u00a0\u00a0└\u00a0' : '') + (tag.attribute('name') as string)];
       })
     );
+    // A discussion can have no tags.
+    options.none = t('no_tags');
 
     return (
       <label className="wch-Preview-sampleTag">
         {t('sample_tag')}
-        <Select value={`tag:${this.sampleTag ?? ids[0]}`} options={options} onchange={(key: string) => (this.sampleTag = key.slice(4))} />
+        <Select
+          value={this.sampleTag === 'none' ? 'none' : `tag:${this.sampleTag ?? ids[0]}`}
+          options={options}
+          onchange={(key: string) => (this.sampleTag = key === 'none' ? 'none' : key.slice(4))}
+        />
       </label>
     );
   }
@@ -240,8 +246,10 @@ function orderedTags() {
   return tagOrder(info).map((id) => info.find((tag) => tag.id === id)!);
 }
 
-/** The tag of the sample discussion: the chosen one, by default the first one. */
+/** The tag of the sample discussion: the chosen one, by default the first one, none for `none`. */
 function pickSampleTag(id: string | null): TagInfo | undefined {
+  if (id === 'none') return undefined;
+
   const tags = orderedTags();
 
   return tags.find((each) => each.id === id) ?? tags[0];
@@ -253,7 +261,7 @@ function pickSampleTag(id: string | null): TagInfo | undefined {
  * the hero's.
  */
 function sampleTags(tag: TagInfo | undefined): { name: string; color: string }[] {
-  if (!tag) return [{ name: t('tag_title'), color: '' }];
+  if (!tag) return [];
 
   const parent = orderedTags().find((each) => each.id === tag.parentId);
 

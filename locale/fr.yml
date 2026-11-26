@@ -34,6 +34,7 @@ walsgit-custom-heroes:
       hidden: Une fois la bannière de bienvenue fermée, ce hero est masqué (comportement de Flarum).
       discussion_title: Le titre d'une discussion
       sample_tag: "Tag d'exemple :"
+      no_tags: Sans tag
       discussion_note: "Tags d'exemple : sur le forum, chaque discussion affiche ses propres tags et, si l'option est activée, la couleur de son premier tag."
       messages_title: Messages
       messages_subtitle: Vos conversations privées.

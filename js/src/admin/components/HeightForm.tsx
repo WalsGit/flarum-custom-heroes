@@ -27,8 +27,9 @@ export default class HeightForm extends Component<HeightFormAttrs> {
     return (
       <div className="wch-HeightForm">
         <div className="Form-group">
-          <label>{t('preset_label')}</label>
+          <label for="wch-height-preset">{t('preset_label')}</label>
           <Select
+            id="wch-height-preset"
             value={value.preset}
             options={{ auto: t('preset_auto'), s: preset('s'), m: preset('m'), l: preset('l'), custom: t('preset_custom') }}
             onchange={(choice: HeightSection['preset']) =>

@@ -223,7 +223,9 @@ export function previewHero(
   const decorated = decoration ? decorateContent(children, decoration) : { content: children, corners: [] };
 
   return (
+    // Inert: a picture of the hero, its buttons and links are not to be focused or read out.
     <header
+      inert
       className={classList('Hero wch-PreviewHero', decoration?.className, content.color && 'wch-PreviewHero--colored')}
       style={{ ...(content.color ? { '--hero-bg': content.color } : {}), ...decoration?.style }}
     >

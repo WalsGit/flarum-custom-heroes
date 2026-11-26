@@ -192,8 +192,9 @@ export default class ButtonsForm extends Component<ButtonsFormAttrs> {
             </div>
 
             <div className="Form-group">
-              <label>{t('action_label')}</label>
+              <label for={id('action')}>{t('action_label')}</label>
               <Select
+                id={id('action')}
                 value={button.action}
                 options={options(['link', 'login', 'signup'], 'action')}
                 onchange={(action: ButtonItem['action']) => set(withAction(button, action))}
@@ -213,8 +214,9 @@ export default class ButtonsForm extends Component<ButtonsFormAttrs> {
                 />
               </div>,
               <div className="Form-group">
-                <label>{t('visibility_label')}</label>
+                <label for={id('visibility')}>{t('visibility_label')}</label>
                 <Select
+                  id={id('visibility')}
                   value={button.visibility}
                   options={options(['all', 'guest', 'user'], 'visibility')}
                   onchange={(visibility: 'all' | 'guest' | 'user') => change({ visibility })}
@@ -246,8 +248,9 @@ export default class ButtonsForm extends Component<ButtonsFormAttrs> {
             </div>
 
             <div className="Form-group">
-              <label>{t('style_label')}</label>
+              <label for={id('style')}>{t('style_label')}</label>
               <Select
+                id={id('style')}
                 value={button.style}
                 options={options(['primary', 'default', 'outline'], 'style')}
                 onchange={(style: ButtonItem['style']) => change({ style })}
@@ -255,8 +258,13 @@ export default class ButtonsForm extends Component<ButtonsFormAttrs> {
             </div>
 
             <div className="Form-group">
-              <label>{t('size_label')}</label>
-              <Select value={button.size} options={options(['s', 'm', 'l'], 'size')} onchange={(size: ButtonItem['size']) => change({ size })} />
+              <label for={id('size')}>{t('size_label')}</label>
+              <Select
+                id={id('size')}
+                value={button.size}
+                options={options(['s', 'm', 'l'], 'size')}
+                onchange={(size: ButtonItem['size']) => change({ size })}
+              />
             </div>
           </div>,
 

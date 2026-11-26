@@ -146,8 +146,8 @@ export default class HeroesPage extends ExtensionPage {
             )}
 
             <div className="Form-group wch-HeroesPage-scope">
-              <label>{t('scope_label')}</label>
-              <Select value={this.key} options={this.scopeOptions()} onchange={(key: string) => this.select(key)} />
+              <label for="wch-scope">{t('scope_label')}</label>
+              <Select id="wch-scope" value={this.key} options={this.scopeOptions()} onchange={(key: string) => this.select(key)} />
               <p className="helpText">{t('scope_help')}</p>
             </div>
 
@@ -533,7 +533,7 @@ export default class HeroesPage extends ExtensionPage {
       <fieldset className="wch-Section wch-Section--discussionTags">
         <div className="Form-group">
           <label>{t('text_style.discussion_tags_label')}</label>
-          <div className="ButtonGroup wch-ChoiceButtons">
+          <div className="ButtonGroup wch-ChoiceButtons" role="group" aria-label={t('text_style.discussion_tags_label')}>
             {(['above', 'below', 'hidden'] as const).map((choice) => (
               <Button
                 className={classList('Button', value === choice && 'active')}

@@ -6,6 +6,8 @@ export interface SocialsFormAttrs extends ComponentAttrs {
     onchange: (value: SocialsSection) => void;
     /** A corner used by the buttons. */
     taken: Placement | null;
+    /** No placement below the text (fof/polls). */
+    noBelowText?: boolean;
 }
 /**
  * A new icon, with the label and link it suggests: they replace a field only

@@ -6,6 +6,8 @@ export interface ButtonsFormAttrs extends ComponentAttrs {
     onchange: (value: ButtonsSection) => void;
     /** A corner used by the social icons. */
     taken: Placement | null;
+    /** No placement below the text (fof/polls). */
+    noBelowText?: boolean;
 }
 export default class ButtonsForm extends Component<ButtonsFormAttrs> {
     /** The card being edited: one at a time, the others folded to their header. */

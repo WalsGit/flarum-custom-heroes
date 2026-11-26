@@ -9,11 +9,6 @@ type OwnSections = {
     socials: SocialsSection;
     buttons: ButtonsSection;
 };
-/**
- * Edits the hero config of one target at a time (global, a hero type or a
- * tag). Each section is either inherited from the level above or defined
- * here.
- */
 export default class HeroesPage extends ExtensionPage {
     /** The config being edited: `global`, `discussion`, `tag:12`… */
     key: string;
@@ -57,6 +52,8 @@ export default class HeroesPage extends ExtensionPage {
      * are for the home hero): shown or not, then the default ones or their own.
      */
     optInSection(name: OptInSection): JSX.Element;
+    /** fof/polls puts its own buttons below the text of its heroes. */
+    noBelowText(): boolean;
     /** Every tag at once, apart from the text style (which it can inherit): stored only to hide the part. */
     tagSwitch(name: 'tagIcon' | 'tagDescription' | 'tagColor', group?: string): JSX.Element;
     /** Discussions use the background, overlay and height of their tag's hero: off by default, stored only on. */

@@ -4,7 +4,7 @@
  * validated and normalized: optional keys are always filled.
  */
 /** `global` is also the config of the home (Welcome) hero. */
-export type HeroScope = 'global' | 'tag' | 'discussion' | 'messages' | 'deck' | 'other';
+export type HeroScope = 'global' | 'tag' | 'discussion' | 'messages' | 'deck' | 'pages' | 'users' | 'polls' | 'other';
 /** `#rgb`, `#rrggbb` or `#rrggbbaa`, lowercase. */
 export type Color = string;
 export type Size = 's' | 'm' | 'l';
@@ -143,9 +143,12 @@ export interface HeroConfig {
     textStyle?: TextStyleSection;
     text?: TextSection;
     logo?: LogoSection;
-    /** The heroes other than the home one do not inherit the default icons and buttons: `inherit` shows them there. */
-    socials?: SocialsSection | 'inherit';
-    buttons?: ButtonsSection | 'inherit';
+    /**
+     * The heroes other than the home one do not inherit the default icons and buttons: `inherit` shows them there.
+     * `false` (a page of fof/pages) hides those of the level above.
+     */
+    socials?: SocialsSection | 'inherit' | false;
+    buttons?: ButtonsSection | 'inherit' | false;
     /** Tag heroes only: `false` hides the tag's icon before its name. */
     tagIcon?: false;
     /** Tag heroes only: `false` hides the tag's description. */

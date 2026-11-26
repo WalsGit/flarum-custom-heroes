@@ -2,12 +2,15 @@ import app from 'flarum/admin/app';
 import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import Icon from 'flarum/common/components/Icon';
+import Select from 'flarum/common/components/Select';
+import isExtensionEnabled from 'flarum/admin/utils/isExtensionEnabled';
+import textContrastClass from 'flarum/common/helpers/textContrastClass';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import { decorateContent, heroDecoration } from '../../common/heroDecoration';
-import { resolveConfig } from '../../common/resolveConfig';
+import { resolveConfig, tagParentId } from '../../common/resolveConfig';
 import { DEFAULT_TEXT, type ForumPayload, type HeroConfig, type HeroConfigs } from '../../common/types';
-import { targetOf } from '../utils/scopes';
+import { tagOrder, targetOf } from '../utils/scopes';
 import { DEVICE_WIDTHS as WIDTHS, type Device } from '../utils/visibleArea';
 
 export interface HeroPreviewAttrs extends ComponentAttrs {
@@ -31,6 +34,8 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
   device: Device = 'desktop';
   /** Home (default level): preview the hero once Flarum's welcome text is closed. */
   closed = false;
+  /** Discussions: the tag the sample discussion is in (preview only, not stored). */
+  sampleTag: string | null = null;
   observer: ResizeObserver | null = null;
   onscroll = () => this.markStuck();
 
@@ -53,6 +58,7 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
               </Button>
             ))}
           </div>
+          {targetOf(this.attrs.target).scope === 'discussion' && this.sampleTagSelect()}
           {targetOf(this.attrs.target).scope === 'global' && (
             <div className="ButtonGroup">
               {[false, true].map((closed) => (
@@ -72,12 +78,40 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
             {this.hero()}
           </div>
         </div>
+        {targetOf(this.attrs.target).scope === 'discussion' && isExtensionEnabled('flarum-tags') && (
+          <p className="helpText wch-Preview-note">
+            <Icon name="fas fa-info-circle" /> {t('discussion_note')}
+          </p>
+        )}
       </div>
     );
   }
 
   hero() {
-    return previewHero(this.attrs, this.closed);
+    return previewHero(this.attrs, this.closed, this.sampleTag);
+  }
+
+  /** Every tag in Flarum's order, children indented: to see the hero with each tag's color. */
+  sampleTagSelect() {
+    const ids = isExtensionEnabled('flarum-tags') ? orderedTags().map((tag) => tag.id) : [];
+
+    if (!ids.length) return null;
+
+    const options = Object.fromEntries(
+      ids.map((id) => {
+        const tag = app.store.getById('tags', id)!;
+
+        // Prefixed: numeric keys would be sorted by number, not in Flarum's order.
+        return [`tag:${id}`, (tagParentId(tag) ? '\u00a0\u00a0└\u00a0' : '') + (tag.attribute('name') as string)];
+      })
+    );
+
+    return (
+      <label className="wch-Preview-sampleTag">
+        {t('sample_tag')}
+        <Select value={`tag:${this.sampleTag ?? ids[0]}`} options={options} onchange={(key: string) => (this.sampleTag = key.slice(4))} />
+      </label>
+    );
   }
 
   oncreate(vnode: Mithril.VnodeDOM<HeroPreviewAttrs, this>) {
@@ -138,7 +172,11 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
  * The hero of a target, rendered like on the forum. Home (default level):
  * `closed` shows it once Flarum's welcome text is closed.
  */
-export function previewHero({ configs, target, chain }: Pick<HeroPreviewAttrs, 'configs' | 'target' | 'chain'>, closed: boolean) {
+export function previewHero(
+  { configs, target, chain }: Pick<HeroPreviewAttrs, 'configs' | 'target' | 'chain'>,
+  closed: boolean,
+  sampleTag: string | null = null
+) {
   const { scope, scopeId } = targetOf(target);
   const payload = app.forum.attribute<ForumPayload>('walsgitCustomHeroes');
   const decoration = heroDecoration(configs, chain, scope, payload.assetsUrl);
@@ -154,6 +192,8 @@ export function previewHero({ configs, target, chain }: Pick<HeroPreviewAttrs, '
   // Flarum's deck hero can be closed too (for good, like in Flarum).
   const closable = (scope === 'global' && !closed) || scope === 'deck';
 
+  if (scope === 'discussion') return discussionHero(config, decoration, sampleTag);
+
   const children = [
     closable && <i className="Hero-close fas fa-times" aria-hidden="true" />,
     <div className="containerNarrow">
@@ -162,9 +202,9 @@ export function previewHero({ configs, target, chain }: Pick<HeroPreviewAttrs, '
           {content.icon && <i className={content.icon} aria-hidden="true" />} {content.title}
         </h1>
       )}
-      {/* Like the core: kept even when empty (but discussions have none). */}
+      {/* Like the core: kept even when empty. */}
       {/* null: hidden (tag description switched off). */}
-      {content.subtitle !== null && (content.subtitle || (content.title && scope !== 'discussion')) && (
+      {content.subtitle !== null && (content.subtitle || content.title) && (
         <div className={classList('Hero-subtitle', closed && 'wch-Hero-message')}>{content.subtitle}</div>
       )}
     </div>,
@@ -176,6 +216,87 @@ export function previewHero({ configs, target, chain }: Pick<HeroPreviewAttrs, '
     <header
       className={classList('Hero wch-PreviewHero', decoration?.className, content.color && 'wch-PreviewHero--colored')}
       style={{ ...(content.color ? { '--hero-bg': content.color } : {}), ...decoration?.style }}
+    >
+      {decoration?.background}
+      <div className="container">{decorated.content}</div>
+      {decorated.corners}
+    </header>
+  );
+}
+
+/** The tags of the forum in Flarum's order: primary tags by position, each followed by its children, then secondary tags. */
+function orderedTags() {
+  const info = app.store.all('tags').map((tag) => ({
+    id: tag.id()!,
+    name: tag.attribute('name') as string,
+    position: tag.attribute('position') as number | null,
+    parentId: tagParentId(tag),
+  }));
+
+  return tagOrder(info).map((id) => info.find((tag) => tag.id === id)!);
+}
+
+/**
+ * The tags of the sample discussion, like flarum/tags shows them: the chosen
+ * tag (by default the first one), after its parent. The first one's color is
+ * the hero's.
+ */
+function sampleTags(id: string | null): { name: string; color: string }[] {
+  const tags = orderedTags();
+  const tag = tags.find((each) => each.id === id) ?? tags[0];
+
+  if (!tag) return [{ name: t('tag_title'), color: '' }];
+
+  const parent = tags.find((each) => each.id === tag.parentId);
+
+  return [parent, tag]
+    .filter((each) => !!each)
+    .map((each) => ({ name: each!.name, color: (app.store.getById('tags', each!.id)?.attribute('color') as string) || '' }));
+}
+
+/** A discussion hero, with Flarum's markup (sample tags, then the title), so that the forum styles apply. */
+function discussionHero(config: HeroConfig, decoration: ReturnType<typeof heroDecoration>, sampleTag: string | null) {
+  const tagged = isExtensionEnabled('flarum-tags');
+  const sample = tagged ? sampleTags(sampleTag) : [];
+  const tags = config.discussionTags === 'hidden' ? [] : sample;
+  // flarum/tags colors the hero with its first tag.
+  const color = config.tagColor === false ? '' : sample[0]?.color ?? '';
+
+  const children = [
+    <ul className="DiscussionHero-items">
+      {tags.length > 0 && (
+        <li className="item-tags">
+          <span className="TagsLabel">
+            {tags.map((tag) => (
+              <span
+                className={classList('TagLabel', tag.color && ['colored', textContrastClass(tag.color)])}
+                style={tag.color ? { '--tag-bg': tag.color } : {}}
+              >
+                <span className="TagLabel-text">
+                  <span className="TagLabel-name">{tag.name}</span>
+                </span>
+              </span>
+            ))}
+          </span>
+        </li>
+      )}
+      <li className="item-title">
+        <h1 className="DiscussionHero-title">{t('discussion_title')}</h1>
+      </li>
+    </ul>,
+  ];
+
+  const decorated = decoration ? decorateContent(children, decoration) : { content: children, corners: [] };
+
+  return (
+    <header
+      className={classList(
+        'Hero DiscussionHero wch-PreviewHero',
+        tagged && 'wch-PreviewHero--tagged',
+        color && ['DiscussionHero--colored', textContrastClass(color)],
+        decoration?.className
+      )}
+      style={{ ...(color ? { '--hero-bg': color } : {}), ...decoration?.style }}
     >
       {decoration?.background}
       <div className="container">{decorated.content}</div>
@@ -207,10 +328,6 @@ function heroContent(
           subtitle: config.tagDescription === false ? null : t('tag_subtitle'),
           icon: config.tagIcon === false ? undefined : 'fas fa-tag',
         };
-  }
-
-  if (scope === 'discussion') {
-    return { title: t('discussion_title') };
   }
 
   // Like Flarum's heroes of these extensions (their texts are not loaded in the admin).

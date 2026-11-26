@@ -198,6 +198,13 @@ class ConfigValidatorTest extends TestCase
         $this->assertInvalid(['tagHero' => true], 'config.tagHero', 'section_not_allowed', Scope::Tag);
     }
 
+    public function test_other_heroes_are_only_enabled_on(): void
+    {
+        $this->assertSame(['enabled' => true], $this->valid(['enabled' => true], Scope::Other));
+        $this->assertInvalid(['enabled' => false], 'config.enabled', 'invalid_value', Scope::Other);
+        $this->assertInvalid(['enabled' => true], 'config.enabled', 'section_not_allowed', Scope::Global);
+    }
+
     // Background ---------------------------------------------------------------
 
     public function test_background_defaults_and_image(): void

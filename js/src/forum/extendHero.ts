@@ -29,7 +29,8 @@ function customizeHero(this: Hero, vdom: Mithril.Children) {
   const payload = app.forum.attribute<ForumPayload | undefined>('walsgitCustomHeroes');
   const configs = normalizeConfigs(payload?.configs);
   const decoration =
-    target && payload
+    // The heroes of the other extensions are left as they are until the admin enables them.
+    payload && (target.scope !== 'other' || configs.other?.enabled)
       ? heroDecoration(
           configs,
           target.scope === 'discussion'

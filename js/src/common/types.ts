@@ -5,7 +5,7 @@
  */
 
 /** `global` is also the config of the home (Welcome) hero. */
-export type HeroScope = 'global' | 'tag' | 'discussion' | 'messages' | 'deck';
+export type HeroScope = 'global' | 'tag' | 'discussion' | 'messages' | 'deck' | 'other';
 
 /** `#rgb`, `#rrggbb` or `#rrggbbaa`, lowercase. */
 export type Color = string;
@@ -158,6 +158,8 @@ export interface HeroConfig {
   tagColor?: false;
   /** Discussion heroes only: `true` uses the background, overlay and height of the discussion's tag hero. */
   tagHero?: true;
+  /** The heroes of the other extensions only: `true` customizes them (they are left as they are by default). */
+  enabled?: true;
 }
 
 /** The config a hero uses, once inherited: `inherit` is replaced by the default icons and buttons and the image of the level above. */

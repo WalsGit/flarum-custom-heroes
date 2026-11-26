@@ -101,6 +101,8 @@ describe('heroDecoration', () => {
     const logo = { image: { id: '1b4f0e9851971998', width: 480, height: 240 }, side: 'title', size: 'm', alt: '', hideOnMobile: false } as const;
 
     expect(heroDecoration({ global: { logo } }, ['global', 'discussion'], 'discussion', assets)!.className).toContain('wch-Hero--logo-above');
+    // The title of another extension's hero may not be `.Hero-title`.
+    expect(heroDecoration({ global: { logo } }, ['global', 'other'], 'other', assets)!.className).toContain('wch-Hero--logo-above');
     expect(heroDecoration({ global: { logo } }, ['global', 'tag'], 'tag', assets)!.className).toContain('wch-Hero--logo-title');
   });
 

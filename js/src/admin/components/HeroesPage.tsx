@@ -131,6 +131,8 @@ export default class HeroesPage extends ExtensionPage {
               <p className="helpText">{t('scope_help')}</p>
             </div>
 
+            {this.key === 'other' && this.enabledSwitch()}
+
             <HeroPreview
               configs={{ ...this.configs, [this.key]: this.draft }}
               target={this.key}
@@ -345,8 +347,9 @@ export default class HeroesPage extends ExtensionPage {
 
   /** What the section does, at the top of its tab. */
   intro(name: string) {
-    // Discussions have no description, and their title is never replaced by the logo.
-    const suffix = this.key === 'discussion' && ['logo', 'textStyle'].includes(name) ? '_discussion' : '';
+    // Discussions have no description, and their title (or another extension's) is never replaced by the logo.
+    const suffix =
+      (this.key === 'discussion' && ['logo', 'textStyle'].includes(name)) || (this.key === 'other' && name === 'logo') ? '_discussion' : '';
     const text = app.translator.trans(`walsgit-custom-heroes.admin.${localeKey(name)}.intro${suffix}`, { a: <Link href={app.route('basics')} /> });
 
     return <p className="helpText wch-Section-intro">{text}</p>;
@@ -449,6 +452,23 @@ export default class HeroesPage extends ExtensionPage {
     );
   }
 
+  /** The heroes of the other extensions are only customized once enabled: off by default, stored only on. */
+  enabledSwitch() {
+    const set = (on: boolean) => {
+      const { enabled: _, ...rest } = this.draft;
+      this.draft = on ? { ...rest, enabled: true } : rest;
+    };
+
+    return (
+      <fieldset className="wch-Section wch-Section--enabled">
+        <Switch state={this.draft.enabled === true} onchange={set}>
+          {t('other.enabled_label')}
+        </Switch>
+        <p className="helpText">{t('other.enabled_help')}</p>
+      </fieldset>
+    );
+  }
+
   /** Where a discussion shows its tags, apart from the text style (which it can inherit). Above the title: not stored. */
   discussionTagsField() {
     const value = this.draft.discussionTags ?? 'above';
@@ -526,6 +546,8 @@ export default class HeroesPage extends ExtensionPage {
     // Heroes of optional extensions, only when they are enabled.
     if (isExtensionEnabled('flarum-messages')) keys.push('messages');
     if (isExtensionEnabled('flarum-deck')) keys.push('deck');
+    // The heroes no other target is for. Tags always come last.
+    keys.push('other');
 
     if (this.tagsEnabled()) {
       const tags = app.store.all('tags').map((tag) => ({

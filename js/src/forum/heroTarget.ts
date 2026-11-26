@@ -26,10 +26,10 @@ function discussionTag(discussion: { tags?: () => (TagModel | undefined)[] | fal
 }
 
 /**
- * Tells which config scope a hero belongs to, or null for the heroes the
- * extension does not customize (messages, user, …).
+ * Tells which config scope a hero belongs to. The heroes of the other
+ * extensions all belong to `other`.
  */
-export function heroTarget(hero: Hero): HeroTarget | null {
+export function heroTarget(hero: Hero): HeroTarget {
   if (hero instanceof WelcomeHero) {
     // The default config is the home hero's.
     return { scope: 'global', scopeId: null };
@@ -54,5 +54,5 @@ export function heroTarget(hero: Hero): HeroTarget | null {
     return { scope: 'tag', scopeId: model?.id() ?? null, parentId: tagParentId(model) };
   }
 
-  return null;
+  return { scope: 'other', scopeId: null };
 }

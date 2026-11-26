@@ -30,8 +30,8 @@ const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-her
 export default class LogoForm extends Component<LogoFormAttrs> {
   view() {
     const { value, target } = this.attrs;
-    // A discussion title is never replaced: "instead of the title" is shown there as "above".
-    const discussion = target === 'discussion';
+    // A discussion title (or another extension's) is never replaced: "instead of the title" is shown there as "above".
+    const discussion = target === 'discussion' || target === 'other';
     const side = discussion && value.side === 'title' ? 'above' : value.side;
     const assetsUrl = app.forum.attribute<ForumPayload>('walsgitCustomHeroes').assetsUrl;
 

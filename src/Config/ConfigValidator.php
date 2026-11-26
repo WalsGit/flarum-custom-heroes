@@ -107,7 +107,7 @@ final class ConfigValidator
                     // Above the title by default: not stored.
                     'discussionTags' => $this->enum($value, ['below', 'hidden'], $path),
                     // Off by default: only stored on.
-                    'tagHero' => $this->enabledOnly($value, $path),
+                    'tagHero', 'enabled' => $this->enabledOnly($value, $path),
                     // Every allowed section must have its own validation.
                     default => throw new LogicException("No validation for the section $section."),
                 };

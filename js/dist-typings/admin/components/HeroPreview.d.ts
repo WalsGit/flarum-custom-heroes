@@ -20,7 +20,7 @@ export default class HeroPreview extends Component<HeroPreviewAttrs> {
     device: Device;
     /** Home (default level): preview the hero once Flarum's welcome text is closed. */
     closed: boolean;
-    /** Discussions: the tag the sample discussion is in (preview only, not stored). */
+    /** Discussions: the tag the sample discussion is in, or `none` (preview only, not stored). */
     sampleTag: string | null;
     observer: ResizeObserver | null;
     onscroll: () => void;

@@ -53,10 +53,10 @@ walsgit-custom-heroes:
       other_subtitle: "Les heroes des autres extensions affichent leurs propres textes."
     other:
       enabled_label: Personnaliser les heroes des autres extensions
-      enabled_help: "Désactivé : les heroes des autres extensions (pages, sondages…) restent tels quels. Activé : ils utilisent les réglages de ce niveau, qui héritent de Par défaut comme les autres heroes. Seuls les heroes construits sur le composant hero de Flarum sont concernés."
+      enabled_help: "Désactivé : les heroes des autres extensions (pages, sondages…) restent tels quels. Activé : ils utilisent les réglages de ce niveau, qui héritent du hero « Par défaut » comme les autres heroes. Seuls les heroes construits sur le composant hero de Flarum sont concernés."
     background:
       title: Image de fond
-      intro: "Ajouter une image en fond du hero. Elle est recadrée selon l'écran : choisissez le point à garder visible."
+      intro: "Ajouter une image de fond au hero. Elle est recadrée selon l'écran : choisissez la zone à garder visible."
       add_label: Utiliser une image de fond
       tag_hero_label: Utiliser le hero du tag de la discussion
       tag_hero_help: "L'image de fond, le filtre et la hauteur du hero du tag de la discussion (son sous-tag, sinon son parent, sinon « Tags (par défaut) ») remplacent ceux de ce niveau. Les discussions sans tag, ou dont les tags n'ont aucun de ces réglages, gardent ceux-ci. Choisissez un tag d'exemple dans l'aperçu pour vérifier."
@@ -68,7 +68,7 @@ walsgit-custom-heroes:
       use_inherited_button: "Utiliser l'image de « {source} »"
       position_button: Ajuster la position
       position_title: Position de l'image de fond
-      position_help: Cliquez ou faites glisser sur l'image pour choisir le point à garder visible. Le cadre montre ce qu'affiche l'appareil choisi, à la hauteur réelle du hero.
+      position_help: Cliquez ou faites glisser sur l'image pour choisir la zone à garder visible. Le cadre montre ce qu'affiche l'appareil choisi, à la hauteur réelle du hero.
       position_x_label: Horizontal (%)
       position_x_help: "La position horizontale n'agit que sur : {devices}. Ailleurs, l'image occupe déjà toute la largeur."
       position_y_label: Vertical (%)
@@ -80,10 +80,10 @@ walsgit-custom-heroes:
     image:
       upload_button: Téléverser une image
       remove_button: Sans image
-      upload_help: "JPEG, PNG ou WebP, jusqu'à {size} Mo et 4000 px de côté. Optimisée en WebP."
+      upload_help: "JPEG, PNG ou WebP, jusqu'à {size} Mo et 4000 px de côté. Le fichier sera converti et optimisé en WebP."
       too_large: "Cette image est trop lourde : {size} Mo maximum."
       url_label: Ou importer depuis une URL
-      url_help: L'image est téléchargée une seule fois et stockée sur votre forum.
+      url_help: L'image sera téléchargée une seule fois et stockée sur votre forum.
       import_button: Importer
     overlay:
       title: Filtre
@@ -137,7 +137,7 @@ walsgit-custom-heroes:
       preset_m: "Moyenne ({desktop} / {tablet} / {mobile} px)"
       preset_l: "Grande ({desktop} / {tablet} / {mobile} px)"
       preset_custom: Personnalisée
-      preset_help: "Hauteurs fixes sur ordinateur / tablette / mobile : le hero garde sa hauteur quel que soit le texte (titre coupé après 2 lignes, description après 3)."
+      preset_help: "Hauteurs fixes sur ordinateur / tablette / mobile : le hero garde sa hauteur quel que soit le texte (le titre est coupé après 2 lignes, la description après 3)."
       auto_help: "Au moins 120 px de haut sur ordinateur (moins sur mobile), et le hero s'agrandit avec son texte ou son logo, comme dans Flarum."
       custom_help: "De {min} à {max} px ({mobile} px au plus sur mobile)."
       desktop_label: Ordinateur

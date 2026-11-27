@@ -237,6 +237,13 @@ walsgit-custom-heroes:
       size_m: "Medium ({size} px)"
       custom_color_label: Change icon color
       color_label: Icon color
+      icons:
+        website: "Website"
+        link: "Link"
+        email: "Email"
+        phone: "Phone"
+        location: "Location"
+        chat: "Chat"
     placement:
       label: Placement
       below_text: Below the text

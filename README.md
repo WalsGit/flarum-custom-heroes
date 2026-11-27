@@ -95,6 +95,7 @@ The images stay in `public/assets/extensions/walsgit-custom-heroes`: delete that
 
 - [Packagist](https://packagist.org/packages/walsgit/flarum-custom-heroes)
 - [GitHub](https://github.com/WalsGit/flarum-custom-heroes)
+- [Discuss](https://discuss.flarum.org/d/40534-custom-heroes)
 - [Issues](https://github.com/WalsGit/flarum-custom-heroes/issues)
 - [Donate](https://walsgit.github.io/Donations/)
 

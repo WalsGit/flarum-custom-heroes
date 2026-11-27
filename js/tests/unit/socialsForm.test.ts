@@ -1,3 +1,4 @@
+import app from 'flarum/admin/app';
 import { withIcon } from '../../src/admin/components/SocialsForm';
 
 describe('withIcon', () => {
@@ -25,5 +26,14 @@ describe('withIcon', () => {
       label: 'Discord',
       url: 'https://discord.gg/',
     });
+  });
+
+  it('translates the label of a generic icon, and still replaces it', () => {
+    // A stand-in translator: the label is the last part of the key.
+    app.translator.trans = ((key: string) => `[${key.split('.').pop()}]`) as typeof app.translator.trans;
+    const email = withIcon(empty, 'fas fa-envelope');
+
+    expect(email).toEqual({ icon: 'fas fa-envelope', label: '[email]', url: 'mailto:' });
+    expect(withIcon(email, 'fas fa-phone')).toEqual({ icon: 'fas fa-phone', label: '[phone]', url: 'tel:' });
   });
 });

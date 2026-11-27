@@ -29,7 +29,8 @@ const MAX_LABEL = 50;
  * The icon picker: common networks, then useful links (Font Awesome Free 7),
  * with the label and the start of the link they suggest.
  */
-const SUGGESTIONS: Record<string, { label: string; url: string }> = {
+// Generic icons get a translated label (`translate`: `label` is the key under `socials.icons`); brand names are kept.
+const SUGGESTIONS: Record<string, { label: string; url: string; translate?: true }> = {
   'fab fa-discord': { label: 'Discord', url: 'https://discord.gg/' },
   'fab fa-x-twitter': { label: 'X', url: 'https://x.com/' },
   'fab fa-bluesky': { label: 'Bluesky', url: 'https://bsky.app/profile/' },
@@ -52,14 +53,18 @@ const SUGGESTIONS: Record<string, { label: string; url: string }> = {
   'fab fa-spotify': { label: 'Spotify', url: 'https://open.spotify.com/' },
   'fab fa-steam': { label: 'Steam', url: 'https://steamcommunity.com/' },
   'fab fa-slack': { label: 'Slack', url: 'https://' },
-  'fas fa-globe': { label: 'Website', url: 'https://' },
-  'fas fa-link': { label: 'Link', url: 'https://' },
-  'fas fa-envelope': { label: 'Email', url: 'mailto:' },
-  'fas fa-phone': { label: 'Phone', url: 'tel:' },
-  'fas fa-location-dot': { label: 'Location', url: 'https://' },
-  'fas fa-comments': { label: 'Chat', url: 'https://' },
+  'fas fa-globe': { label: 'website', url: 'https://', translate: true },
+  'fas fa-link': { label: 'link', url: 'https://', translate: true },
+  'fas fa-envelope': { label: 'email', url: 'mailto:', translate: true },
+  'fas fa-phone': { label: 'phone', url: 'tel:', translate: true },
+  'fas fa-location-dot': { label: 'location', url: 'https://', translate: true },
+  'fas fa-comments': { label: 'chat', url: 'https://', translate: true },
   'fas fa-rss': { label: 'RSS', url: 'https://' },
 };
+
+const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.socials.${key}`, params, true);
+
+const suggestedLabel = ({ label, translate }: { label: string; translate?: true }) => (translate ? t(`icons.${label}`) : label);
 
 /**
  * A new icon, with the label and link it suggests: they replace a field only
@@ -73,12 +78,10 @@ export function withIcon(item: SocialItem, icon: string): SocialItem {
   return {
     ...item,
     icon,
-    ...(after && untouched(item.label, before?.label) ? { label: after.label } : {}),
+    ...(after && untouched(item.label, before && suggestedLabel(before)) ? { label: suggestedLabel(after) } : {}),
     ...(after && untouched(item.url, before?.url) ? { url: after.url } : {}),
   };
 }
-
-const t = (key: string, params = {}) => app.translator.trans(`walsgit-custom-heroes.admin.socials.${key}`, params, true);
 
 export default class SocialsForm extends Component<SocialsFormAttrs> {
   view() {
@@ -160,7 +163,7 @@ export default class SocialsForm extends Component<SocialsFormAttrs> {
         <IconPicker
           className="wch-SocialsForm-icon"
           value={item.icon || null}
-          icons={Object.fromEntries(Object.entries(SUGGESTIONS).map(([icon, { label }]) => [icon, label]))}
+          icons={Object.fromEntries(Object.entries(SUGGESTIONS).map(([icon, suggestion]) => [icon, suggestedLabel(suggestion)]))}
           label={t('pick_icon_button', { number })}
           onchange={(icon: string | null) => set(withIcon(item, icon ?? ''))}
         />

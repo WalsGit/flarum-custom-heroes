@@ -8,9 +8,9 @@ Without any setting, the forum looks exactly as before: nothing changes until yo
 
 ## 🖼️ Screenshots
 
-![Home page hero with a background image, a logo, social icons and buttons](.github/screenshots/home.webp)
+![Home page hero with a background image, a logo, social icons and buttons](https://raw.githubusercontent.com/WalsGit/flarum-custom-heroes/main/.github/screenshots/home.webp)
 
-![Settings page in the admin panel, with the live preview](.github/screenshots/admin.webp)
+![Settings page in the admin panel, with the live preview](https://raw.githubusercontent.com/WalsGit/flarum-custom-heroes/main/.github/screenshots/admin.webp)
 
 ## ✨ Features
 

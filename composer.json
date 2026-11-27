@@ -11,6 +11,7 @@
     ],
     "type": "flarum-extension",
     "license": "MIT",
+    "homepage": "https://github.com/WalsGit/flarum-custom-heroes",
     "require": {
         "flarum/core": "^2.0"
     },
